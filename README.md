@@ -67,6 +67,12 @@ post-earnings drift (PEAD) pullback.**
 Day (5-min candles): ORB / gap-and-go, VWAP reclaim, **red-to-green, high-of-day break, VWAP bounce, intraday flag** (+ 15-minute versions).
 Not every strategy works. The weekly backtest and the live scorecard switch off whatever loses, so the library prunes itself.
 
+## v5 - 44 swing + 10 day detectors
+Added on top of v4: spring/turtle-soup reversal, higher-low structure breakout, descending-trendline break, rising-channel bounce, capitulation reversal,
+golden cross, MACD pullback, stochastic oversold, momentum burst (Stockbee), RSI bullish divergence, anchored-VWAP reclaim, 3-down-day reversal,
+gap-down reclaim (bear trap), Keltner thrust, Ichimoku cloud breakout. Day: previous-day-high break (and previous-day-low break for shorts),
+EMA9/20 pullback, afternoon lunch-range breakout, gap reversal (and failed gap-up fade for shorts). Day setups now get yesterday's close/high/low from daily bars.
+
 ## Run
 Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
 Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`

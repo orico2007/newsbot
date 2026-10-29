@@ -96,3 +96,40 @@ def ibs(b):
     """Internal Bar Strength: איפה הסגירה בטווח הנר (0=בשפל, 1=בשיא)"""
     r = b["h"] - b["l"]
     return (b["c"] - b["l"]) / r if r > 0 else 0.5
+
+def macd(closes, fast=12, slow=26, sig=9):
+    """(macd, signal, hist) של הנר האחרון + hist הקודם: מחזיר (macd, signal, hist, prev_hist) או None"""
+    if len(closes) < slow + sig + 2: return None
+    def series(n):
+        k = 2 / (n + 1); e = sum(closes[:n]) / n; out = [None] * (n - 1) + [e]
+        for v in closes[n:]: e = v * k + e * (1 - k); out.append(e)
+        return out
+    ef, es = series(fast), series(slow)
+    line = [a - b for a, b in zip(ef, es) if a is not None and b is not None]
+    k = 2 / (sig + 1); s = sum(line[:sig]) / sig; sigs = [s]
+    for v in line[sig:]: s = v * k + s * (1 - k); sigs.append(s)
+    hist = [l - g for l, g in zip(line[sig - 1:], sigs)]
+    return line[-1], sigs[-1], hist[-1], hist[-2]
+
+def stoch(bars, n=14, d=3):
+    """(%K, %D, prev %K, prev %D)"""
+    if len(bars) < n + d + 1: return None
+    ks = []
+    for i in range(len(bars) - d - 1, len(bars)):
+        w = bars[i - n + 1:i + 1]; hi, lo = max(b["h"] for b in w), min(b["l"] for b in w)
+        ks.append(100 * (bars[i]["c"] - lo) / (hi - lo) if hi > lo else 50.0)
+    return ks[-1], sum(ks[-d:]) / d, ks[-2], sum(ks[-d - 1:-1]) / d
+
+def anchored_vwap(bars, i0):
+    seg = bars[i0:]
+    pv = sum((b["h"] + b["l"] + b["c"]) / 3 * b["v"] for b in seg); v = sum(b["v"] for b in seg)
+    return pv / v if v else None
+
+def ichimoku(bars):
+    """(tenkan, kijun, cloud_top, cloud_bottom) של הבר האחרון; הענן = ערכים מלפני 26 נרות"""
+    if len(bars) < 52 + 26: return None
+    mid = lambda seg: (max(b["h"] for b in seg) + min(b["l"] for b in seg)) / 2
+    n = len(bars); ref = n - 26
+    a = (mid(bars[ref - 9:ref]) + mid(bars[ref - 26:ref])) / 2
+    b = mid(bars[ref - 52:ref])
+    return mid(bars[-9:]), mid(bars[-26:]), max(a, b), min(a, b)

@@ -410,8 +410,13 @@ def detect_day(bars5, ctx=None, enabled=None, shorts=True):
         mb, k2 = mirror(bars5)
         mc = dict(ctx)
         if ctx.get("prev_close"): mc["prev_close"] = k2 / ctx["prev_close"]
+        if ctx.get("prev_low"): mc["prev_high"] = k2 / ctx["prev_low"]
+        else: mc.pop("prev_high", None)
+        if ctx.get("prev_high"): mc["prev_low"] = k2 / ctx["prev_high"]
+        else: mc.pop("prev_low", None)
         run(mb, mc, True, k2)
     return out
 
 
 import patterns2  # noqa: E402,F401  (רושם גלאים נוספים)
+import patterns3  # noqa: E402,F401

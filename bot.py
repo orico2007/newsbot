@@ -359,22 +359,17 @@ class Engine:
             try:
                 bars5 = self.b.bars(sym, "5Min", session_open_iso(now))
                 if len(bars5) < 6: continue
-                prev = None
-                sigs = patterns.detect_day(bars5, {"prev_close": prev}, sg.get("detectors") or None, shorts=d["allow_short"])
-                if any(x.name == "orb" for x in sigs):           # gap_and_go דורש סגירה קודמת
-                    prev = self.b.snapshot(sym)[1]
-                    sigs = patterns.detect_day(bars5, {"prev_close": prev}, sg.get("detectors") or None, shorts=d["allow_short"])
+                daily_ctx = self._daily_cached(sym, now)
+                ctx = self._prev_day(daily_ctx, now)
+                sigs = patterns.detect_day(bars5, ctx, sg.get("detectors") or None, shorts=d["allow_short"])
                 m15 = tf.resample_n(bars5, 3)
                 if len(m15) >= 12:
-                    for x in patterns.detect_day(m15, {}, {"orb": False}, shorts=d["allow_short"]):
+                    only15 = {k: k in ("vwap_reclaim", "vwap_bounce", "intraday_flag") for k in patterns.DAY_DETECTORS}
+                    for x in patterns.detect_day(m15, {}, only15, shorts=d["allow_short"]):
                         x.name += "_15m"; x.quality = min(1.0, x.quality + 0.05); sigs.append(x)
                 off = self._disabled_patterns()
-                daily_ctx = None
                 for sig in sigs:
                     if sig.name.replace("_15m", "") in off: continue
-                    if daily_ctx is None:
-                        try: daily_ctx = self.b.bars(sym, "1Day", daily_start_iso(now))
-                        except Exception: daily_ctx = []
                     lvl = tf.near_level(daily_ctx, sig.price, sig.side) if daily_ctx else None
                     if lvl:
                         self._j(now, sym, f"DAY {sig.name}", None, "day", sig.side, "blocked", f"daily level {lvl:.2f} right in front"); continue
@@ -390,6 +385,24 @@ class Engine:
             if sym in done: continue
             done.add(sym)
             self._enter_signal(now, sym, "day", sig, sc, why, True)
+
+    def _daily_cached(self, sym, now):
+        """נרות יומיים פעם ביום לכל מניה (הקשר לסטאפים של יום: אתמול, רמות)"""
+        key = now.astimezone(ZoneInfo("America/New_York")).date().isoformat()
+        if getattr(self, "_dc_day", None) != key: self._dc, self._dc_day = {}, key
+        if sym not in self._dc:
+            try: self._dc[sym] = self.b.bars(sym, "1Day", daily_start_iso(now))
+            except Exception: self._dc[sym] = []
+        return self._dc[sym]
+
+    @staticmethod
+    def _prev_day(daily, now):
+        """סגירה/שיא/שפל של יום המסחר הקודם. ריק אם אין נתונים"""
+        if not daily: return {}
+        today = now.astimezone(ZoneInfo("America/New_York")).date().isoformat()
+        past = [b for b in daily if str(b.get("t", ""))[:10] < today]
+        p = past[-1] if past else (daily[-2] if len(daily) >= 2 else None)
+        return {"prev_close": p["c"], "prev_high": p["h"], "prev_low": p["l"]} if p else {}
 
     def _enter_signal(self, now, sym, strategy, sig, sc, why, is_open, daily=None):
         head = f"{strategy.upper()} {sig.name}: {sig.notes}"
