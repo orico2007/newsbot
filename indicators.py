@@ -56,3 +56,43 @@ def bollinger(closes, n=20, k=2.0):
 def pct_return(closes, n):
     if len(closes) <= n or closes[-n - 1] == 0: return None
     return (closes[-1] / closes[-n - 1] - 1) * 100
+
+def ema(vals, n):
+    if len(vals) < n: return None
+    k = 2 / (n + 1); e = sum(vals[:n]) / n
+    for v in vals[n:]: e = v * k + e * (1 - k)
+    return e
+
+def adx(bars, n=14):
+    """Wilder ADX: עוצמת מגמה (מעל ~20 = מגמה אמיתית)"""
+    if len(bars) < 2 * n + 1: return None
+    tr, pdm, mdm = [], [], []
+    for p, b in zip(bars, bars[1:]):
+        up, dn = b["h"] - p["h"], p["l"] - b["l"]
+        pdm.append(up if up > dn and up > 0 else 0.0); mdm.append(dn if dn > up and dn > 0 else 0.0)
+        tr.append(max(b["h"] - b["l"], abs(b["h"] - p["c"]), abs(b["l"] - p["c"])))
+    def smooth(x):
+        s = sum(x[:n]); out = [s]
+        for v in x[n:]: s = s - s / n + v; out.append(s)
+        return out
+    st, sp, sm = smooth(tr), smooth(pdm), smooth(mdm)
+    dx = []
+    for t, p, m in zip(st, sp, sm):
+        if t == 0: dx.append(0.0); continue
+        pi, mi = 100 * p / t, 100 * m / t
+        dx.append(100 * abs(pi - mi) / (pi + mi) if pi + mi else 0.0)
+    if len(dx) < n: return None
+    a = sum(dx[:n]) / n
+    for v in dx[n:]: a = (a * (n - 1) + v) / n
+    return a
+
+def keltner(bars, n=20, mult=1.5):
+    """(mid, upper, lower) סביב SMA20 עם ATR"""
+    if len(bars) < n + 1: return None
+    mid = sum(b["c"] for b in bars[-n:]) / n; a = atr(bars) or 0
+    return mid, mid + mult * a, mid - mult * a
+
+def ibs(b):
+    """Internal Bar Strength: איפה הסגירה בטווח הנר (0=בשפל, 1=בשיא)"""
+    r = b["h"] - b["l"]
+    return (b["c"] - b["l"]) / r if r > 0 else 0.5

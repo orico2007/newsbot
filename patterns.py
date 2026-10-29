@@ -65,9 +65,9 @@ def _vavg(bars, n=20):
     return avg(b["v"] for b in bars[-n - 1:-1]) if len(bars) > 2 else 0
 
 # ---------- דגל (flag) ----------
-def flag_long(bars, min_pole_pct=12, max_pole=12, min_flag=3, max_flag=10):
+def flag_long(bars, min_pole_pct=12, max_pole=12, min_flag=3, max_flag=10, min_bars=40):
     n = len(bars)
-    if n < 40: return None
+    if n < min_bars: return None
     last, best = bars[-1], None
     for L in range(min_flag, max_flag + 1):
         fs = n - 1 - L
@@ -412,3 +412,6 @@ def detect_day(bars5, ctx=None, enabled=None, shorts=True):
         if ctx.get("prev_close"): mc["prev_close"] = k2 / ctx["prev_close"]
         run(mb, mc, True, k2)
     return out
+
+
+import patterns2  # noqa: E402,F401  (רושם גלאים נוספים)

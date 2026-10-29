@@ -58,6 +58,15 @@ are closed the day before a report (calendar: Nasdaq; if it can't be fetched the
 - **Swing entries only 15 minutes before the close**, when the daily candle is almost final (`swing.scan_minutes_before_close: 15`). The backtester now enters at the signal day's close to match.
 - **Multi-timeframe**: weekly trend must agree (bonus) or disagree (penalty) with the trade; the same patterns are also scanned on weekly candles (signals named `*_W`); day setups also run on 15-minute candles (`*_15m`) and are blocked when a daily support/resistance level sits right in front of the trade.
 
+## v4 - strategy library (29 swing + 6 day detectors, every one mirrored for shorts)
+Swing (daily candles): flag, base breakout, double bottom, inverse head & shoulders, ascending/symmetrical triangle, falling wedge,
+breakaway/runaway gaps, island reversal, trend pullback, Fibonacci pullback, breakout-retest, 52-week high, oversold bounce, Bollinger squeeze,
+**RSI(2) mean reversion, IBS reversion, Donchian 20/55 breakouts, NR7/inside-bar breakout, pocket pivot, Minervini VCP, cup & handle,
+TTM squeeze, reversal candles (morning star, piercing line, three white soldiers, tweezer bottom), EMA21 bounce (ADX filter), support-level bounce,
+post-earnings drift (PEAD) pullback.**
+Day (5-min candles): ORB / gap-and-go, VWAP reclaim, **red-to-green, high-of-day break, VWAP bounce, intraday flag** (+ 15-minute versions).
+Not every strategy works. The weekly backtest and the live scorecard switch off whatever loses, so the library prunes itself.
+
 ## Run
 Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
 Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`

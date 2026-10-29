@@ -32,3 +32,12 @@ closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pc
 2026-10-29T19:56:59.307866+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
 2026-10-29T19:55:59.307866+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
 2026-10-29T19:56:59.307866+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news
+2026-10-29T20:00:05.597621+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
+2026-10-29T19:59:05.597621+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
+2026-10-29T20:00:05.597621+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news
+2026-10-29T20:00:50.481822+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
+2026-10-29T19:59:50.481822+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
+2026-10-29T20:00:50.481822+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news
+2026-10-29T20:01:29.927397+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
+2026-10-29T20:00:29.927397+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
+2026-10-29T20:01:29.927397+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news
