@@ -53,20 +53,33 @@ def stats(trades):
                   "avg_pnl_pct": round(sum(t["pnl_pct"] for t in ts) / len(ts), 3),
                   "profit_factor": round(gp / gl, 2) if gl > 0 else None, "avg_hold": round(sum(t["held"] for t in ts) / len(ts), 1),
                   "long_n": sum(1 for t in ts if t["side"] == "long"), "short_n": sum(1 for t in ts if t["side"] == "short")}
+    for side in ("long", "short"):
+        ts = [t for t in allt_sides(trades) if t["side"] == side]
+        if ts: out[f"ALL_{side}"] = _one(ts)
     return out
 
-def disabled_from(st, min_n=30, max_avg_r=-0.1):
-    """גלאים עם מספיק עסקאות ותוחלת שלילית ברורה - מכבים אוטומטית"""
-    return sorted(k for k, v in st.items() if k != "ALL" and v["n"] >= min_n and v["avg_R"] <= max_avg_r)
+def allt_sides(trades): return trades
+
+def _one(ts):
+    w = [t for t in ts if t["R"] > 0]; l = [t for t in ts if t["R"] <= 0]
+    gp, gl = sum(t["pnl_pct"] for t in w), -sum(t["pnl_pct"] for t in l)
+    return {"n": len(ts), "win_rate": round(len(w) / len(ts) * 100, 1), "avg_R": round(sum(t["R"] for t in ts) / len(ts), 3),
+            "avg_pnl_pct": round(sum(t["pnl_pct"] for t in ts) / len(ts), 3), "profit_factor": round(gp / gl, 2) if gl > 0 else None,
+            "avg_hold": round(sum(t["held"] for t in ts) / len(ts), 1), "long_n": sum(1 for t in ts if t["side"] == "long"), "short_n": sum(1 for t in ts if t["side"] == "short")}
+
+def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
+    """גלאים עם מספיק עסקאות ותוחלת שלילית (או profit factor נמוך) - מכבים אוטומטית"""
+    return sorted(k for k, v in st.items() if not k.startswith("ALL") and v["n"] >= min_n and
+                  (v["avg_R"] <= max_avg_r or (v["profit_factor"] is not None and v["profit_factor"] < min_pf)))
 
 def to_markdown(st, symbols, years, disabled):
-    rows = sorted(((k, v) for k, v in st.items() if k != "ALL"), key=lambda kv: -kv[1]["avg_R"])
+    rows = sorted(((k, v) for k, v in st.items() if not k.startswith("ALL")), key=lambda kv: -kv[1]["avg_R"])
     md = [f"# Backtest - {years}y daily, {len(symbols)} symbols", "",
           "Entry at next open, stop first on conflict, 0.05% slippage each side, 10-day time stop. Past results do not guarantee future results.", "",
           "| Pattern | Trades | Win % | Avg R | Avg % | Profit factor | Avg hold (d) | Long/Short |", "|---|---|---|---|---|---|---|---|"]
-    for k, v in [("ALL", st.get("ALL"))] + rows:
+    for k, v in [("ALL", st.get("ALL")), ("ALL longs", st.get("ALL_long")), ("ALL shorts", st.get("ALL_short"))] + rows:
         if v: md.append(f"| {k} | {v['n']} | {v['win_rate']} | {v['avg_R']} | {v['avg_pnl_pct']} | {v['profit_factor']} | {v['avg_hold']} | {v['long_n']}/{v['short_n']} |")
-    md += ["", f"Auto-disabled (n>=30, avg R <= -0.1): {', '.join(disabled) or 'none'}"]
+    md += ["", f"Auto-disabled (n>=30 and avg R <= -0.05 or profit factor < 0.85): {', '.join(disabled) or 'none'}"]
     return "\n".join(md)
 
 def main():
