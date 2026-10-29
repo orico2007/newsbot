@@ -1,22 +1,23 @@
-# NewsBot – בוט מסחר מבוסס חדשות (Paper בלבד כברירת מחדל)
+# NewsBot v2 - paper trading bot (news + earnings + chart rules)
 
-זרימה: `חדשות Alpaca -> Claude נותן ציון 1-10 -> שער סיכון (risk.py + rules.yaml) -> פקודת Bracket (כניסה + סטופ + יעד)`
+Flow: Alpaca news (full article text) -> Claude scores it (direction, strength 1-10, event type, horizon)
+-> chart rules in code -> risk gate in code -> bracket order (entry + stop + target) at Alpaca.
 
-## הרצה
-1. פתחו חשבון Paper ב-alpaca.markets והעתיקו מפתחות.
-2. `cp .env.example .env`, מלאו מפתחות Alpaca, ואז `export $(cat .env | xargs)`
-   - ברירת מחדל: Claude Code מותקן ומחובר אצלכם (`claude` בטרמינל) - בלי מפתח API.
-   - אפשר גם `BRAIN_BACKEND=api` עם `ANTHROPIC_API_KEY`.
-3. `pip install -r requirements.txt && python -m pytest -q && python bot.py`
+## Strategies (all numbers live in `rules.yaml`)
+**Day**: news with score >= 9. Long needs price above VWAP and a volume spike; short needs the mirror image.
+Positions are closed 10 minutes before the US close. Longs 5% / shorts 3% of equity, stop 3%, target 6%.
 
-כל החלטה (כולל דילוגים וחסימות) נרשמת ל-`journal.csv`. אחרי 3-4 שבועות בדמו בודקים שם אם יש יתרון אמיתי.
-שינוי חוקים = עריכת `rules.yaml` בלבד. מעבר ל-Live חסום אלא אם `mode: live` וגם `ALLOW_LIVE=1`.
+**Swing**: held for days (max 10 trading days).
+- Catalyst entries: news/earnings rated horizon=swing with score >= 8, confirmed by the daily trend (above/below SMA50).
+- Daily scan near the close over `watchlist`: uptrend + 2-10% pullback + RSI 40-65 + revenue growth >= 10% YoY (SEC filings).
+- Stop 2x ATR (capped at 8%), target 4x ATR, GTC orders at the broker.
 
-## הרצה אוטומטית בענן (GitHub Actions)
-ה-workflow ב-`.github/workflows/trade.yml` מתעורר סביב פתיחת השוק האמריקאי (ימים ב'-ו'), בודק מול Alpaca אם השוק פתוח, סוחר (Paper) עד הסגירה, ושומר יומן ל-`data/journal.csv` בתוך הריפו.
+**Earnings/reports**: Claude reads the article body, not only the headline, plus YoY revenue/EPS growth from SEC EDGAR.
 
-Secrets נדרשים (Settings -> Secrets and variables -> Actions):
-- `ALPACA_KEY_ID`, `ALPACA_SECRET_KEY` - מפתחות Paper
-- `CLAUDE_CODE_OAUTH_TOKEN` - מתקבל מהפקודה `claude setup-token` (משתמש במנוי Claude)
+**Risk gate** (code, not Claude): max 8 positions, 60% gross exposure, 2% daily loss stop, no chasing, price >= $5, liquidity filter.
 
-אל תריצו במקביל גם את הגרסה המקומית (Task Scheduler) וגם את ה-Actions.
+## Run
+Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
+Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`
+
+Every decision (including skips and blocks) is logged to `data/journal.csv`. Paper only unless `mode: live` AND `ALLOW_LIVE=1`.

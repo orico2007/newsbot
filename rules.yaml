@@ -1,20 +1,53 @@
-# ===== חוקי הבוט =====
-# [V] = מהסרטון   [A] = נוסף על ידי (שיטות מקובלות לניהול סיכון)
+# ===== חוקי הבוט (v2) =====
+# [V] = מהסרטון   [A] = נוסף על ידי
 mode: paper            # הבוט מסרב לעבוד על חשבון אמיתי אלא אם mode: live וגם ALLOW_LIVE=1
 
-entry:
-  min_score: 9               # [V] "ציון מעל 8 -> קונים" (כלומר 9 או 10)
-  direction: bullish         # [A] long בלבד
-  max_news_age_minutes: 15   # [A] לא מגיבים לחדשות ישנות
-  min_price: 5               # [A] בלי מניות פניני
-  min_avg_daily_dollar_volume: 5000000   # [A] נזילות מינימלית
-  max_chase_pct: 6           # [A] לא רודפים: אם המניה כבר עלתה יותר מזה מאתמול - מדלגים
+account:
+  max_open_positions_total: 8
+  max_gross_exposure_pct: 60     # [A] סך החשיפה (לונג+שורט) עד 60% מההון
+  max_daily_loss_pct: 2          # [A] הפסד יומי מעל זה = עוצר לשאר היום
+  max_trades_per_day: 12
+  market_hours_only: true
 
-risk:
-  max_position_pct: 5        # [V] "עד 5% מהחשבון" לפוזיציה
-  stop_loss_pct: 3           # [V] "ירידה של 3% -> מוכרים" (פקודת סטופ אצל הברוקר)
-  take_profit_pct: 6         # [A] יחס סיכוי/סיכון 2:1
-  max_open_positions: 5      # [A]
-  max_daily_loss_pct: 2      # [A] הפסד יומי מעל זה = הבוט עוצר לשאר היום
-  max_trades_per_day: 10     # [A]
-  market_hours_only: true    # [A]
+news:
+  max_news_age_minutes: 15       # [A]
+  min_price: 5                   # [A]
+  min_avg_daily_dollar_volume: 1000000   # [A] נמדד על IEX בלבד (~3% מהמחזור האמיתי)
+  max_chase_pct: 6               # [A] לא רודפים: כבר זז יותר מזה מאתמול
+
+# ---------- מסחר יומי: נכנסים על חדשות חזקות, יוצאים לפני הסגירה ----------
+day:
+  enabled: true
+  min_score: 9                   # [V] "ציון מעל 8"
+  allow_short: true
+  max_positions: 3
+  flatten_minutes_before_close: 10
+  long:  {position_pct: 5,   stop_pct: 3, take_profit_pct: 6}   # [V] 5% לפוזיציה, סטופ 3%
+  short: {position_pct: 3,   stop_pct: 3, take_profit_pct: 6}
+  chart:
+    require_vwap_side: true      # לונג רק מעל VWAP, שורט רק מתחתיו
+    min_rel_volume: 1.5          # זינוק נפח מול ממוצע 20 הברים הקודמים (כשיש מספיק ברים)
+    max_rsi_long: 80
+    min_rsi_short: 20
+
+# ---------- סווינג: מחזיקים ימים עד שבועות ----------
+swing:
+  enabled: true
+  catalyst_min_score: 8          # חדשות/דוח עם horizon=swing
+  allow_short: true
+  max_positions: 4
+  max_hold_days: 10              # יציאת זמן (ימי מסחר)
+  scan_minutes_before_close: 20  # סריקה ויציאות זמן פעם ביום, בסוף היום
+  long:  {position_pct: 4,   atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
+  short: {position_pct: 2.5, atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
+  scan:                          # סריקה יומית של רשימת מעקב: מגמה + נסיגה + צמיחה בדוחות
+    enabled: true
+    new_per_day: 2
+    min_revenue_yoy_pct: 10      # צמיחת הכנסות שנתית מינימלית (דוחות SEC)
+    rsi_min: 40
+    rsi_max: 65
+    min_pullback_pct: 2
+    max_pullback_pct: 10
+  watchlist: [AAPL, MSFT, NVDA, AMZN, GOOGL, META, AVGO, TSLA, AMD, NFLX, CRM, ADBE, ORCL, INTC, QCOM, MU,
+              UBER, SHOP, PANW, CRWD, NOW, INTU, AMAT, LRCX, JPM, V, MA, UNH, LLY, COST, WMT, HD, NKE, DIS,
+              BA, CAT, GE, XOM, ABBV, ISRG]
