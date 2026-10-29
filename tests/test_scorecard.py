@@ -61,3 +61,11 @@ def test_alert_on_loss_short(tmp_path, monkeypatch):
     e.state["meta"]["BBB"] = {"strategy": "day", "side": "short", "entry": 50.0, "fill": 50.0, "qty": 20, "stop0": 51.5, "ts": 0, "pattern": "orb", "last": 51.0, "entry_date": "2026-10-29"}
     e.reconcile([])
     assert any("LOSS BBB" in t and "-2.00" in t or "LOSS BBB" in t and "-20.00 USD" in t for t in sent)
+
+def test_alerts_never_hit_the_network_under_pytest(monkeypatch):
+    import requests
+    calls = []
+    monkeypatch.setattr(requests, "post", lambda *a, **k: calls.append(a))
+    monkeypatch.setenv("NTFY_TOPIC", "should-not-be-used")
+    alerts.send("hello")                       # PYTEST_CURRENT_TEST פעיל: לא יוצא החוצה
+    assert calls == []

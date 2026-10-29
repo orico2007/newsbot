@@ -2,6 +2,7 @@
 import os, requests
 
 def send(text, title="NewsBot"):
+    if os.getenv("PYTEST_CURRENT_TEST") or os.getenv("NEWSBOT_NO_ALERTS"): return      # בדיקות לא שולחות התראות אמיתיות
     topic = os.getenv("NTFY_TOPIC")
     tg_token, tg_chat = os.getenv("TELEGRAM_BOT_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
     try:

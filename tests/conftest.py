@@ -4,6 +4,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _isolate_data(tmp_path, monkeypatch):
+    for k in ("NTFY_TOPIC", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"): monkeypatch.delenv(k, raising=False)
     """לא נוגעים בתיקיית data האמיתית: כל הכתיבות של הבוט והבדיקות הולכות לתיקייה זמנית"""
     import bot, crypto
     d = tmp_path / "data"; d.mkdir()
