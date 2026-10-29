@@ -1,11 +1,11 @@
 name: NewsBot trading session
 
 on:
-  schedule:            # UTC. כיסוי לשעון קיץ/חורף של ארה"ב; הבוט עצמו בודק מול Alpaca אם השוק פתוח
-    - cron: "20 13 * * 1-5"
-    - cron: "20 14 * * 1-5"
+  schedule:            # UTC. סשן ראשון ב-8:00 ET (חדשות לפני הפתיחה), והעברת שרביט ב-14:10 ET. מכסה שעון קיץ/חורף; הבוט בודק מול Alpaca
+    - cron: "0 12 * * 1-5"
+    - cron: "0 13 * * 1-5"
+    - cron: "10 18 * * 1-5"
     - cron: "10 19 * * 1-5"
-    - cron: "10 20 * * 1-5"
     - cron: "0 */6 * * *"      # קריפטו 24/7
   workflow_dispatch:
 
@@ -25,6 +25,9 @@ jobs:
       ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
       ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -58,6 +61,9 @@ jobs:
       ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
       ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

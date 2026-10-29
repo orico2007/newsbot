@@ -45,6 +45,14 @@ are closed the day before a report (calendar: Nasdaq; if it can't be fetched the
 **Backtester** (`backtest.py`, weekly GitHub Action or run by hand): replays every pattern on 3 years of daily bars for the watchlist and writes
 `data/backtest.md`. Patterns with 30+ trades and clearly negative expectancy are disabled automatically via `data/backtest.json`.
 
+## v3.2 additions
+- **Phone alerts** (`alerts.py`): entries, exits, order failures and repeated crashes. Install the free ntfy app, subscribe to a private topic name and add it as the repo secret `NTFY_TOPIC` (or use `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`).
+- **Scorecard** (`data/trades.csv`, `data/scorecard.md`): every closed trade with real P&L and R, by strategy and by pattern, plus entry slippage (price wanted vs price filled). Patterns with 15+ real trades and clearly negative results are switched off automatically (`data/scorecard.json`).
+- **Kill switches**: no new longs if the S&P is down 2% (or volatility spikes 10%), no new shorts if it is up 3%, everything paused at a 5% move.
+- **Premarket news**: starting 100 minutes before the open the bot scores overnight news and earnings, queues the ideas, and acts on them at the open once the chart confirms.
+- **Relative strength** vs the S&P in the confluence score, and the day's most-active stocks added to the scans (up to 120 symbols).
+- **Weekly review** (`review.py`, Sundays): Claude reads the scorecard, backtest and daily reports and writes `data/review.md` with evidence-based rule suggestions. It never changes rules by itself.
+
 ## Run
 Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
 Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`

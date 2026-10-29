@@ -7,6 +7,7 @@ from indicators import sma, atr
 from structure import trend_structure
 from scoring import confluence, size_mult
 from rules_loader import load_rules
+import scorecard, alerts
 
 log = logging.getLogger("crypto")
 DATA = pathlib.Path("data"); DATA.mkdir(exist_ok=True)
@@ -36,7 +37,19 @@ class CryptoEngine:
         self.b, self.brain, self.r, self.state, self.clock = broker, brain, rules, state, clock
         self.c = rules["crypto"]
 
+    def _log_trade(self, now, m, price, reason):
+        try:
+            pnl = (price / m["entry"] - 1) * 100
+            risk = m["entry"] - m.get("stop0", m["stop"])
+            scorecard.append_trade(DATA / "trades.csv", {"closed": now.isoformat(), "symbol": m["symbol"], "strategy": "crypto", "pattern": m.get("pattern", ""),
+                                   "side": "long", "entry": m["entry"], "exit": price, "pnl_pct": round(pnl, 3),
+                                   "R": round((price - m["entry"]) / risk, 2) if risk > 0 else "", "held_days": (now - datetime.fromisoformat(m["entry_time"])).days,
+                                   "entry_slip_pct": "", "reason": reason})
+        except Exception as e:
+            log.warning("crypto trade log failed: %s", e)
+
     def _j(self, now, sym, headline="", score="", strategy="", action="", detail=""):
+        if action in ("ENTER", "EXIT"): alerts.send(f"CRYPTO {action} {sym}\n{detail[:120]}", "NewsBot")
         journal([now.isoformat(), sym, headline, score, strategy, action, detail])
 
     def _held(self):
@@ -84,6 +97,7 @@ class CryptoEngine:
                 try:
                     self.b.close_position(k)
                     self._j(now, sym, strategy="crypto", action="EXIT", detail=f"{reason} price={price} entry={m['entry']}")
+                    self._log_trade(now, m, price, reason)
                 except Exception as e:
                     log.warning("crypto exit failed %s: %s", sym, e)
 
@@ -104,7 +118,7 @@ class CryptoEngine:
         except Exception as e:
             self._j(now, sym, headline, score, why, "error", str(e)); return False, str(e)
         self.state["meta"][key(sym)] = {"symbol": sym, "entry": price, "stop": round(stop, 6), "target": round(target, 6), "atr": a,
-                                        "high": price, "entry_time": now.isoformat(), "ts": self.clock()}
+                                        "high": price, "entry_time": now.isoformat(), "ts": self.clock(), "stop0": round(stop, 6), "pattern": why}
         self._j(now, sym, headline, score, why, "ENTER", f"qty={qty} entry={price} stop={stop:.6g} tp={target:.6g} x{mult}")
         return True, "ok"
 
@@ -155,6 +169,8 @@ class CryptoEngine:
             if v.direction == "bearish" and v.score >= c["news_min_score"] and key(sym) in self._held():
                 try:
                     self.b.close_position(key(sym)); self._j(now, sym, item.headline, v.score, "news", "EXIT", "bearish news")
+                    m = self.state["meta"].get(key(sym))
+                    if m: self._log_trade(now, m, self.b.crypto_price(sym), "bearish news")
                 except Exception as e: log.warning("news exit failed: %s", e)
                 continue
             if v.direction != "bullish" or v.score < c["news_min_score"]: continue

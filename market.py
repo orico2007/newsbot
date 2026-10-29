@@ -59,6 +59,7 @@ class Market:
     def __init__(self, broker, cfg, start_iso_fn):
         self.b, self.cfg, self.start = broker, cfg, start_iso_fn
         self.regime, self.ranked, self.t = "neutral", [], 0
+        self.spy_ret60, self.risk, self.rt = 0.0, {"spy": 0.0, "vix": 0.0}, 0
 
     def refresh(self, now, force=False):
         if not self.cfg.get("enabled", True): return
@@ -68,6 +69,7 @@ class Market:
             spy = self.b.bars("SPY", "1Day", start)
             bars = {e: self.b.bars(e, "1Day", start) for e in SECTORS}
             self.regime, self.ranked, self.t = regime(spy), rank_sectors(bars, spy), time.time()
+            self.spy_ret60 = pct_return([b["c"] for b in spy], 60) or 0.0
         except Exception:
             self.t = time.time() - 3000      # ננסה שוב בעוד ~10 דקות
 
@@ -93,3 +95,25 @@ class Market:
 
     def summary(self):
         return [(r["etf"], r["name"], r["score"]) for r in self.ranked]
+
+    # ---- מתגי חירום: ירידת S&P חדה / זינוק בתנודתיות (VIXY) ----
+    def refresh_risk(self, force=False):
+        k = self.cfg.get("kill_switch")
+        if not k or not k.get("enabled") or (not force and time.time() - self.rt < 300): return
+        self.rt = time.time()
+        try:
+            p, prev, _ = self.b.snapshot("SPY"); self.risk["spy"] = (p / prev - 1) * 100 if prev else 0.0
+            p, prev, _ = self.b.snapshot("VIXY"); self.risk["vix"] = (p / prev - 1) * 100 if prev else 0.0
+        except Exception:
+            pass
+
+    def kill(self, side):
+        """סיבה לחסימת כניסות חדשות בצד הזה, או None"""
+        k = self.cfg.get("kill_switch")
+        if not k or not k.get("enabled"): return None
+        spy, vix = self.risk["spy"], self.risk["vix"]
+        if abs(spy) >= k["extreme_move_pct"]: return f"SPY moved {spy:+.1f}% - all new entries paused"
+        if side == "long" and spy <= -k["spy_drop_pct"]: return f"SPY {spy:+.1f}% - no new longs"
+        if side == "long" and vix >= k["vixy_spike_pct"]: return f"volatility spike VIXY {vix:+.1f}% - no new longs"
+        if side == "short" and spy >= k["spy_rally_pct"]: return f"SPY {spy:+.1f}% - no new shorts"
+        return None

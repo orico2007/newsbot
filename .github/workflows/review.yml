@@ -1,0 +1,33 @@
+name: Weekly review
+
+on:
+  schedule:
+    - cron: "30 4 * * 0"      # ביום ראשון, אחרי ה-backtest
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: python review.py
+      - name: Save review
+        run: |
+          git config user.name "newsbot"
+          git config user.email "newsbot@users.noreply.github.com"
+          git add data
+          git commit -m "weekly review [skip ci]" || exit 0
+          git pull --rebase
+          git push

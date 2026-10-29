@@ -77,3 +77,13 @@ def test_bullish_news_enters_when_trend_ok(tmp_path, monkeypatch):
     b._news = [NewsItem("n2", "ETF approved", "", ["ETH/USD"], NOW, "")]
     e.step(NOW)
     assert any(o[0] == "ETH/USD" for o in b.simple)
+
+def test_crypto_exit_logged_to_scorecard(tmp_path, monkeypatch):
+    import scorecard
+    monkeypatch.setattr(crypto, "DATA", tmp_path)
+    b, e = eng(tmp_path, monkeypatch)
+    e.step(NOW)
+    b.prices["ETH/USD"] = e.state["meta"]["ETHUSD"]["stop"] - 0.5
+    e.step(NOW + timedelta(minutes=1))
+    t = scorecard.read_trades(tmp_path / "trades.csv")
+    assert t and t[0]["strategy"] == "crypto" and t[0]["pnl_pct"] < 0 and t[0]["pattern"]

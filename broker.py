@@ -88,6 +88,22 @@ class AlpacaBroker:
         except Exception:
             return [], []
 
+    def actives(self, top=40):
+        """המניות הפעילות ביותר לפי מחזור היום"""
+        try:
+            d = self._get(self.d, "/v1beta1/screener/stocks/most-actives", by="volume", top=top)
+            return [m["symbol"] for m in d.get("most_actives", [])]
+        except Exception:
+            return []
+
+    def last_fill(self, symbol, side):
+        """מחיר המילוי של פקודת היציאה האחרונה (לחישוב רווח אמיתי)"""
+        orders = self._get(self.t, "/v2/orders", status="closed", symbols=symbol, direction="desc", limit=10)
+        for o in orders:
+            if o.get("side") == side and o.get("filled_avg_price"):
+                return float(o["filled_avg_price"])
+        return None
+
     def raise_stop(self, symbol, new_stop):
         """מזיז את רגל הסטופ של ה-bracket הפתוח (טריילינג / ברייק-אבן)"""
         orders = self._get(self.t, "/v2/orders", status="open", symbols=symbol, nested="true", limit=50)
@@ -103,7 +119,7 @@ class MockBroker:
     """לבדיקות וסימולציה בלבד"""
     def __init__(self, equity=100000):
         self._eq = equity; self.orders = []; self.closed = []; self._pos = []; self.is_open = True
-        self._news = []; self.snap = {}; self.bar_data = {}; self.assets = {}; self.prices = {}; self.simple = []; self.mv = ([], []); self.raised = []
+        self._news = []; self.snap = {}; self.bar_data = {}; self.assets = {}; self.prices = {}; self.act = []; self.fills = {}; self.simple = []; self.mv = ([], []); self.raised = []
         self._clock = {"is_open": True, "timestamp": "2026-10-29T12:00:00-04:00", "next_close": "2026-10-29T16:00:00-04:00"}
     def account(self): return {"equity": self._eq, "last_equity": self._eq, "buying_power": self._eq * 2}
     def positions(self): return self._pos
@@ -123,6 +139,8 @@ class MockBroker:
         self.simple.append((symbol, qty, side))
         self._pos.append({"symbol": symbol.replace("/", ""), "qty": str(qty), "side": "long", "market_value": str(qty * self.prices.get(symbol, 0)), "asset_class": "crypto"})
     def movers(self, top=20): return self.mv
+    def actives(self, top=40): return self.act
+    def last_fill(self, symbol, side): return self.fills.get(symbol)
     def raise_stop(self, symbol, new_stop): self.raised.append((symbol, new_stop)); return True
     def close_position(self, symbol):
         self.closed.append(symbol); self._pos = [p for p in self._pos if p["symbol"] != symbol]

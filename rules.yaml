@@ -57,17 +57,26 @@ market:                          # Top-Down: משטר S&P500 + סקטורים מ
   enabled: true
   top_n: 3
   veto_against: true             # לא קונים סקטור חלש / לא שורטים סקטור מוביל / לא קונים בשוק דובי
+  kill_switch:                   # עוצר כניסות חדשות ביום קיצוני (נבדק כל 5 דקות)
+    enabled: true
+    spy_drop_pct: 2.0            # S&P ירד 2% מהסגירה הקודמת = בלי לונגים חדשים
+    spy_rally_pct: 3.0           # עלה 3% = בלי שורטים חדשים
+    vixy_spike_pct: 10.0         # זינוק של 10% בתנודתיות = בלי לונגים חדשים
+    extreme_move_pct: 5.0        # תנועה של 5% לשני הכיוונים = עוצרים הכל
 
 signals:                         # אין יחס סיכוי-סיכון מינימלי; סטופ ויעד נגזרים ממבנה הגרף
   swing:
     enabled: true
     min_confluence: 45
     scan_watchlist_patterns: true
+    use_actives: true            # + המניות הפעילות ביותר היום
+    max_universe: 120
     detectors: {}                # רשימת גלאים לכיבוי: {flag: false} וכו'
   day:
     enabled: true
     min_confluence: 45
     use_movers: true
+    use_actives: true
     max_symbols: 40
     scan_every_minutes: 5
     detectors: {}
@@ -103,3 +112,9 @@ crypto:
 earnings:                        # לוח דוחות (Nasdaq). לא ידוע = לא חוסם
   blackout_days: 2               # סווינג לא נכנס אם יש דוח בתוך 2 ימי מסחר
   exit_before: true              # סווינג פתוח נסגר ביום שלפני הדוח
+
+premarket:                       # חדשות ודוחות שיצאו לפני הפתיחה: מדורגים מוקדם ונכנסים בפתיחה
+  enabled: true
+  window_minutes: 100
+  news_lookback_minutes: 600
+  retry_minutes_after_open: 20

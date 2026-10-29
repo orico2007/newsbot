@@ -5,10 +5,13 @@ from rules_loader import load_rules
 from risk import evaluate_entry
 import chart
 import patterns
+from models import Verdict
 from market import Market, SECTOR_OF
 from scoring import confluence, size_mult
 from earnings import Earnings
 import report as _report
+import scorecard
+import alerts
 from indicators import atr as _atr, pct_return
 
 log = logging.getLogger("bot")
@@ -27,8 +30,8 @@ def roll(s):
     if s.get("day") != today:
         s = {"day": today, "seen": s.get("seen", [])[-2000:], "meta": s.get("meta", {}),
              "swing_done": s.get("swing_done"), "trades_today": 0, "halted": False,
-             "cool": s.get("cool", {}), "tried": []}
-    s.setdefault("meta", {}); s.setdefault("seen", []); s.setdefault("cool", {}); s.setdefault("tried", [])
+             "cool": s.get("cool", {}), "tried": [], "queue": s.get("queue", [])}
+    s.setdefault("meta", {}); s.setdefault("seen", []); s.setdefault("cool", {}); s.setdefault("tried", []); s.setdefault("queue", [])
     return s
 
 def save_state(s): STATE_FILE.write_text(json.dumps(s), encoding="utf-8")
@@ -86,6 +89,8 @@ class Engine:
         sec, cap = SECTOR_OF.get(sym), self.r.get("sector_cap")
         if sec and cap and sum(1 for p in self._pos() if SECTOR_OF.get(p["symbol"]) == sec) >= cap:
             return False, f"sector cap ({sec})", 0.0
+        kill = self.mkt.kill(side)
+        if kill: return False, f"kill switch: {kill}", 0.0
         veto, pts, why = self.mkt.alignment(sym, side)
         if veto: return False, f"against market/sector: {why}", pts
         return True, why, pts
@@ -103,6 +108,8 @@ class Engine:
         return False if f["rev_yoy"] > 25 else (True if f["rev_yoy"] < 5 else None)
 
     def _j(self, now, sym, headline="", v=None, strategy="", side="", action="", detail=""):
+        if action in ("ENTER", "EXIT") or (action == "error" and "order failed" in detail):
+            alerts.send(f"{action} {sym} {strategy} {side}\n{(headline or '')[:80]} {detail[:100]}", "NewsBot")
         journal([now.isoformat(), sym, headline, v.score if v else "", v.direction if v else "", v.event if v else "",
                  v.horizon if v else "", strategy, side, action, detail, v.reason if v else ""])
 
@@ -118,7 +125,7 @@ class Engine:
         if d["enabled"] and v.score >= d["min_score"]: return "day", side
         return None
 
-    def _submit(self, now, sym, headline, v, strategy, side, dec, extra="", price=None, atr=None):
+    def _submit(self, now, sym, headline, v, strategy, side, dec, extra="", price=None, atr=None, pattern=""):
         try:
             self.b.submit_bracket(sym, dec.qty, dec.side, dec.stop_price, dec.take_profit_price, dec.tif)
         except Exception as e:
@@ -126,7 +133,7 @@ class Engine:
             return False
         ref = price or ((dec.stop_price + dec.take_profit_price) / 2)
         self.state["meta"][sym] = {"strategy": strategy, "side": side, "entry_date": str(date.today()), "ts": time.time(),
-                                   "entry": ref, "stop": dec.stop_price, "ext": ref,
+                                   "entry": ref, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
                                    "atr": atr or max(abs(ref - dec.stop_price) / 1.5, 0.01)}
         self.state["trades_today"] = self.state.get("trades_today", 0) + 1
         self._j(now, sym, headline, v, strategy, side, "ENTER",
@@ -148,37 +155,74 @@ class Engine:
             route = self._route(v)
             if not route:
                 self._j(now, sym, item.headline, v, action="skip", detail="below threshold / neutral"); continue
-            strategy, side = route
-            if strategy == "day" and mtc is not None and mtc <= d["flatten_minutes_before_close"] + 5:
-                self._j(now, sym, item.headline, v, strategy, side, "blocked", "too close to market close"); continue
-            try:
-                price, prev, adv = self.b.snapshot(sym)
-                atr, snap = None, {}
-                if strategy == "day":
-                    ok, why, snap = chart.intraday_check(self.b.bars(sym, "5Min", session_open_iso(now)), side, d["chart"])
-                else:
-                    ok, why, snap = chart.trend_ok(self.b.bars(sym, "1Day", daily_start_iso(now)), side)
-                    atr = snap.get("atr")
-                    if ok and f and f.get("rev_yoy") is not None and ((side == "long" and f["rev_yoy"] < 0) or (side == "short" and f["rev_yoy"] > 25)):
-                        ok, why = False, f"fundamentals disagree (rev_yoy {f['rev_yoy']}%)"
-                if not ok:
-                    self._j(now, sym, item.headline, v, strategy, side, "blocked", f"chart: {why} {_fmt(snap)}"); continue
-                okg, whyg, pts = self._gate(sym, side)
-                if not okg:
-                    self._j(now, sym, item.headline, v, strategy, side, "blocked", whyg); continue
-                sc = confluence(0.6, pts, (snap.get("vol_spike") or 0) >= 1.5, v.score, True, self._fund_ok(f, side))
-                mult = 1.0      # חדשות: הגודל נשאר בדיוק לפי הכלל (5% / 4%); הציון נרשם ביומן בלבד
-                shortable = True
-                if side == "short":
-                    a = self.b.asset(sym); shortable = bool(a.get("shortable") and a.get("easy_to_borrow") and a.get("tradable", True))
-                dec = evaluate_entry(self.r, strategy, side, sym, price, prev, adv, self.b.account(), self._pos(),
-                                     self.state, is_open, atr=atr, shortable=shortable, size_mult=mult)
+            self._act(now, mtc, is_open, sym, item.headline, v, f, route)
+
+    def premarket(self, now, c):
+        """לפני הפתיחה: Claude מדרג חדשות/דוחות שיצאו בלילה והעסקאות נכנסות לתור לפתיחה"""
+        pm = self.r.get("premarket", {})
+        if not pm.get("enabled") or not c.get("next_open"): return
+        wait = (_ts(c["next_open"]) - _ts(c["timestamp"])).total_seconds() / 60
+        if wait > pm["window_minutes"]: return
+        for item in self.b.news(minutes=pm["news_lookback_minutes"]):
+            if item.id in self.state["seen"]: continue
+            self.state["seen"].append(item.id)
+            if len(item.symbols) != 1 or "/" in item.symbols[0]: continue
+            sym = item.symbols[0]
+            f = self._fund(sym)
+            v = self.brain.rate(sym, item.headline, item.summary, item.content, f)
+            route = self._route(v)
+            if not route:
+                self._j(now, sym, item.headline, v, action="skip", detail="premarket: below threshold / neutral"); continue
+            self.state["queue"].append({"sym": sym, "headline": item.headline, "v": v.__dict__, "route": list(route), "expire": time.time() + pm["retry_minutes_after_open"] * 60})
+            self._j(now, sym, item.headline, v, route[0], route[1], "queued", "premarket - will act at the open")
+
+    def process_queue(self, now, mtc, is_open):
+        keep = []
+        for q in self.state.get("queue", []):
+            if time.time() > q["expire"]: continue
+            v = Verdict(**q["v"])
+            try: res = self._act(now, mtc, is_open, q["sym"], q["headline"], v, self._fund(q["sym"]), tuple(q["route"]))
             except Exception as e:
-                log.warning("eval failed for %s: %s", sym, e)
-                self._j(now, sym, item.headline, v, strategy, side, "error", str(e)); continue
-            if not dec.ok:
-                self._j(now, sym, item.headline, v, strategy, side, "blocked", dec.reason); continue
-            self._submit(now, sym, item.headline, v, strategy, side, dec, f"conf={sc} x{mult} {whyg} " + _fmt(snap), price=price, atr=atr)
+                log.warning("queue item failed: %s", e); res = None
+            if res == "retry": keep.append(q)
+        self.state["queue"] = keep
+
+    def _act(self, now, mtc, is_open, sym, headline, v, f, route):
+        """מהחלטת Claude להזמנה: גרף -> שוק/סקטור -> Risk Gate. מחזיר 'retry' אם אין עדיין מספיק נרות 5 דקות"""
+        d = self.r["day"]
+        strategy, side = route
+        if strategy == "day" and mtc is not None and mtc <= d["flatten_minutes_before_close"] + 5:
+            self._j(now, sym, headline, v, strategy, side, "blocked", "too close to market close"); return
+        try:
+            price, prev, adv = self.b.snapshot(sym)
+            atr, snap = None, {}
+            if strategy == "day":
+                ok, why, snap = chart.intraday_check(self.b.bars(sym, "5Min", session_open_iso(now)), side, d["chart"])
+            else:
+                ok, why, snap = chart.trend_ok(self.b.bars(sym, "1Day", daily_start_iso(now)), side)
+                atr = snap.get("atr")
+                if ok and f and f.get("rev_yoy") is not None and ((side == "long" and f["rev_yoy"] < 0) or (side == "short" and f["rev_yoy"] > 25)):
+                    ok, why = False, f"fundamentals disagree (rev_yoy {f['rev_yoy']}%)"
+            if not ok:
+                self._j(now, sym, headline, v, strategy, side, "blocked", f"chart: {why} {_fmt(snap)}")
+                return "retry" if why.startswith("not enough") else None
+            okg, whyg, pts = self._gate(sym, side)
+            if not okg:
+                self._j(now, sym, headline, v, strategy, side, "blocked", whyg); return
+            sc = confluence(0.6, pts, (snap.get("vol_spike") or 0) >= 1.5, v.score, True, self._fund_ok(f, side))
+            mult = 1.0      # חדשות: הגודל נשאר בדיוק לפי הכלל (5% / 4%); הציון נרשם ביומן בלבד
+            shortable = True
+            if side == "short":
+                a = self.b.asset(sym); shortable = bool(a.get("shortable") and a.get("easy_to_borrow") and a.get("tradable", True))
+            dec = evaluate_entry(self.r, strategy, side, sym, price, prev, adv, self.b.account(), self._pos(),
+                                 self.state, is_open, atr=atr, shortable=shortable, size_mult=mult)
+        except Exception as e:
+            log.warning("eval failed for %s: %s", sym, e)
+            self._j(now, sym, headline, v, strategy, side, "error", str(e)); return
+        if not dec.ok:
+            self._j(now, sym, headline, v, strategy, side, "blocked", dec.reason); return
+        self._submit(now, sym, headline, v, strategy, side, dec, f"conf={sc} x{mult} {whyg} " + _fmt(snap), price=price, atr=atr)
+
 
     # --- יציאת Day לפני הסגירה ---
     def day_flatten(self, mtc, positions):
@@ -225,13 +269,15 @@ class Engine:
         if not sg.get("enabled") or not sg.get("scan_watchlist_patterns"): return 0
         held = {p["symbol"] for p in self._pos()}
         cands = []
-        for sym in s["watchlist"]:
+        extra = [x for x in (self.b.actives() if sg.get("use_actives") else []) if x.isalpha()]
+        universe = list(dict.fromkeys(list(s["watchlist"]) + extra))[:sg.get("max_universe", 120)]
+        for sym in universe:
             if sym in held: continue
             try:
                 daily = self.b.bars(sym, "1Day", daily_start_iso(now))
                 if len(daily) < 60: continue
                 closes = [b["c"] for b in daily]
-                rs = pct_return(closes, 60) or 0.0
+                rs = (pct_return(closes, 60) or 0.0) - (self.mkt.spy_ret60 or 0.0)
                 f = None
                 det = dict(sg.get("detectors") or {})
                 for name in self._disabled_patterns(): det.setdefault(name, False)
@@ -294,7 +340,8 @@ class Engine:
         if time.time() - self.state.get("day_scan_ts", 0) < sg["scan_every_minutes"] * 60: return
         self.state["day_scan_ts"] = time.time()
         gain, lose = self.b.movers() if sg.get("use_movers") else ([], [])
-        syms = [x for x in dict.fromkeys(list(gain) + list(lose) + self.r["swing"]["watchlist"]) if x.isalpha()][:sg["max_symbols"]]
+        act = self.b.actives() if sg.get("use_actives") else []
+        syms = [x for x in dict.fromkeys(list(gain) + list(lose) + list(act) + self.r["swing"]["watchlist"]) if x.isalpha()][:sg["max_symbols"]]
         held = {p["symbol"] for p in self._pos()}
         cands = []
         for sym in syms:
@@ -307,7 +354,9 @@ class Engine:
                 if any(x.name == "orb" for x in sigs):           # gap_and_go דורש סגירה קודמת
                     prev = self.b.snapshot(sym)[1]
                     sigs = patterns.detect_day(bars5, {"prev_close": prev}, sg.get("detectors") or None, shorts=d["allow_short"])
+                off = self._disabled_patterns()
                 for sig in sigs:
+                    if sig.name in off: continue
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok)
@@ -341,7 +390,7 @@ class Engine:
         if strategy == "day": self.state["tried"].append(sym)
         if not dec.ok:
             self._j(now, sym, head, None, strategy, sig.side, "blocked", f"{dec.reason} conf={sc}"); return False
-        return self._submit(now, sym, head, None, strategy, sig.side, dec, f"conf={sc} x{mult} {why}", price=price, atr=atr)
+        return self._submit(now, sym, head, None, strategy, sig.side, dec, f"conf={sc} x{mult} {why}", price=price, atr=atr, pattern=sig.name)
 
     # --- ניהול פוזיציות פתוחות: ברייק-אבן וסטופ נגרר ---
     def manage_positions(self, now, positions):
@@ -377,20 +426,60 @@ class Engine:
         self.state["report_done"] = today
         try:
             _report.write(today, self.b.account(), self._pos(), JOURNAL, DATA / "journal_crypto.csv", DATA / "sectors.json", DATA)
+            scorecard.write(DATA / "trades.csv", DATA)
         except Exception as e:
             log.warning("report failed: %s", e)
 
     def _disabled_patterns(self):
         """גלאים שה-backtest סימן כמפסידים (data/backtest.json) - מכבים אוטומטית"""
+        out = set()
+        for f in ("backtest.json", "scorecard.json"):
+            try: out |= set(json.loads((DATA / f).read_text(encoding="utf-8")).get("disabled", []))
+            except Exception: pass
+        return out
+
+    def track_positions(self, now, positions):
+        """רושם מחיר אחרון ואת ההחלקה בכניסה (מחיר מבוקש מול מחיר מילוי)"""
+        for p in positions:
+            m = self.state["meta"].get(p["symbol"])
+            if not m: continue
+            try: m["last"] = float(p["current_price"])
+            except (KeyError, TypeError, ValueError): pass
+            if "fill" not in m:
+                try: fill = float(p["avg_entry_price"])
+                except (KeyError, TypeError, ValueError): continue
+                m["fill"] = fill
+                if m.get("entry"):
+                    m["slip"] = round(((fill / m["entry"] - 1) if m["side"] == "long" else (m["entry"] / fill - 1)) * 100, 3)
+                    self._j(now, p["symbol"], strategy=m["strategy"], side=m["side"], action="FILL", detail=f"wanted {m['entry']:.2f} got {fill:.2f} slippage {m['slip']}%")
+
+    def _record_trade(self, sym, m):
         try:
-            return set(json.loads((DATA / "backtest.json").read_text(encoding="utf-8")).get("disabled", []))
-        except Exception:
-            return set()
+            fill = m.get("fill") or m.get("entry")
+            if not fill: return
+            exit_px = None
+            try: exit_px = self.b.last_fill(sym, "sell" if m["side"] == "long" else "buy")
+            except Exception: pass
+            exit_px = exit_px or m.get("last")
+            if not exit_px: return
+            long = m["side"] == "long"
+            pnl = ((exit_px / fill - 1) if long else (fill / exit_px - 1)) * 100
+            risk = abs(fill - m["stop0"]) if m.get("stop0") else 0
+            r = ((exit_px - fill) if long else (fill - exit_px)) / risk if risk else ""
+            held = weekdays_between(m["entry_date"], str(date.today())) if m.get("entry_date") else ""
+            reason = "stop/target/other"
+            scorecard.append_trade(DATA / "trades.csv", {"closed": datetime.now(timezone.utc).isoformat(), "symbol": sym, "strategy": m["strategy"],
+                                   "pattern": m.get("pattern", ""), "side": m["side"], "entry": round(fill, 4), "exit": round(exit_px, 4),
+                                   "pnl_pct": round(pnl, 3), "R": round(r, 2) if r != "" else "", "held_days": held,
+                                   "entry_slip_pct": m.get("slip", ""), "reason": reason})
+        except Exception as e:
+            log.warning("record trade failed %s: %s", sym, e)
 
     def reconcile(self, positions):
         held, t = {p["symbol"] for p in positions}, time.time()
         for sym in list(self.state["meta"]):
             if sym not in held and t - self.state["meta"][sym].get("ts", 0) > 600:
+                self._record_trade(sym, self.state["meta"][sym])
                 del self.state["meta"][sym]
                 self.state.setdefault("cool", {})[sym] = t
 
@@ -398,14 +487,21 @@ class Engine:
         now = now or datetime.now(timezone.utc)
         self.state = roll(self.state)
         c = self.b.clock()
-        if self.r["account"]["market_hours_only"] and not c["is_open"]: return c
+        if not c["is_open"]:
+            try: self.premarket(now, c)
+            except Exception as e: log.warning("premarket failed: %s", e)
+            save_state(self.state)
+            if self.r["account"]["market_hours_only"]: return c
         mtc = (_ts(c["next_close"]) - _ts(c["timestamp"])).total_seconds() / 60 if c.get("next_close") else None
         self.mkt.refresh(now)
+        self.mkt.refresh_risk()
         self._write_sectors()
         positions = self._pos()
         self.reconcile(positions)
         self.day_flatten(mtc, positions)
+        self.track_positions(now, positions)
         self.manage_positions(now, positions)
+        self.process_queue(now, mtc, c["is_open"])
         self.news_pass(now, mtc, c["is_open"])
         self.day_scan(now, mtc, c["is_open"])
         self.swing_pass(now, mtc)
@@ -417,7 +513,7 @@ def _fmt(snap):
     return json.dumps({k: (round(v, 2) if isinstance(v, float) else v) for k, v in (snap or {}).items()}) if snap else ""
 
 # ---------- runners ----------
-def session(engine, max_minutes=345, early_minutes=20, sleep=time.sleep):
+def session(engine, max_minutes=345, early_minutes=100, sleep=time.sleep):
     """סשן אחד (ל-GitHub Actions): מחכה לפתיחת השוק, רץ עד הסגירה או עד max_minutes, ואז יוצא."""
     t0, opened = time.monotonic(), False
     while True:
@@ -436,6 +532,8 @@ def session(engine, max_minutes=345, early_minutes=20, sleep=time.sleep):
             engine.step()
         except Exception as e:
             log.exception("loop error: %s", e)
+            errs = getattr(engine, "_errs", 0) + 1; engine._errs = errs
+            if errs in (3, 20): alerts.send(f"Bot loop error x{errs}: {str(e)[:200]}", "NewsBot ERROR")
         sleep(20 if c["is_open"] else 30)
 
 def main():
