@@ -1,0 +1,21 @@
+name: Test phone alert
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests
+      - name: Send test alert
+        run: |
+          if [ -z "$NTFY_TOPIC" ] && [ -z "$TELEGRAM_BOT_TOKEN" ]; then echo "No NTFY_TOPIC secret found - check the secret name"; exit 1; fi
+          python -c "import alerts; alerts.send('Test alert: NewsBot can reach your phone', 'NewsBot TEST')"
+          echo "Sent."
