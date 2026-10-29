@@ -37,6 +37,14 @@ It scales signal position size between 0.5x and 1.5x of the normal size (news tr
 Alpaca has no crypto shorts or bracket orders, so the bot manages stop, target and trailing itself. Own state/journal: `data/state_crypto.json`, `data/journal_crypto.csv`.
 Runs as a separate GitHub Actions job every 6 hours.
 
+**Earnings blackout** (`earnings.py`): swing entries are skipped when the company reports within 2 trading days, and open swing positions
+are closed the day before a report (calendar: Nasdaq; if it can't be fetched the bot carries on without the filter).
+
+**Daily report**: `data/report.md` (and `data/reports/DATE.md`) is written just before the close: P&L, entries, exits, open positions, why ideas were blocked, sectors.
+
+**Backtester** (`backtest.py`, weekly GitHub Action or run by hand): replays every pattern on 3 years of daily bars for the watchlist and writes
+`data/backtest.md`. Patterns with 30+ trades and clearly negative expectancy are disabled automatically via `data/backtest.json`.
+
 ## Run
 Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
 Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`

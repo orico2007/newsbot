@@ -99,3 +99,7 @@ crypto:
   scan_every_minutes: 60
   news_min_score: 8
   news_max_age_minutes: 15
+
+earnings:                        # לוח דוחות (Nasdaq). לא ידוע = לא חוסם
+  blackout_days: 2               # סווינג לא נכנס אם יש דוח בתוך 2 ימי מסחר
+  exit_before: true              # סווינג פתוח נסגר ביום שלפני הדוח

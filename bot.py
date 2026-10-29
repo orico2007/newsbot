@@ -7,6 +7,8 @@ import chart
 import patterns
 from market import Market, SECTOR_OF
 from scoring import confluence, size_mult
+from earnings import Earnings
+import report as _report
 from indicators import atr as _atr, pct_return
 
 log = logging.getLogger("bot")
@@ -59,8 +61,9 @@ def weekdays_between(d1, d2):
 
 # ---------- engine ----------
 class Engine:
-    def __init__(self, broker, brain, rules, state, funds=None):
+    def __init__(self, broker, brain, rules, state, funds=None, earnings=None):
         self.b, self.brain, self.r, self.state, self.funds = broker, brain, rules, state, funds
+        self.earn = earnings
         self.mkt = Market(broker, rules.get("market", {"enabled": False}), daily_start_iso)
 
     def _write_sectors(self):
@@ -86,6 +89,13 @@ class Engine:
         veto, pts, why = self.mkt.alignment(sym, side)
         if veto: return False, f"against market/sector: {why}", pts
         return True, why, pts
+
+    def _earnings_block(self, sym, strategy):
+        """סווינג לא נכנס כשדוח קרוב (פער לא נשלט). יום-מסחר לא מושפע"""
+        e = self.r.get("earnings", {})
+        if not self.earn or strategy != "swing" or not e.get("blackout_days"): return None
+        n = self.earn.days_until(sym)
+        return f"earnings in {n}d" if n is not None and n <= e["blackout_days"] else None
 
     def _fund_ok(self, f, side):
         if not f or f.get("rev_yoy") is None: return None
@@ -191,6 +201,14 @@ class Engine:
         if not s["enabled"] or mtc is None or mtc > s["scan_minutes_before_close"] or self.state.get("swing_done") == today: return
         self.state["swing_done"] = today
         held = {p["symbol"] for p in self._pos()}
+        if self.earn and self.r.get("earnings", {}).get("exit_before"):
+            for sym, m in list(self.state["meta"].items()):
+                if m.get("strategy") == "swing" and sym in held and self.earn.days_until(sym) in (0, 1) and not m.get("earn_ok"):
+                    try:
+                        self.b.close_position(sym); held.discard(sym)
+                        self._j(now, sym, strategy="swing", side=m.get("side", ""), action="EXIT", detail="earnings tomorrow/today - flatten")
+                    except Exception as e:
+                        log.warning("earnings exit failed %s: %s", sym, e)
         for sym, m in list(self.state["meta"].items()):
             if m.get("strategy") == "swing" and sym in held and weekdays_between(m["entry_date"], today) >= s["max_hold_days"]:
                 try:
@@ -215,7 +233,9 @@ class Engine:
                 closes = [b["c"] for b in daily]
                 rs = pct_return(closes, 60) or 0.0
                 f = None
-                for sig in patterns.detect_all(daily, sg.get("detectors") or None, {"rs": rs}, shorts=s["allow_short"]):
+                det = dict(sg.get("detectors") or {})
+                for name in self._disabled_patterns(): det.setdefault(name, False)
+                for sig in patterns.detect_all(daily, det or None, {"rs": rs}, shorts=s["allow_short"]):
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     f = f or self._fund(sym)
@@ -253,6 +273,9 @@ class Engine:
         taken = taken0
         for rev, sym, daily, snap, f in cands:
             if taken >= s["scan"]["new_per_day"]: break
+            eb = self._earnings_block(sym, "swing")
+            if eb:
+                self._j(now, sym, f"SCAN candidate rev_yoy={rev}%", None, "swing", "long", "blocked", eb); continue
             price, prev = daily[-1]["c"], daily[-2]["c"]
             adv = sum(b["c"] * b["v"] for b in daily[-20:]) / len(daily[-20:])
             dec = evaluate_entry(self.r, "swing", "long", sym, price, prev, adv, self.b.account(), self._pos(),
@@ -300,6 +323,9 @@ class Engine:
 
     def _enter_signal(self, now, sym, strategy, sig, sc, why, is_open, daily=None):
         head = f"{strategy.upper()} {sig.name}: {sig.notes}"
+        eb = self._earnings_block(sym, strategy)
+        if eb:
+            self._j(now, sym, head, None, strategy, sig.side, "blocked", eb); return False
         try:
             price, prev, adv = self.b.snapshot(sym)
             atr = (_atr(daily) if daily else None) or (abs(price - sig.stop) / 1.5)
@@ -345,6 +371,22 @@ class Engine:
                 except Exception as e:
                     log.warning("trail failed %s: %s", p["symbol"], e)
 
+    def daily_report(self, now, mtc):
+        today = str(date.today())
+        if mtc is None or mtc > 4 or self.state.get("report_done") == today: return
+        self.state["report_done"] = today
+        try:
+            _report.write(today, self.b.account(), self._pos(), JOURNAL, DATA / "journal_crypto.csv", DATA / "sectors.json", DATA)
+        except Exception as e:
+            log.warning("report failed: %s", e)
+
+    def _disabled_patterns(self):
+        """גלאים שה-backtest סימן כמפסידים (data/backtest.json) - מכבים אוטומטית"""
+        try:
+            return set(json.loads((DATA / "backtest.json").read_text(encoding="utf-8")).get("disabled", []))
+        except Exception:
+            return set()
+
     def reconcile(self, positions):
         held, t = {p["symbol"] for p in positions}, time.time()
         for sym in list(self.state["meta"]):
@@ -367,6 +409,7 @@ class Engine:
         self.news_pass(now, mtc, c["is_open"])
         self.day_scan(now, mtc, c["is_open"])
         self.swing_pass(now, mtc)
+        self.daily_report(now, mtc)
         save_state(self.state)
         return c
 
@@ -405,7 +448,7 @@ def main():
     from broker import AlpacaBroker
     from brain import Brain
     from fundamentals import Fundamentals
-    engine = Engine(AlpacaBroker(paper=not live), Brain(), rules, load_state(), Fundamentals())
+    engine = Engine(AlpacaBroker(paper=not live), Brain(), rules, load_state(), Fundamentals(), Earnings())
     log.info("started in %s mode", "LIVE" if live else "PAPER")
     if args.session:
         return session(engine)

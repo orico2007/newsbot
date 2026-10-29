@@ -1,0 +1,33 @@
+name: Backtest patterns
+
+on:
+  schedule:
+    - cron: "30 2 * * 0"     # פעם בשבוע, ביום ראשון
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PYTHONUTF8: "1"
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python backtest.py --years 3
+      - name: Save results
+        run: |
+          git config user.name "newsbot"
+          git config user.email "newsbot@users.noreply.github.com"
+          git add data
+          git commit -m "backtest results [skip ci]" || exit 0
+          git pull --rebase
+          git push
