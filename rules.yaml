@@ -37,7 +37,7 @@ swing:
   allow_short: true
   max_positions: 4
   max_hold_days: 10              # יציאת זמן (ימי מסחר)
-  scan_minutes_before_close: 20  # סריקה ויציאות זמן פעם ביום, בסוף היום
+  scan_minutes_before_close: 15  # פריצות סווינג נבדקות רק 15 דקות לפני הסגירה, כשהנר היומי כמעט סופי
   long:  {position_pct: 4,   atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
   short: {position_pct: 2.5, atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
   scan:                          # סריקה יומית של רשימת מעקב: מגמה + נסיגה + צמיחה בדוחות

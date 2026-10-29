@@ -1,4 +1,4 @@
-"""Backtest לתבניות הגרף על נתונים יומיים היסטוריים. כניסה בפתיחת היום שאחרי האיתות,
+"""Backtest לתבניות הגרף על נתונים יומיים היסטוריים. כניסה סמוך לסגירת יום האיתות,
 סטופ/יעד מהתבנית, סטופ קודם אם שניהם באותו נר (שמרני), יציאת זמן, עמלות/החלקה."""
 import json, argparse, pathlib, logging
 from collections import defaultdict
@@ -13,9 +13,8 @@ def simulate(bars, detectors=None, shorts=True, max_hold=10, warmup=130, cooldow
         sigs = [s for s in patterns.detect_all(bars[:i + 1], detectors, {"rs": 0.0}, shorts=shorts) if s.quality >= min_conf_quality]
         if not sigs: i += 1; continue
         sig = max(sigs, key=lambda s: s.quality)
-        entry_bar = bars[i + 1]
         long = sig.side == "long"
-        entry = entry_bar["o"] * (1 + slip_pct / 100 if long else 1 - slip_pct / 100)
+        entry = bars[i]["c"] * (1 + slip_pct / 100 if long else 1 - slip_pct / 100)     # כניסה סמוך לסגירה (15 דקות לפני), כמו בבוט
         stop, target = sig.stop, sig.target
         if (long and not (stop < entry < target)) or (not long and not (target < entry < stop)):
             i += 1; continue
@@ -75,7 +74,7 @@ def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
 def to_markdown(st, symbols, years, disabled):
     rows = sorted(((k, v) for k, v in st.items() if not k.startswith("ALL")), key=lambda kv: -kv[1]["avg_R"])
     md = [f"# Backtest - {years}y daily, {len(symbols)} symbols", "",
-          "Entry at next open, stop first on conflict, 0.05% slippage each side, 10-day time stop. Past results do not guarantee future results.", "",
+          "Entry near the signal day's close (bot buys 15 min before close), stop first on conflict, 0.05% slippage each side, 10-day time stop. Past results do not guarantee future results.", "",
           "| Pattern | Trades | Win % | Avg R | Avg % | Profit factor | Avg hold (d) | Long/Short |", "|---|---|---|---|---|---|---|---|"]
     for k, v in [("ALL", st.get("ALL")), ("ALL longs", st.get("ALL_long")), ("ALL shorts", st.get("ALL_short"))] + rows:
         if v: md.append(f"| {k} | {v['n']} | {v['win_rate']} | {v['avg_R']} | {v['avg_pnl_pct']} | {v['profit_factor']} | {v['avg_hold']} | {v['long_n']}/{v['short_n']} |")

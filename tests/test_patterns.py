@@ -159,3 +159,30 @@ def test_vwap_reclaim():
     s = P.vwap_reclaim_long(bars)
     assert s and s.name == "vwap_reclaim" and s.stop < s.price < s.target
     assert P.vwap_reclaim_long(bars[:-1] + [B(49.0, 49.3, 48.9, 49.1, 5000)]) is None
+
+# ---- כלל המחברת: חצי גוף מעבר לקו ----
+def test_body_beyond_math():
+    assert P.body_beyond(B(10, 12, 9.9, 12), 11) == 0.5
+    assert P.body_beyond(B(10, 12, 9.9, 12), 9) == 1.0
+    assert P.body_beyond(B(12, 12.5, 9.9, 10), 9) == 0.0          # נר אדום
+    assert P.body_beyond(B(10, 12, 9.9, 10.5), 11) == 0.0         # סגירה מתחת לקו
+
+def test_flag_rejected_when_body_mostly_below_line():
+    bars = make_flag(); bars[-1] = B(60.6, 62.9, 60.5, 61.9, 1500)   # סוגר מעל הקו, אבל רוב הגוף מתחתיו
+    assert P.flag_long(bars) is None
+
+def test_flag_accepted_when_half_body_above_line():
+    bars = make_flag(); bars[-1] = B(61.3, 62.9, 61.2, 62.7, 1500)
+    assert P.flag_long(bars) is not None
+
+def test_orb_requires_half_body():
+    bars = intraday_orb()
+    bars[-1] = B(49.9, 51.0, 49.8, 50.6, 3000)                       # גוף 0.7, מעל 50.5 רק 0.1
+    assert P.orb_long(bars) is None
+
+def test_short_breakdown_uses_same_rule_via_mirror():
+    mb, k2 = P.mirror(make_flag())
+    assert any(s.name == "flag" and s.side == "short" for s in P.detect_all(mb))
+    bad = make_flag(); bad[-1] = B(60.6, 62.9, 60.5, 61.9, 1500)
+    mb2, _ = P.mirror(bad)
+    assert not any(s.name == "flag" and s.side == "short" for s in P.detect_all(mb2))

@@ -11,6 +11,7 @@ from scoring import confluence, size_mult
 from earnings import Earnings
 import report as _report
 import scorecard
+import timeframes as tf
 import alerts
 from indicators import atr as _atr, pct_return
 
@@ -53,7 +54,7 @@ def session_open_iso(now):
     return et.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 def daily_start_iso(now):
-    return (now - timedelta(days=400)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return (now - timedelta(days=900)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 def weekdays_between(d1, d2):
     d1, d2, n = date.fromisoformat(d1), date.fromisoformat(d2), 0
@@ -281,9 +282,18 @@ class Engine:
                 f = None
                 det = dict(sg.get("detectors") or {})
                 for name in self._disabled_patterns(): det.setdefault(name, False)
-                for sig in patterns.detect_all(daily, det or None, {"rs": rs}, shorts=s["allow_short"]):
+                sigs = patterns.detect_all(daily, det or None, {"rs": rs}, shorts=s["allow_short"])
+                weekly = tf.resample_weekly(daily)
+                if len(weekly) >= 60:
+                    for w in patterns.detect_all(weekly, det or None, {"rs": rs}, shorts=s["allow_short"]):
+                        w.name += "_W"; w.quality = min(1.0, w.quality + 0.1); w.notes = "weekly " + w.notes
+                        sigs.append(w)
+                for sig in sigs:
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
+                    htf = tf.htf_points(daily, sig.side)
+                    pts += 0.5 * htf
+                    why += f"; weekly {'agrees' if htf > 0 else 'against' if htf < 0 else 'neutral'}"
                     f = f or self._fund(sym)
                     fo = self._fund_ok(f, sig.side)
                     if fo is False: continue
@@ -354,9 +364,20 @@ class Engine:
                 if any(x.name == "orb" for x in sigs):           # gap_and_go דורש סגירה קודמת
                     prev = self.b.snapshot(sym)[1]
                     sigs = patterns.detect_day(bars5, {"prev_close": prev}, sg.get("detectors") or None, shorts=d["allow_short"])
+                m15 = tf.resample_n(bars5, 3)
+                if len(m15) >= 12:
+                    for x in patterns.detect_day(m15, {}, {"orb": False}, shorts=d["allow_short"]):
+                        x.name += "_15m"; x.quality = min(1.0, x.quality + 0.05); sigs.append(x)
                 off = self._disabled_patterns()
+                daily_ctx = None
                 for sig in sigs:
-                    if sig.name in off: continue
+                    if sig.name.replace("_15m", "") in off: continue
+                    if daily_ctx is None:
+                        try: daily_ctx = self.b.bars(sym, "1Day", daily_start_iso(now))
+                        except Exception: daily_ctx = []
+                    lvl = tf.near_level(daily_ctx, sig.price, sig.side) if daily_ctx else None
+                    if lvl:
+                        self._j(now, sym, f"DAY {sig.name}", None, "day", sig.side, "blocked", f"daily level {lvl:.2f} right in front"); continue
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok)

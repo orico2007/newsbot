@@ -53,6 +53,11 @@ are closed the day before a report (calendar: Nasdaq; if it can't be fetched the
 - **Relative strength** vs the S&P in the confluence score, and the day's most-active stocks added to the scans (up to 120 symbols).
 - **Weekly review** (`review.py`, Sundays): Claude reads the scorecard, backtest and daily reports and writes `data/review.md` with evidence-based rule suggestions. It never changes rules by itself.
 
+## v3.3 - your notebook rules
+- **Half-body breakout rule**: a breakout (flag, base, neckline, triangle resistance or diagonal trendline, 52-week high, opening-range) only counts when the candle is green and at least half of its body is beyond the line. Shorts use the same rule mirrored.
+- **Swing entries only 15 minutes before the close**, when the daily candle is almost final (`swing.scan_minutes_before_close: 15`). The backtester now enters at the signal day's close to match.
+- **Multi-timeframe**: weekly trend must agree (bonus) or disagree (penalty) with the trade; the same patterns are also scanned on weekly candles (signals named `*_W`); day setups also run on 15-minute candles (`*_15m`) and are blocked when a daily support/resistance level sits right in front of the trade.
+
 ## Run
 Cloud: GitHub Actions (`.github/workflows/trade.yml`), secrets: ALPACA_KEY_ID, ALPACA_SECRET_KEY, CLAUDE_CODE_OAUTH_TOKEN.
 Local: `pip install -r requirements.txt && python -m pytest -q && python bot.py`

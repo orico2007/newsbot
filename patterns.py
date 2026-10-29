@@ -29,6 +29,14 @@ def unmirror(sig, k2):
     return sig
 
 # ---------- נרות ----------
+BODY_MIN = 0.5      # כלל המחברת: פריצה תקפה רק אם לפחות חצי מגוף הנר מעבר לקו (אופקי או אלכסוני)
+
+def body_beyond(b, level):
+    """כמה מגוף נר ירוק נמצא מעל הקו (0..1). נר אדום/דוג'י = 0. (שורט = אותו כלל על גרף ההפוך)"""
+    body = b["c"] - b["o"]
+    if body <= 0 or b["c"] <= level: return 0.0
+    return min(1.0, (b["c"] - max(b["o"], level)) / body)
+
 def _parts(b):
     body = abs(b["c"] - b["o"]); rng = b["h"] - b["l"]
     return body, rng, b["h"] - max(b["o"], b["c"]), min(b["o"], b["c"]) - b["l"]
@@ -76,7 +84,7 @@ def flag_long(bars, min_pole_pct=12, max_pole=12, min_flag=3, max_flag=10):
             if (fh - fl) > 0.45 * height or fl < lo0 + 0.5 * height or fh > hi1 * 1.03: continue
             pv, fv = avg(b["v"] for b in pole), avg(b["v"] for b in flag)
             if fv >= pv: continue
-            if not (fh < last["c"] <= fh * 1.03): continue
+            if not (fh < last["c"] <= fh * 1.03) or body_beyond(last, fh) < BODY_MIN: continue
             q = 0.7 + (0.1 if last["v"] >= 1.3 * fv else 0) + (0.05 if fv < 0.7 * pv else 0)
             cand = Signal("flag", "long", "swing", last["c"], fl * 0.995, fh + height, q,
                           f"pole {height / lo0 * 100:.0f}% flag {L}d", last["v"] >= 1.3 * fv)
@@ -93,7 +101,7 @@ def base_breakout_long(bars, max_range_pct=14, min_len=15, max_len=60):
         bh, bl = max(b["h"] for b in base), min(b["l"] for b in base)
         if (bh - bl) / bl * 100 > max_range_pct: continue
         bv = avg(b["v"] for b in base)
-        if not (bh < last["c"] <= bh * 1.04) or last["v"] < 1.5 * bv: continue
+        if not (bh < last["c"] <= bh * 1.04) or last["v"] < 1.5 * bv or body_beyond(last, bh) < BODY_MIN: continue
         dry = avg(b["v"] for b in base[-8:]) <= 0.9 * bv
         stop = max(bl, bh - 2 * a) if a else bl
         q = 0.65 + (0.15 if dry else 0) + (0.1 if last["v"] >= 2 * bv else 0)
@@ -115,7 +123,7 @@ def double_bottom_long(bars, tol=3.0, min_sep=8, max_sep=50, min_depth=6.0):
         mid = seg[A[0]:C[0] + 1]
         B = max(b["h"] for b in mid); lo = min(A[1], C[1])
         if (B - lo) / lo * 100 < min_depth: continue
-        if not (B < last["c"] <= B * 1.05) or last["v"] < 1.1 * va: continue
+        if not (B < last["c"] <= B * 1.05) or last["v"] < 1.1 * va or body_beyond(last, B) < BODY_MIN: continue
         if any(b["c"] > B for b in seg[C[0] + 1:-3]): continue      # פריצה טרייה
         return Signal("double_bottom", "long", "swing", last["c"], lo - 0.25 * a, B + (B - lo),
                       0.7 + (0.1 if C[1] >= A[1] else 0), f"W A={A[1]:.2f} C={C[1]:.2f} neck={B:.2f}", True)
@@ -135,7 +143,7 @@ def inverse_hs_long(bars):
     p1 = max(b["h"] for b in seg[ls[0]:h[0] + 1]); p2 = max(b["h"] for b in seg[h[0]:rs[0] + 1])
     if abs(p1 - p2) / p1 > 0.04: return None
     neck = (p1 + p2) / 2
-    if not (neck < last["c"] <= neck * 1.05) or last["v"] < 1.0 * va: return None
+    if not (neck < last["c"] <= neck * 1.05) or last["v"] < 1.0 * va or body_beyond(last, neck) < BODY_MIN: return None
     if any(b["c"] > neck for b in seg[rs[0] + 1:-3]): return None
     return Signal("inverse_head_shoulders", "long", "swing", last["c"], rs[1] - 0.25 * a, neck + (neck - h[1]), 0.7,
                   f"H={h[1]:.2f} neck={neck:.2f}", last["v"] >= 1.3 * va)
@@ -155,7 +163,7 @@ def ascending_triangle_long(bars):
     lp = [l[1] for l in ls]
     if not all(lp[i] < lp[i + 1] for i in range(len(lp) - 1)) or (lp[-1] - lp[0]) / lp[0] < 0.02: return None
     last, a, va = bars[-1], atr(bars) or 0, _vavg(bars)
-    if not (res * 1.002 < last["c"] <= res * 1.04) or last["v"] < 1.1 * va: return None
+    if not (res * 1.002 < last["c"] <= res * 1.04) or last["v"] < 1.1 * va or body_beyond(last, res) < BODY_MIN: return None
     if any(b["c"] > res * 1.003 for b in seg[hs[-1][0] + 1:-1]): return None
     return Signal("ascending_triangle", "long", "swing", last["c"], lp[-1] - 0.25 * a, res + (res - lp[0]), 0.7,
                   f"touches={len(hs) + len(ls)} res={res:.2f}", True)
@@ -170,7 +178,7 @@ def symmetrical_triangle_up(bars):
     slope = (p2 - p1) / (i2 - i1)
     line = p2 + slope * (len(seg) - 1 - i2)
     last, a, va = bars[-1], atr(bars) or 0, _vavg(bars)
-    if not (line * 1.002 < last["c"] <= line * 1.04) or last["v"] < 1.1 * va: return None
+    if not (line * 1.002 < last["c"] <= line * 1.04) or last["v"] < 1.1 * va or body_beyond(last, line) < BODY_MIN: return None
     return Signal("symmetrical_triangle", "long", "swing", last["c"], lp[-1] - 0.25 * a, last["c"] + (hp[0] - lp[0]), 0.6,
                   f"touches={len(hs) + len(ls)}", True)
 
@@ -264,7 +272,7 @@ def breakout_retest_long(bars):
         L = lv["price"]
         for k in range(n - 12, n - 2):
             va = avg(b["v"] for b in bars[max(0, k - 20):k])
-            if bars[k]["c"] > L * 1.01 and bars[k - 1]["c"] <= L * 1.003 and bars[k]["v"] >= 1.3 * va:
+            if bars[k]["c"] > L * 1.01 and bars[k - 1]["c"] <= L * 1.003 and bars[k]["v"] >= 1.3 * va and body_beyond(bars[k], L) >= BODY_MIN:
                 if any(b["c"] < L * 0.985 for b in bars[k:]): break
                 if last["l"] <= L * 1.012 and last["c"] >= L * 0.997 and (last["c"] > last["o"] or bull_candle(bars)):
                     return Signal("breakout_retest", "long", "swing", last["c"], L - a, last["c"] + 3 * a, 0.7,
@@ -281,7 +289,7 @@ def high52_breakout_long(bars, rs=0.0):
     last, a = bars[-1], atr(bars) or 0
     closes = [b["c"] for b in bars]
     s50 = sma(closes, 50)
-    if not (hh < last["c"] <= hh * 1.04) or last["v"] < 1.4 * _vavg(bars) or not s50 or last["c"] < s50: return None
+    if not (hh < last["c"] <= hh * 1.04) or last["v"] < 1.4 * _vavg(bars) or not s50 or last["c"] < s50 or body_beyond(last, hh) < BODY_MIN: return None
     return Signal("high52_breakout", "long", "swing", last["c"], last["c"] - 2.5 * a, last["c"] + 5 * a,
                   0.6 + (0.15 if rs >= 10 else 0) + (0.05 if last["v"] >= 2 * _vavg(bars) else 0), f"new {look}d high rs={rs:.0f}", True)
 
@@ -358,7 +366,7 @@ def orb_long(bars5, ctx=None, or_bars=3):
     oh, ol = max(b["h"] for b in rng), min(b["l"] for b in rng)
     last = bars5[-1]
     if (oh - ol) / ol * 100 < 0.3 or (oh - ol) / ol * 100 > 6: return None
-    if not (oh < last["c"] <= oh * 1.02): return None
+    if not (oh < last["c"] <= oh * 1.02) or body_beyond(last, oh) < BODY_MIN: return None
     if any(b["c"] > oh for b in bars5[or_bars:-1]): return None        # פריצה טרייה בלבד
     vw = vwap(bars5)
     base_v = avg(b["v"] for b in bars5[:-1])
