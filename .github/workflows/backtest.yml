@@ -24,10 +24,4 @@ jobs:
       - run: python -m pytest -q
       - run: python backtest.py --years 3
       - name: Save results
-        run: |
-          git config user.name "newsbot"
-          git config user.email "newsbot@users.noreply.github.com"
-          git add data
-          git commit -m "backtest results [skip ci]" || exit 0
-          git pull --rebase
-          git push
+        run: bash scripts/save_data.sh "backtest results"
