@@ -36,3 +36,23 @@ def vol_spike(bars, recent=3, base=20):
     r = sum(b["v"] for b in bars[-recent:]) / recent
     b0 = sum(b["v"] for b in bars[-recent - base:-recent]) / base
     return r / b0 if b0 else None
+
+def avg(vals):
+    vals = list(vals)
+    return sum(vals) / len(vals) if vals else 0.0
+
+def stdev(vals):
+    vals = list(vals)
+    if len(vals) < 2: return 0.0
+    m = sum(vals) / len(vals)
+    return (sum((v - m) ** 2 for v in vals) / len(vals)) ** 0.5
+
+def bollinger(closes, n=20, k=2.0):
+    """(mid, upper, lower, width%) של הבר האחרון"""
+    if len(closes) < n: return None
+    w = closes[-n:]; m = sum(w) / n; sd = stdev(w)
+    return m, m + k * sd, m - k * sd, (2 * k * sd) / m * 100
+
+def pct_return(closes, n):
+    if len(closes) <= n or closes[-n - 1] == 0: return None
+    return (closes[-1] / closes[-n - 1] - 1) * 100

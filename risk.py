@@ -3,7 +3,7 @@ import math
 from models import Decision
 
 def evaluate_entry(rules, strategy, side, symbol, price, prev_close, adv, account, positions, state,
-                   market_open, atr=None, shortable=True):
+                   market_open, atr=None, shortable=True, override=None, size_mult=1.0):
     a, n, s = rules["account"], rules["news"], rules[strategy]
     meta = state.get("meta", {})
     no = lambda why: Decision(False, why)
@@ -28,7 +28,7 @@ def evaluate_entry(rules, strategy, side, symbol, price, prev_close, adv, accoun
         state["halted"] = True
         return no("daily loss limit hit")
     cfg = s[side]
-    budget = min(equity * cfg["position_pct"] / 100, float(account["buying_power"]))
+    budget = min(equity * cfg["position_pct"] / 100 * size_mult, float(account["buying_power"]))
     gross = sum(abs(float(p.get("market_value", 0) or 0)) for p in positions)
     room = equity * a["max_gross_exposure_pct"] / 100 - gross
     budget = min(budget, room)
@@ -45,4 +45,12 @@ def evaluate_entry(rules, strategy, side, symbol, price, prev_close, adv, accoun
         stop, take, order_side = price - sd, price + td, "buy"
     else:
         stop, take, order_side = price + sd, price - td, "sell"
+    if override:                     # סטופ/יעד לפי מבנה הגרף (מתחת לשפל / גובה התבנית); תקרת סיכון נשארת
+        o_stop, o_take = override
+        ok_dir = (o_stop < price < o_take) if side == "long" else (o_take < price < o_stop)
+        cap = (cfg.get("max_stop_pct") or cfg.get("stop_pct") * 1.7) / 100
+        if ok_dir and abs(price - o_stop) / price <= cap and abs(o_take - price) >= 0.01 and abs(price - o_stop) >= 0.01:
+            stop, take = o_stop, o_take
+        elif ok_dir and abs(price - o_stop) / price > cap:
+            return no(f"structure stop {abs(price - o_stop) / price * 100:.1f}% beyond max risk {cap * 100:.1f}%")
     return Decision(True, "ok", qty, order_side, round(stop, 2), round(take, 2), "day" if strategy == "day" else "gtc")

@@ -1,4 +1,4 @@
-# ===== חוקי הבוט (v2) =====
+# ===== חוקי הבוט (v3) =====
 # [V] = מהסרטון   [A] = נוסף על ידי
 mode: paper            # הבוט מסרב לעבוד על חשבון אמיתי אלא אם mode: live וגם ALLOW_LIVE=1
 
@@ -51,3 +51,51 @@ swing:
   watchlist: [AAPL, MSFT, NVDA, AMZN, GOOGL, META, AVGO, TSLA, AMD, NFLX, CRM, ADBE, ORCL, INTC, QCOM, MU,
               UBER, SHOP, PANW, CRWD, NOW, INTU, AMAT, LRCX, JPM, V, MA, UNH, LLY, COST, WMT, HD, NKE, DIS,
               BA, CAT, GE, XOM, ABBV, ISRG]
+
+# ---------- v3: סיגנלים מגרף (תבניות), שוק וסקטורים ----------
+market:                          # Top-Down: משטר S&P500 + סקטורים מובילים/נחלשים
+  enabled: true
+  top_n: 3
+  veto_against: true             # לא קונים סקטור חלש / לא שורטים סקטור מוביל / לא קונים בשוק דובי
+
+signals:                         # אין יחס סיכוי-סיכון מינימלי; סטופ ויעד נגזרים ממבנה הגרף
+  swing:
+    enabled: true
+    min_confluence: 45
+    scan_watchlist_patterns: true
+    detectors: {}                # רשימת גלאים לכיבוי: {flag: false} וכו'
+  day:
+    enabled: true
+    min_confluence: 45
+    use_movers: true
+    max_symbols: 40
+    scan_every_minutes: 5
+    detectors: {}
+  size_multiplier: {min: 0.5, max: 1.5}    # ציון מפגש גבוה = פוזיציה גדולה יותר (עדיין מתחת לתקרות)
+
+trailing:                        # ניהול פוזיציה פתוחה: ברייק-אבן וטריילינג
+  enabled: true
+  breakeven_atr: 1.0             # אחרי רווח של 1 ATR מעבירים סטופ לכניסה
+  trail_atr: 2.5                 # אחרי 2 ATR רווח - סטופ נגרר 2.5 ATR מתחת לשיא
+  trail_activate_atr: 2.0
+
+cooldown_minutes: 90             # אחרי יציאה לא נכנסים שוב לאותה מניה
+
+sector_cap: 2                    # מקסימום פוזיציות באותו סקטור
+
+# ---------- קריפטו 24/7 (לונג בלבד) ----------
+crypto:
+  enabled: true
+  symbols: [BTC/USD, ETH/USD, SOL/USD, AVAX/USD, LINK/USD, DOGE/USD, LTC/USD, BCH/USD]
+  position_pct: 3
+  max_positions: 3
+  max_gross_pct: 10
+  atr_stop_mult: 2.5
+  max_stop_pct: 10
+  max_hold_days: 14
+  trail: {activate_atr: 1.5, trail_atr: 2.5}
+  min_confluence: 45
+  new_per_scan: 1
+  scan_every_minutes: 60
+  news_min_score: 8
+  news_max_age_minutes: 15

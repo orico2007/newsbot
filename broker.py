@@ -64,11 +64,46 @@ class AlpacaBroker:
         if not r.ok:
             raise RuntimeError(f"close failed {r.status_code}: {r.text[:200]}")
 
+    # ---- קריפטו (24/7, ללא bracket וללא שורט ב-Alpaca) ----
+    def crypto_bars(self, symbol, timeframe, start):
+        d = self._get(self.d, "/v1beta3/crypto/us/bars", symbols=symbol, timeframe=timeframe, start=start, limit=1000)
+        return (d.get("bars") or {}).get(symbol, [])
+
+    def crypto_price(self, symbol):
+        d = self._get(self.d, "/v1beta3/crypto/us/latest/trades", symbols=symbol)
+        return d["trades"][symbol]["p"]
+
+    def submit_simple(self, symbol, qty, side, tif="gtc"):
+        body = {"symbol": symbol, "qty": str(qty), "side": side, "type": "market", "time_in_force": tif}
+        r = requests.post(self.t + "/v2/orders", headers=self.h, json=body, timeout=15)
+        if not r.ok:
+            raise RuntimeError(f"order rejected {r.status_code}: {r.text[:200]}")
+        return r.json()
+
+    def movers(self, top=20):
+        """הנעים הגדולים של היום (שוק המניות) - מועמדים לסשן יומי"""
+        try:
+            d = self._get(self.d, "/v1beta1/screener/stocks/movers", top=top)
+            return [m["symbol"] for m in d.get("gainers", [])] , [m["symbol"] for m in d.get("losers", [])]
+        except Exception:
+            return [], []
+
+    def raise_stop(self, symbol, new_stop):
+        """מזיז את רגל הסטופ של ה-bracket הפתוח (טריילינג / ברייק-אבן)"""
+        orders = self._get(self.t, "/v2/orders", status="open", symbols=symbol, nested="true", limit=50)
+        done = False
+        for o in orders:
+            for leg in [o] + (o.get("legs") or []):
+                if leg.get("type") in ("stop", "stop_limit") and leg.get("status") in OPEN_STATES:
+                    r = requests.patch(f"{self.t}/v2/orders/{leg['id']}", headers=self.h, json={"stop_price": str(round(new_stop, 2))}, timeout=15)
+                    done = done or r.ok
+        return done
+
 class MockBroker:
     """לבדיקות וסימולציה בלבד"""
     def __init__(self, equity=100000):
         self._eq = equity; self.orders = []; self.closed = []; self._pos = []; self.is_open = True
-        self._news = []; self.snap = {}; self.bar_data = {}; self.assets = {}
+        self._news = []; self.snap = {}; self.bar_data = {}; self.assets = {}; self.prices = {}; self.simple = []; self.mv = ([], []); self.raised = []
         self._clock = {"is_open": True, "timestamp": "2026-10-29T12:00:00-04:00", "next_close": "2026-10-29T16:00:00-04:00"}
     def account(self): return {"equity": self._eq, "last_equity": self._eq, "buying_power": self._eq * 2}
     def positions(self): return self._pos
@@ -82,5 +117,12 @@ class MockBroker:
         self.orders.append((symbol, qty, side, stop, take, tif))
         self._pos.append({"symbol": symbol, "qty": str(qty), "side": "long" if side == "buy" else "short", "market_value": "0"})
         return {"id": "mock"}
+    def crypto_bars(self, symbol, timeframe, start): return self.bar_data.get((symbol, timeframe), [])
+    def crypto_price(self, symbol): return self.prices[symbol]
+    def submit_simple(self, symbol, qty, side, tif="gtc"):
+        self.simple.append((symbol, qty, side))
+        self._pos.append({"symbol": symbol.replace("/", ""), "qty": str(qty), "side": "long", "market_value": str(qty * self.prices.get(symbol, 0)), "asset_class": "crypto"})
+    def movers(self, top=20): return self.mv
+    def raise_stop(self, symbol, new_stop): self.raised.append((symbol, new_stop)); return True
     def close_position(self, symbol):
         self.closed.append(symbol); self._pos = [p for p in self._pos if p["symbol"] != symbol]

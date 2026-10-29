@@ -6,17 +6,18 @@ on:
     - cron: "20 14 * * 1-5"
     - cron: "10 19 * * 1-5"
     - cron: "10 20 * * 1-5"
+    - cron: "0 */6 * * *"      # קריפטו 24/7
   workflow_dispatch:
-
-concurrency:
-  group: newsbot
-  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   trade:
+    if: github.event.schedule != '0 */6 * * *'
+    concurrency:
+      group: newsbot
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 355
     env:
@@ -42,5 +43,38 @@ jobs:
           git config user.email "newsbot@users.noreply.github.com"
           git add data
           git commit -m "journal update [skip ci]" || exit 0
+          git pull --rebase
+          git push
+
+  crypto:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    concurrency:
+      group: newsbot-crypto
+      cancel-in-progress: false
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */6 * * *'
+    env:
+      PYTHONUTF8: "1"
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - name: Crypto session (paper)
+        run: python crypto.py --session --minutes 340
+      - name: Save crypto journal and state
+        if: always()
+        run: |
+          git config user.name "newsbot"
+          git config user.email "newsbot@users.noreply.github.com"
+          git add data
+          git commit -m "crypto journal update [skip ci]" || exit 0
           git pull --rebase
           git push
