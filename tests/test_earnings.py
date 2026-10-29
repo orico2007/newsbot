@@ -26,7 +26,7 @@ def eng(tmp_path, monkeypatch):
     def make(report_day_offset):
         b = MockBroker(); b._news = []; b._clock = clock(10)
         r = copy.deepcopy(R); r["swing"]["watchlist"] = ["AAA"]
-        today = date.today()
+        today = NOW.date()
         e = Earnings(4, cal({today + timedelta(days=report_day_offset): ["AAA"]}))
         return b, bot.Engine(b, FakeBrain(1, "neutral"), r, bot.roll({}), None, e)
     return make
@@ -48,6 +48,6 @@ def test_swing_entry_allowed_when_no_report_soon(eng):
 def test_open_swing_flattened_day_before_report(eng):
     b, e = eng(1)
     b._pos.append({"symbol": "AAA", "market_value": "1000", "qty": "10"})
-    e.state["meta"]["AAA"] = {"strategy": "swing", "side": "long", "entry_date": str(date.today()), "ts": 0}
+    e.state["meta"]["AAA"] = {"strategy": "swing", "side": "long", "entry_date": str(NOW.date()), "ts": 0}
     e.swing_pass(NOW, 10)
     assert "AAA" in b.closed
