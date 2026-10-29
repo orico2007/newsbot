@@ -133,7 +133,7 @@ class Engine:
             return False
         ref = price or ((dec.stop_price + dec.take_profit_price) / 2)
         self.state["meta"][sym] = {"strategy": strategy, "side": side, "entry_date": str(date.today()), "ts": time.time(),
-                                   "entry": ref, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
+                                   "entry": ref, "qty": dec.qty, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
                                    "atr": atr or max(abs(ref - dec.stop_price) / 1.5, 0.01)}
         self.state["trades_today"] = self.state.get("trades_today", 0) + 1
         self._j(now, sym, headline, v, strategy, side, "ENTER",
@@ -427,6 +427,8 @@ class Engine:
         try:
             _report.write(today, self.b.account(), self._pos(), JOURNAL, DATA / "journal_crypto.csv", DATA / "sectors.json", DATA)
             scorecard.write(DATA / "trades.csv", DATA)
+            acct = self.b.account(); pnl = float(acct["equity"]) - float(acct["last_equity"])
+            alerts.send(f"Day summary: {pnl:+,.2f} USD ({pnl / float(acct['last_equity']) * 100:+.2f}%)\nEquity {float(acct['equity']):,.2f}", "NewsBot daily")
         except Exception as e:
             log.warning("report failed: %s", e)
 
@@ -472,6 +474,10 @@ class Engine:
                                    "pattern": m.get("pattern", ""), "side": m["side"], "entry": round(fill, 4), "exit": round(exit_px, 4),
                                    "pnl_pct": round(pnl, 3), "R": round(r, 2) if r != "" else "", "held_days": held,
                                    "entry_slip_pct": m.get("slip", ""), "reason": reason})
+            usd = ((exit_px - fill) if long else (fill - exit_px)) * (m.get("qty") or 0)
+            icon = "WIN" if pnl > 0 else "LOSS"
+            alerts.send(f"{icon} {sym} {m['strategy']} {m['side']}: {pnl:+.2f}%" + (f" ({usd:+,.2f} USD)" if m.get("qty") else "") +
+                        f"\nentry {fill:.2f} -> exit {exit_px:.2f}", "NewsBot")
         except Exception as e:
             log.warning("record trade failed %s: %s", sym, e)
 

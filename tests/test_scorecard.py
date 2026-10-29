@@ -48,3 +48,16 @@ def test_disabled_merges_scorecard(tmp_path, monkeypatch):
     (tmp_path / "scorecard.json").write_text(json.dumps({"disabled": ["orb"]}), encoding="utf-8")
     (tmp_path / "backtest.json").write_text(json.dumps({"disabled": ["flag"]}), encoding="utf-8")
     assert e._disabled_patterns() == {"orb", "flag"}
+
+def test_alert_on_closed_trade_with_pnl(tmp_path, monkeypatch):
+    b, e, sent = eng(tmp_path, monkeypatch)
+    e.state["meta"]["AAA"] = {"strategy": "swing", "side": "long", "entry": 100.0, "fill": 100.0, "qty": 10, "stop0": 96, "ts": 0, "entry_date": "2026-10-20", "pattern": "flag", "last": 104}
+    b.fills["AAA"] = 105.0
+    e.reconcile([])
+    assert any("WIN AAA" in t and "+5.00%" in t and "+50.00 USD" in t for t in sent)
+
+def test_alert_on_loss_short(tmp_path, monkeypatch):
+    b, e, sent = eng(tmp_path, monkeypatch)
+    e.state["meta"]["BBB"] = {"strategy": "day", "side": "short", "entry": 50.0, "fill": 50.0, "qty": 20, "stop0": 51.5, "ts": 0, "pattern": "orb", "last": 51.0, "entry_date": "2026-10-29"}
+    e.reconcile([])
+    assert any("LOSS BBB" in t and "-2.00" in t or "LOSS BBB" in t and "-20.00 USD" in t for t in sent)

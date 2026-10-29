@@ -45,6 +45,9 @@ class CryptoEngine:
                                    "side": "long", "entry": m["entry"], "exit": price, "pnl_pct": round(pnl, 3),
                                    "R": round((price - m["entry"]) / risk, 2) if risk > 0 else "", "held_days": (now - datetime.fromisoformat(m["entry_time"])).days,
                                    "entry_slip_pct": "", "reason": reason})
+            usd = (price - m["entry"]) * (m.get("qty") or 0)
+            alerts.send(f"{'WIN' if pnl > 0 else 'LOSS'} CRYPTO {m['symbol']}: {pnl:+.2f}%" + (f" ({usd:+,.2f} USD)" if m.get("qty") else "") +
+                        f"\nentry {m['entry']} -> exit {price}", "NewsBot")
         except Exception as e:
             log.warning("crypto trade log failed: %s", e)
 
@@ -118,7 +121,7 @@ class CryptoEngine:
         except Exception as e:
             self._j(now, sym, headline, score, why, "error", str(e)); return False, str(e)
         self.state["meta"][key(sym)] = {"symbol": sym, "entry": price, "stop": round(stop, 6), "target": round(target, 6), "atr": a,
-                                        "high": price, "entry_time": now.isoformat(), "ts": self.clock(), "stop0": round(stop, 6), "pattern": why}
+                                        "high": price, "qty": qty, "entry_time": now.isoformat(), "ts": self.clock(), "stop0": round(stop, 6), "pattern": why}
         self._j(now, sym, headline, score, why, "ENTER", f"qty={qty} entry={price} stop={stop:.6g} tp={target:.6g} x{mult}")
         return True, "ok"
 
