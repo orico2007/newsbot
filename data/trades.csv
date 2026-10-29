@@ -8,3 +8,6 @@ closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pc
 2026-10-29T19:33:18.518414+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
 2026-10-29T19:32:18.518414+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
 2026-10-29T19:33:18.518414+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news
+2026-10-29T19:45:57.880404+00:00,ETH/USD,crypto,base_breakout,long,207.0,195.924374,-5.351,-1.05,0,,stop 196.424374
+2026-10-29T19:44:57.880404+00:00,ETH/USD,crypto,base_breakout,long,207.0,209.28781281661918,1.105,0.22,0,,stop 210.431719
+2026-10-29T19:45:57.880404+00:00,ETH/USD,crypto,base_breakout,long,207.0,207.0,0.0,0.0,0,,bearish news

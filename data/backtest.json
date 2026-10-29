@@ -1,0 +1,148 @@
+{
+ "updated": "2026-10-29T19:47:27.267037+00:00",
+ "stats": {
+  "trend_pullback": {
+   "n": 332,
+   "win_rate": 45.8,
+   "avg_R": 0.045,
+   "avg_pnl_pct": -0.154,
+   "profit_factor": 0.93,
+   "avg_hold": 6.0,
+   "long_n": 176,
+   "short_n": 156
+  },
+  "ALL": {
+   "n": 1512,
+   "win_rate": 46.0,
+   "avg_R": -0.013,
+   "avg_pnl_pct": -0.219,
+   "profit_factor": 0.92,
+   "avg_hold": 7.0,
+   "long_n": 805,
+   "short_n": 707
+  },
+  "fib_pullback": {
+   "n": 135,
+   "win_rate": 51.1,
+   "avg_R": 0.061,
+   "avg_pnl_pct": 0.335,
+   "profit_factor": 1.15,
+   "avg_hold": 7.1,
+   "long_n": 68,
+   "short_n": 67
+  },
+  "breakout_retest": {
+   "n": 189,
+   "win_rate": 44.4,
+   "avg_R": -0.053,
+   "avg_pnl_pct": -0.144,
+   "profit_factor": 0.94,
+   "avg_hold": 7.1,
+   "long_n": 92,
+   "short_n": 97
+  },
+  "flag": {
+   "n": 278,
+   "win_rate": 44.2,
+   "avg_R": 0.039,
+   "avg_pnl_pct": 0.52,
+   "profit_factor": 1.21,
+   "avg_hold": 7.7,
+   "long_n": 191,
+   "short_n": 87
+  },
+  "base_breakout": {
+   "n": 239,
+   "win_rate": 48.5,
+   "avg_R": -0.082,
+   "avg_pnl_pct": -0.505,
+   "profit_factor": 0.8,
+   "avg_hold": 7.5,
+   "long_n": 111,
+   "short_n": 128
+  },
+  "double_bottom": {
+   "n": 172,
+   "win_rate": 46.5,
+   "avg_R": -0.115,
+   "avg_pnl_pct": -1.353,
+   "profit_factor": 0.61,
+   "avg_hold": 7.8,
+   "long_n": 80,
+   "short_n": 92
+  },
+  "inverse_head_shoulders": {
+   "n": 16,
+   "win_rate": 43.8,
+   "avg_R": -0.346,
+   "avg_pnl_pct": -2.623,
+   "profit_factor": 0.37,
+   "avg_hold": 7.6,
+   "long_n": 7,
+   "short_n": 9
+  },
+  "runaway_gap": {
+   "n": 47,
+   "win_rate": 36.2,
+   "avg_R": 0.088,
+   "avg_pnl_pct": 0.169,
+   "profit_factor": 1.07,
+   "avg_hold": 5.4,
+   "long_n": 21,
+   "short_n": 26
+  },
+  "breakaway_gap": {
+   "n": 18,
+   "win_rate": 27.8,
+   "avg_R": 0.09,
+   "avg_pnl_pct": -0.705,
+   "profit_factor": 0.73,
+   "avg_hold": 7.0,
+   "long_n": 9,
+   "short_n": 9
+  },
+  "island_bottom": {
+   "n": 22,
+   "win_rate": 72.7,
+   "avg_R": 0.005,
+   "avg_pnl_pct": -0.456,
+   "profit_factor": 0.79,
+   "avg_hold": 2.7,
+   "long_n": 12,
+   "short_n": 10
+  },
+  "high52_breakout": {
+   "n": 47,
+   "win_rate": 44.7,
+   "avg_R": 0.003,
+   "avg_pnl_pct": -0.025,
+   "profit_factor": 0.99,
+   "avg_hold": 7.9,
+   "long_n": 30,
+   "short_n": 17
+  },
+  "bollinger_squeeze": {
+   "n": 12,
+   "win_rate": 33.3,
+   "avg_R": -0.227,
+   "avg_pnl_pct": -1.726,
+   "profit_factor": 0.49,
+   "avg_hold": 6.1,
+   "long_n": 6,
+   "short_n": 6
+  },
+  "oversold_bounce": {
+   "n": 5,
+   "win_rate": 40.0,
+   "avg_R": -0.309,
+   "avg_pnl_pct": -1.958,
+   "profit_factor": 0.51,
+   "avg_hold": 4.0,
+   "long_n": 2,
+   "short_n": 3
+  }
+ },
+ "disabled": [
+  "double_bottom"
+ ]
+}
