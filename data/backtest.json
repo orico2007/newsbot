@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-30T08:36:13.962417+00:00",
+ "updated": "2026-10-30T09:18:45.886127+00:00",
  "stats": {
   "ema21_bounce": {
    "n": 518,
@@ -861,16 +861,6 @@
    "long_n": 18,
    "short_n": 8
   },
-  "evening_star": {
-   "n": 29,
-   "win_rate": 41.4,
-   "avg_R": -0.14,
-   "avg_pnl_pct": -0.786,
-   "profit_factor": 0.75,
-   "avg_hold": 6.5,
-   "long_n": 0,
-   "short_n": 29
-  },
   "gap_down_reclaim": {
    "n": 30,
    "win_rate": 53.3,
@@ -880,6 +870,26 @@
    "avg_hold": 5.5,
    "long_n": 17,
    "short_n": 13
+  },
+  "oversold_bounce": {
+   "n": 11,
+   "win_rate": 45.5,
+   "avg_R": 0.633,
+   "avg_pnl_pct": 0.426,
+   "profit_factor": 1.16,
+   "avg_hold": 5.0,
+   "long_n": 5,
+   "short_n": 6
+  },
+  "evening_star": {
+   "n": 29,
+   "win_rate": 41.4,
+   "avg_R": -0.14,
+   "avg_pnl_pct": -0.786,
+   "profit_factor": 0.75,
+   "avg_hold": 6.5,
+   "long_n": 0,
+   "short_n": 29
   },
   "shooting_star": {
    "n": 12,
@@ -921,15 +931,15 @@
    "long_n": 24,
    "short_n": 23
   },
-  "oversold_bounce": {
-   "n": 11,
-   "win_rate": 45.5,
-   "avg_R": 0.633,
-   "avg_pnl_pct": 0.426,
-   "profit_factor": 1.16,
-   "avg_hold": 5.0,
+  "three_white_soldiers": {
+   "n": 8,
+   "win_rate": 37.5,
+   "avg_R": -0.266,
+   "avg_pnl_pct": -2.158,
+   "profit_factor": 0.23,
+   "avg_hold": 8.4,
    "long_n": 5,
-   "short_n": 6
+   "short_n": 3
   },
   "parabolic_reversal": {
    "n": 7,
@@ -940,16 +950,6 @@
    "avg_hold": 6.0,
    "long_n": 0,
    "short_n": 7
-  },
-  "three_white_soldiers": {
-   "n": 8,
-   "win_rate": 37.5,
-   "avg_R": -0.266,
-   "avg_pnl_pct": -2.158,
-   "profit_factor": 0.23,
-   "avg_hold": 8.4,
-   "long_n": 5,
-   "short_n": 3
   },
   "ALL_long": {
    "n": 9000,
@@ -2301,25 +2301,25 @@
    "long_n": 18,
    "short_n": 0
   },
-  "SIDE|evening_star|short": {
-   "n": 29,
-   "win_rate": 41.4,
-   "avg_R": -0.14,
-   "avg_pnl_pct": -0.786,
-   "profit_factor": 0.75,
-   "avg_hold": 6.5,
-   "long_n": 0,
-   "short_n": 29
+  "SIDE|island_bottom|long": {
+   "n": 28,
+   "win_rate": 78.6,
+   "avg_R": 0.026,
+   "avg_pnl_pct": 0.061,
+   "profit_factor": 1.04,
+   "avg_hold": 2.6,
+   "long_n": 28,
+   "short_n": 0
   },
-  "SIDE|gap_up_hold|short": {
-   "n": 55,
-   "win_rate": 36.4,
-   "avg_R": -0.152,
-   "avg_pnl_pct": -1.42,
-   "profit_factor": 0.67,
-   "avg_hold": 6.8,
-   "long_n": 0,
-   "short_n": 55
+  "SIDE|falling_wedge|long": {
+   "n": 30,
+   "win_rate": 63.3,
+   "avg_R": 0.071,
+   "avg_pnl_pct": 0.651,
+   "profit_factor": 1.45,
+   "avg_hold": 6.2,
+   "long_n": 30,
+   "short_n": 0
   },
   "SIDE|gap_down_reclaim|long": {
    "n": 17,
@@ -2331,15 +2331,25 @@
    "long_n": 17,
    "short_n": 0
   },
-  "SIDE|shooting_star|short": {
-   "n": 12,
-   "win_rate": 25.0,
-   "avg_R": -0.392,
-   "avg_pnl_pct": -2.96,
-   "profit_factor": 0.36,
-   "avg_hold": 4.5,
+  "SIDE|oversold_bounce|long": {
+   "n": 5,
+   "win_rate": 20.0,
+   "avg_R": -0.13,
+   "avg_pnl_pct": -3.379,
+   "profit_factor": 0.33,
+   "avg_hold": 3.2,
+   "long_n": 5,
+   "short_n": 0
+  },
+  "SIDE|gap_up_hold|short": {
+   "n": 55,
+   "win_rate": 36.4,
+   "avg_R": -0.152,
+   "avg_pnl_pct": -1.42,
+   "profit_factor": 0.67,
+   "avg_hold": 6.8,
    "long_n": 0,
-   "short_n": 12
+   "short_n": 55
   },
   "SIDE|bollinger_squeeze|short": {
    "n": 66,
@@ -2351,26 +2361,6 @@
    "long_n": 0,
    "short_n": 66
   },
-  "SIDE|double_top|short": {
-   "n": 22,
-   "win_rate": 36.4,
-   "avg_R": -0.195,
-   "avg_pnl_pct": -1.678,
-   "profit_factor": 0.34,
-   "avg_hold": 9.1,
-   "long_n": 0,
-   "short_n": 22
-  },
-  "SIDE|island_bottom|long": {
-   "n": 28,
-   "win_rate": 78.6,
-   "avg_R": 0.026,
-   "avg_pnl_pct": 0.061,
-   "profit_factor": 1.04,
-   "avg_hold": 2.6,
-   "long_n": 28,
-   "short_n": 0
-  },
   "SIDE|avwap_reclaim|long": {
    "n": 68,
    "win_rate": 45.6,
@@ -2381,6 +2371,56 @@
    "long_n": 68,
    "short_n": 0
   },
+  "SIDE|bb_lower_bounce|short": {
+   "n": 41,
+   "win_rate": 46.3,
+   "avg_R": -0.027,
+   "avg_pnl_pct": 0.008,
+   "profit_factor": 1.0,
+   "avg_hold": 4.3,
+   "long_n": 0,
+   "short_n": 41
+  },
+  "SIDE|three_line_strike_bull|long": {
+   "n": 39,
+   "win_rate": 41.0,
+   "avg_R": -0.019,
+   "avg_pnl_pct": 0.139,
+   "profit_factor": 1.06,
+   "avg_hold": 7.3,
+   "long_n": 39,
+   "short_n": 0
+  },
+  "SIDE|evening_star|short": {
+   "n": 29,
+   "win_rate": 41.4,
+   "avg_R": -0.14,
+   "avg_pnl_pct": -0.786,
+   "profit_factor": 0.75,
+   "avg_hold": 6.5,
+   "long_n": 0,
+   "short_n": 29
+  },
+  "SIDE|shooting_star|short": {
+   "n": 12,
+   "win_rate": 25.0,
+   "avg_R": -0.392,
+   "avg_pnl_pct": -2.96,
+   "profit_factor": 0.36,
+   "avg_hold": 4.5,
+   "long_n": 0,
+   "short_n": 12
+  },
+  "SIDE|double_top|short": {
+   "n": 22,
+   "win_rate": 36.4,
+   "avg_R": -0.195,
+   "avg_pnl_pct": -1.678,
+   "profit_factor": 0.34,
+   "avg_hold": 9.1,
+   "long_n": 0,
+   "short_n": 22
+  },
   "SIDE|bullish_engulfing_support|long": {
    "n": 57,
    "win_rate": 52.6,
@@ -2389,16 +2429,6 @@
    "profit_factor": 1.96,
    "avg_hold": 7.7,
    "long_n": 57,
-   "short_n": 0
-  },
-  "SIDE|falling_wedge|long": {
-   "n": 30,
-   "win_rate": 63.3,
-   "avg_R": 0.071,
-   "avg_pnl_pct": 0.651,
-   "profit_factor": 1.45,
-   "avg_hold": 6.2,
-   "long_n": 30,
    "short_n": 0
   },
   "SIDE|capitulation_reversal|short": {
@@ -2431,66 +2461,6 @@
    "long_n": 24,
    "short_n": 0
   },
-  "SIDE|three_line_strike_bull|long": {
-   "n": 39,
-   "win_rate": 41.0,
-   "avg_R": -0.019,
-   "avg_pnl_pct": 0.139,
-   "profit_factor": 1.06,
-   "avg_hold": 7.3,
-   "long_n": 39,
-   "short_n": 0
-  },
-  "SIDE|oversold_bounce|long": {
-   "n": 5,
-   "win_rate": 20.0,
-   "avg_R": -0.13,
-   "avg_pnl_pct": -3.379,
-   "profit_factor": 0.33,
-   "avg_hold": 3.2,
-   "long_n": 5,
-   "short_n": 0
-  },
-  "SIDE|bb_lower_bounce|short": {
-   "n": 41,
-   "win_rate": 46.3,
-   "avg_R": -0.027,
-   "avg_pnl_pct": 0.008,
-   "profit_factor": 1.0,
-   "avg_hold": 4.3,
-   "long_n": 0,
-   "short_n": 41
-  },
-  "SIDE|parabolic_reversal|short": {
-   "n": 7,
-   "win_rate": 28.6,
-   "avg_R": -0.443,
-   "avg_pnl_pct": -2.372,
-   "profit_factor": 0.43,
-   "avg_hold": 6.0,
-   "long_n": 0,
-   "short_n": 7
-  },
-  "SIDE|gap_down_reclaim|short": {
-   "n": 13,
-   "win_rate": 53.8,
-   "avg_R": 0.033,
-   "avg_pnl_pct": 0.776,
-   "profit_factor": 1.22,
-   "avg_hold": 4.6,
-   "long_n": 0,
-   "short_n": 13
-  },
-  "SIDE|three_white_soldiers|short": {
-   "n": 3,
-   "win_rate": 33.3,
-   "avg_R": -0.451,
-   "avg_pnl_pct": -3.757,
-   "profit_factor": 0.15,
-   "avg_hold": 7.7,
-   "long_n": 0,
-   "short_n": 3
-  },
   "SIDE|rsi_divergence|long": {
    "n": 34,
    "win_rate": 73.5,
@@ -2521,6 +2491,36 @@
    "long_n": 5,
    "short_n": 0
   },
+  "SIDE|three_white_soldiers|short": {
+   "n": 3,
+   "win_rate": 33.3,
+   "avg_R": -0.451,
+   "avg_pnl_pct": -3.757,
+   "profit_factor": 0.15,
+   "avg_hold": 7.7,
+   "long_n": 0,
+   "short_n": 3
+  },
+  "SIDE|parabolic_reversal|short": {
+   "n": 7,
+   "win_rate": 28.6,
+   "avg_R": -0.443,
+   "avg_pnl_pct": -2.372,
+   "profit_factor": 0.43,
+   "avg_hold": 6.0,
+   "long_n": 0,
+   "short_n": 7
+  },
+  "SIDE|gap_down_reclaim|short": {
+   "n": 13,
+   "win_rate": 53.8,
+   "avg_R": 0.033,
+   "avg_pnl_pct": 0.776,
+   "profit_factor": 1.22,
+   "avg_hold": 4.6,
+   "long_n": 0,
+   "short_n": 13
+  },
   "SIDE|vcp|short": {
    "n": 8,
    "win_rate": 37.5,
@@ -2531,16 +2531,6 @@
    "long_n": 0,
    "short_n": 8
   },
-  "SIDE|oversold_bounce|short": {
-   "n": 6,
-   "win_rate": 66.7,
-   "avg_R": 1.269,
-   "avg_pnl_pct": 3.596,
-   "profit_factor": 6.16,
-   "avg_hold": 6.5,
-   "long_n": 0,
-   "short_n": 6
-  },
   "SIDE|capitulation_reversal|long": {
    "n": 5,
    "win_rate": 60.0,
@@ -2550,6 +2540,16 @@
    "avg_hold": 8.4,
    "long_n": 5,
    "short_n": 0
+  },
+  "SIDE|oversold_bounce|short": {
+   "n": 6,
+   "win_rate": 66.7,
+   "avg_R": 1.269,
+   "avg_pnl_pct": 3.596,
+   "profit_factor": 6.16,
+   "avg_hold": 6.5,
+   "long_n": 0,
+   "short_n": 6
   },
   "SIDE|hammer_support|short": {
    "n": 4,
