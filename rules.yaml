@@ -90,8 +90,8 @@ trailing:                        # ניהול פוזיציה פתוחה: ברי�
   trail_atr: 2.5                 # אחרי 2 ATR רווח - סטופ נגרר 2.5 ATR מתחת לשיא
   trail_activate_atr: 2.0
 
-research:                        # תוצרי research.py (walk-forward): רק מה שהוכיח את עצמו על נתונים שלא נבחרו עליהם
-  enforce: true
+research:                        # תוצרי research.py (walk-forward). כבוי: ב-holdout ה-whitelist לא שיפר את התשואה לעסקה (ראה data/research.md)
+  enforce: false
   min_validated: 5               # whitelist פעיל רק כשיש לפחות 5 תבניות מאומתות (אחרת חוזרים לכיבוי לפי ה-backtest)
 
 scale_out:                       # מימוש רווח חלקי + סטופ מוצמד לנמוך הבא אחרי כל יעד

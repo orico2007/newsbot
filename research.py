@@ -93,7 +93,8 @@ def stat(ts):
     if not ts: return {"n": 0, "win": 0.0, "avgR": 0.0, "avg_pct": 0.0, "pf": None, "pf_pct": None}
     w = [t["R"] for t in ts if t["R"] > 0]; l = [-t["R"] for t in ts if t["R"] <= 0]
     wp = [t["pnl_pct"] for t in ts if t["pnl_pct"] > 0]; lp = [-t["pnl_pct"] for t in ts if t["pnl_pct"] <= 0]
-    return {"n": len(ts), "win": round(100 * len(w) / len(ts), 1), "avgR": round(sum(t["R"] for t in ts) / len(ts), 3),
+    al = [t["alpha"] for t in ts if "alpha" in t]
+    return {"alpha": round(sum(al) / len(al), 3) if al else None, "n": len(ts), "win": round(100 * len(w) / len(ts), 1), "avgR": round(sum(t["R"] for t in ts) / len(ts), 3),
             "avg_pct": round(sum(t["pnl_pct"] for t in ts) / len(ts), 3),
             "pf": round(sum(w) / sum(l), 2) if l and sum(l) > 0 else None, "pf_pct": round(sum(wp) / sum(lp), 2) if lp and sum(lp) > 0 else None}
 
@@ -183,6 +184,13 @@ def pipeline(recs, bars_by_sym, spy=None, etf=None):
     בלי C כל מה שנבחר על נתונים 'שלא נראו' נראה טוב מדי (בחירה על אותו מבחן = רמאות עצמית)."""
     if spy and etf: backtest.annotate(recs, spy, etf)
     base_trades = evaluate(recs, bars_by_sym, DEFAULT_CFG)
+    if spy:                                  # alpha = תשואת העסקה פחות מה שהשוק (SPY) עשה באותה תקופה (בשורט: הפוך)
+        idx = {b["t"][:10]: k for k, b in enumerate(spy)}
+        for t in base_trades:
+            k = idx.get(t["t"])
+            if k is not None and k + t["held"] < len(spy):
+                m = (spy[k + t["held"]]["c"] / spy[k]["c"] - 1) * 100
+                t["alpha"] = t["pnl_pct"] - (m if t["side"] == "long" else -m)
     c1, c2 = _cuts(base_trades)
     A = [t for t in base_trades if t["t"] < c1]; B = [t for t in base_trades if c1 <= t["t"] < c2]; C = [t for t in base_trades if t["t"] >= c2]
     res = {"cut1": c1, "cut2": c2, "n_signals": len(recs), "baseline": {}, "filters": {}, "validated": {}, "exits": None}
@@ -198,6 +206,21 @@ def pipeline(recs, bars_by_sym, spy=None, etf=None):
     keep = lambda ts: [t for t in ts if f"{t['pattern']}:{t['side']}" in V and t.get("regime", "bull") in V[f"{t['pattern']}:{t['side']}"]["regimes"]]
     VA, VB, VC = keep(FA), keep(FB), keep(FC)
     res["after_validation"] = {"A": S(VA), "B": S(VB), "C": S(VC), "C_long": S(VC, "long"), "C_short": S(VC, "short")}
+    # וריאנטים להשוואה על ה-holdout (כולם נבחרו על A+B בלבד)
+    by = defaultdict(lambda: {"A": [], "B": []})
+    for t in A: by[(t["pattern"], t["side"])]["A"].append(t)
+    for t in B: by[(t["pattern"], t["side"])]["B"].append(t)
+    bad = {k for k, d in by.items() if len(d["A"]) >= 20 and len(d["B"]) >= 10 and stat(d["A"])["avgR"] < 0 and stat(d["B"])["avgR"] < 0}
+    res["blacklist"] = sorted(f"{p}:{s}" for p, s in bad)
+    noblack = lambda ts: [t for t in ts if (t["pattern"], t["side"]) not in bad]
+    gate = lambda ts: [t for t in ts if t["side"] == "long" and t.get("regime") in ("bull", "neutral")]
+    res["variants"] = {
+        "all longs": S(C, "long"), "all shorts": S(C, "short"),
+        "longs, market not bearish": S(gate(C)), "longs, market bullish only": S([t for t in C if t["side"] == "long" and t.get("regime") == "bull"]),
+        "longs minus blacklisted patterns": S(noblack([t for t in C if t["side"] == "long"])),
+        "longs minus blacklist, market not bearish": S(gate(noblack(C))),
+        "longs, high-volume only (rvol>=1.26)": S([t for t in C if t["side"] == "long" and (t["f"].get("rvol") or 0) >= 1.26]),
+        "whitelist (validated patterns) longs": S(VC, "long")}
     vkeys = {(t["sym"], t["pattern"], t["side"], t["i"]) for t in VA + VB + VC}
     vrecs = [r for r in recs if (r["sym"], r["p"], r["side"], r["i"]) in vkeys]
     ra = [r for r in vrecs if r["t"] < c1]; rb = [r for r in vrecs if c1 <= r["t"] < c2]; rc = [r for r in vrecs if r["t"] >= c2]
@@ -229,6 +252,10 @@ def to_markdown(res, symbols, years):
     L += [row("**FINAL: filters + validated patterns**", av["C"]), row("FINAL longs", av["C_long"]), row("FINAL shorts", av["C_short"]), "",
           "## Same sets on earlier periods (selection bias makes A and B look better than reality)", ""] + hdr
     L += [row("FINAL on A (chosen on this)", av["A"]), row("FINAL on B (confirmation)", av["B"]), ""]
+    L += ["## Variants compared on the holdout (alpha = trade return minus what SPY did over the same days; positive = beats just holding the market)", "",
+          "| Variant | Trades | Win % | Avg R | Avg % | Alpha % | Profit factor |", "|---|---|---|---|---|---|---|"]
+    for k, s in res.get("variants", {}).items(): L.append(f"| {k} | {s['n']} | {s['win']} | {s['avgR']} | {s['avg_pct']} | {s['alpha']} | {s['pf']} |")
+    L += ["", "Blacklist (lost on both A and B): " + (", ".join(res.get("blacklist", [])) or "none"), ""]
     L += ["## Feature filters chosen (improve A and confirmed on B)", ""]
     for side in ("long", "short"):
         L.append(f"- {side}: " + (", ".join(f"{r['f']} {r['op']} {r['v']}" for r in res["filters"][side]) or "none"))

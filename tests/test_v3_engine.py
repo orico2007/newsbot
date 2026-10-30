@@ -165,6 +165,9 @@ def _write_research(validated=None, filters=None, exits=None):
     if filters is not None: (bot.DATA / "filters.json").write_text(json.dumps(filters), encoding="utf-8")
     if exits is not None: (bot.DATA / "exits.json").write_text(json.dumps(exits), encoding="utf-8")
 
+def _enf():
+    r = copy.deepcopy(R); r["research"] = {"enforce": True, "min_validated": 5}; return r
+
 def _flag_setup(b):
     d = swing_flag_daily(); last = d[-1]["c"]
     b.bar_data[("AAA", "1Day")] = d; b.snap["AAA"] = (last, d[-2]["c"], 2e8)
@@ -172,31 +175,36 @@ def _flag_setup(b):
 OTHER5 = {f"p{i}:long": {"regimes": ["bull", "bear", "neutral"], "mult": 1.0} for i in range(5)}
 
 def test_whitelist_blocks_unvalidated_pattern(mk3):
-    b, e = mk3(); _flag_setup(b); _write_research(validated=OTHER5, filters={"long": [], "short": []})
+    b, e = mk3(_enf()); _flag_setup(b); _write_research(validated=OTHER5, filters={"long": [], "short": []})
     e.swing_pass(NOW, 10)
     assert not b.orders                                            # flag לא ברשימה המאומתת
 
 def test_whitelist_allows_validated_and_scales_size(mk3):
     b, e = mk3(); _flag_setup(b)
     e.swing_pass(NOW, 10); base_qty = b.orders[0][1]               # בלי research: נכנס
-    b2, e2 = mk3(); _flag_setup(b2)
+    b2, e2 = mk3(_enf()); _flag_setup(b2)
     _write_research(validated=dict(OTHER5, **{"flag:long": {"regimes": ["bull", "bear", "neutral"], "mult": 0.75}}), filters={"long": [], "short": []})
     e2.swing_pass(NOW, 10)
     assert b2.orders and b2.orders[0][1] < base_qty                # מכפיל 0.75 מקטין את הפוזיציה
 
 def test_whitelist_inactive_with_few_validated_patterns(mk3):
-    b, e = mk3(); _flag_setup(b); _write_research(validated={"p0:long": {"regimes": ["bull"], "mult": 1.0}})
+    b, e = mk3(_enf()); _flag_setup(b); _write_research(validated={"p0:long": {"regimes": ["bull"], "mult": 1.0}})
     e.swing_pass(NOW, 10)
     assert b.orders                                                # פחות מ-5 מאומתות: לא מחילים whitelist
 
 def test_feature_filter_blocks_entry(mk3):
-    b, e = mk3(); _flag_setup(b); _write_research(validated={}, filters={"long": [{"f": "rvol", "op": "<=", "v": 0.0001}], "short": []})
+    b, e = mk3(_enf()); _flag_setup(b); _write_research(validated={}, filters={"long": [{"f": "rvol", "op": "<=", "v": 0.0001}], "short": []})
     e.swing_pass(NOW, 10)
     assert not b.orders
 
 def test_research_exits_override_target_and_hold(mk3):
-    b, e = mk3(); _flag_setup(b); _write_research(validated={}, filters={"long": [], "short": []}, exits={"stop_atr": None, "target_r": 2.0, "no_target": False, "hold": 7, "scale": []})
+    b, e = mk3(_enf()); _flag_setup(b); _write_research(validated={}, filters={"long": [], "short": []}, exits={"stop_atr": None, "target_r": 2.0, "no_target": False, "hold": 7, "scale": []})
     e.swing_pass(NOW, 10)
     sym, qty, side, stop, tp, tif = b.orders[0]
     price = b.snap["AAA"][0]
     assert abs((tp - price) - 2.0 * (price - stop)) < 0.6 and e._hold_days() == 7
+
+def test_research_not_enforced_by_default(mk3):
+    b, e = mk3(); _flag_setup(b); _write_research(validated=OTHER5, filters={"long": [{"f": "rvol", "op": "<=", "v": 0.0001}], "short": []})
+    e.swing_pass(NOW, 10)
+    assert b.orders                                                # enforce=false: ה-research לא חוסם
