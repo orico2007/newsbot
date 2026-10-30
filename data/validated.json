@@ -1,0 +1,259 @@
+{
+ "updated": "2026-10-30T10:50:09.014663+00:00",
+ "holdout_from": "2024-01-10",
+ "patterns": {
+  "base_breakout:long": {
+   "train": {
+    "n": 386,
+    "win": 54.4,
+    "avgR": 0.055,
+    "avg_pct": 0.391,
+    "pf": 1.18,
+    "pf_pct": 1.22
+   },
+   "test": {
+    "n": 258,
+    "win": 57.8,
+    "avgR": 0.054,
+    "avg_pct": 0.448,
+    "pf": 1.17,
+    "pf_pct": 1.28
+   },
+   "regimes": [
+    "bull",
+    "bear",
+    "neutral"
+   ],
+   "mult": 0.75
+  },
+  "bollinger_squeeze:long": {
+   "train": {
+    "n": 136,
+    "win": 52.2,
+    "avgR": 0.114,
+    "avg_pct": 1.001,
+    "pf": 1.24,
+    "pf_pct": 1.51
+   },
+   "test": {
+    "n": 107,
+    "win": 51.4,
+    "avgR": 0.095,
+    "avg_pct": 0.389,
+    "pf": 1.24,
+    "pf_pct": 1.21
+   },
+   "regimes": [
+    "bull",
+    "bear"
+   ],
+   "mult": 1.0
+  },
+  "keltner_thrust:long": {
+   "train": {
+    "n": 81,
+    "win": 61.7,
+    "avgR": 0.22,
+    "avg_pct": 1.062,
+    "pf": 1.81,
+    "pf_pct": 1.76
+   },
+   "test": {
+    "n": 60,
+    "win": 58.3,
+    "avgR": 0.174,
+    "avg_pct": 0.787,
+    "pf": 1.66,
+    "pf_pct": 1.6
+   },
+   "regimes": [
+    "bull",
+    "bear",
+    "neutral"
+   ],
+   "mult": 1.25
+  },
+  "three_line_strike_bull:long": {
+   "train": {
+    "n": 27,
+    "win": 59.3,
+    "avgR": 0.366,
+    "avg_pct": 2.494,
+    "pf": 2.39,
+    "pf_pct": 3.19
+   },
+   "test": {
+    "n": 14,
+    "win": 50.0,
+    "avgR": 0.32,
+    "avg_pct": 2.159,
+    "pf": 2.08,
+    "pf_pct": 3.26
+   },
+   "regimes": [
+    "bull"
+   ],
+   "mult": 1.25
+  },
+  "down_trendline_break:long": {
+   "train": {
+    "n": 86,
+    "win": 57.0,
+    "avgR": 0.243,
+    "avg_pct": 1.16,
+    "pf": 1.76,
+    "pf_pct": 1.59
+   },
+   "test": {
+    "n": 63,
+    "win": 54.0,
+    "avgR": 0.091,
+    "avg_pct": 0.767,
+    "pf": 1.24,
+    "pf_pct": 1.4
+   },
+   "regimes": [
+    "bull",
+    "bear",
+    "neutral"
+   ],
+   "mult": 1.0
+  },
+  "momentum_burst:long": {
+   "train": {
+    "n": 161,
+    "win": 46.6,
+    "avgR": 0.156,
+    "avg_pct": 0.637,
+    "pf": 1.31,
+    "pf_pct": 1.29
+   },
+   "test": {
+    "n": 119,
+    "win": 51.3,
+    "avgR": 0.124,
+    "avg_pct": 0.752,
+    "pf": 1.33,
+    "pf_pct": 1.48
+   },
+   "regimes": [
+    "bull",
+    "bear",
+    "neutral"
+   ],
+   "mult": 1.0
+  },
+  "outside_day_reversal:long": {
+   "train": {
+    "n": 25,
+    "win": 60.0,
+    "avgR": 0.302,
+    "avg_pct": 1.376,
+    "pf": 2.21,
+    "pf_pct": 1.89
+   },
+   "test": {
+    "n": 12,
+    "win": 66.7,
+    "avgR": 0.243,
+    "avg_pct": 1.246,
+    "pf": 1.89,
+    "pf_pct": 2.13
+   },
+   "regimes": [
+    "bull",
+    "neutral"
+   ],
+   "mult": 1.25
+  },
+  "level_bounce:long": {
+   "train": {
+    "n": 28,
+    "win": 46.4,
+    "avgR": 0.183,
+    "avg_pct": 0.197,
+    "pf": 1.41,
+    "pf_pct": 1.12
+   },
+   "test": {
+    "n": 16,
+    "win": 56.2,
+    "avgR": 0.332,
+    "avg_pct": 0.236,
+    "pf": 1.77,
+    "pf_pct": 1.14
+   },
+   "regimes": [
+    "bull",
+    "bear"
+   ],
+   "mult": 1.25
+  },
+  "volume_climax_top:short": {
+   "train": {
+    "n": 23,
+    "win": 47.8,
+    "avgR": 0.315,
+    "avg_pct": 2.324,
+    "pf": 1.7,
+    "pf_pct": 2.77
+   },
+   "test": {
+    "n": 17,
+    "win": 52.9,
+    "avgR": 0.068,
+    "avg_pct": 0.804,
+    "pf": 1.18,
+    "pf_pct": 1.58
+   },
+   "regimes": [
+    "bull"
+   ],
+   "mult": 0.75
+  },
+  "macd_pullback:long": {
+   "train": {
+    "n": 26,
+    "win": 50.0,
+    "avgR": 0.085,
+    "avg_pct": 0.449,
+    "pf": 1.44,
+    "pf_pct": 1.35
+   },
+   "test": {
+    "n": 14,
+    "win": 64.3,
+    "avgR": 0.404,
+    "avg_pct": 1.797,
+    "pf": 4.21,
+    "pf_pct": 2.72
+   },
+   "regimes": [
+    "bear"
+   ],
+   "mult": 1.25
+  },
+  "three_inside_up:long": {
+   "train": {
+    "n": 20,
+    "win": 50.0,
+    "avgR": 0.126,
+    "avg_pct": -0.21,
+    "pf": 1.29,
+    "pf_pct": 0.92
+   },
+   "test": {
+    "n": 9,
+    "win": 55.6,
+    "avgR": 0.255,
+    "avg_pct": 1.218,
+    "pf": 1.69,
+    "pf_pct": 1.63
+   },
+   "regimes": [
+    "bull"
+   ],
+   "mult": 1.25
+  }
+ }
+}
