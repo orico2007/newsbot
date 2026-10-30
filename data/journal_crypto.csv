@@ -1,0 +1,12 @@
+time,symbol,headline,score,strategy,action,detail
+2026-10-30T12:46:43.461143+00:00,BTC/USD,"Stock Market Today: Dow Jones, S&P 500, Nasdaq 100 Futures Trade Mixed as AMZN, INTC Slide After Q3 Earnings—DELL, LLY, AZN in Focus (UPDATED)",1,news,scored,neutral macro
+2026-10-30T12:56:54.009662+00:00,BTC/USD,"Bitcoin Holds $77,000 Despite Binance Scare: ‘ A Sign Of Resilience’",4,news,scored,neutral other
+2026-10-30T13:07:02.286654+00:00,BTC/USD,cumRSI2 19,47.9,cum_rsi2,ENTER,qty=0.026428 entry=77191.5 stop=72753.3 tp=79405.5 x0.68
+2026-10-30T13:56:46.116157+00:00,BTC/USD,Can Bitcoin Hold On After the Selloff? Here's What Technical Analysis Says,3,news,scored,neutral other
+2026-10-30T14:01:53.599050+00:00,BTC/USD,Will U.S. Midterms Impact Crypto? Grayscale Says Election Outcome Matters Only 'At The Margins',2,news,scored,neutral macro
+2026-10-30T14:07:00.759600+00:00,BTC/USD,"Bears Load Up on Ondas, Dutch Bros and 8 More Stocks — Is a Squeeze Brewing?",1,news,scored,neutral other
+2026-10-30T15:07:57.453585+00:00,DOGE/USD,failed break of 0.07,45.8,spring_reversal,ENTER,qty=24864.91559 entry=0.07601 stop=0.0711488 tp=0.0843339 x0.63
+2026-10-30T15:17:11.113604+00:00,BTC/USD,"Benzinga Market Summary: Market Drops On Intel And Amazon Earnings, Record Binance Hack Weighs On Bitcoin Price, Oil Climbs On Tanker Attack In Strait Of Hormuz",6,news,scored,bearish other
+2026-10-30T16:08:02.959963+00:00,BCH/USD,pullback to SMA20 candle=None,45.8,trend_pullback,ENTER,qty=6.506384 entry=290.442 stop=266.312 tp=340.867 x0.63
+2026-10-30T16:47:56.154914+00:00,BTC/USD,Intel’s Agentic AI Overshadowed By Weak PC Sales; Soft Retail Overshadows Amazon AI; Record Crypto Heist,7,news,scored,bearish other
+2026-10-30T17:07:21.738275+00:00,BTC/USD,"Nasdaq Tumbles Over 3%, Chip Stocks Sink: Stock Market Today",4,news,scored,bearish macro
