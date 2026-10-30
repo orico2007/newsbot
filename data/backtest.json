@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-30T00:10:35.548058+00:00",
+ "updated": "2026-10-30T00:12:04.443772+00:00",
  "stats": {
   "tweezer_bottom": {
    "n": 41,
@@ -1390,6 +1390,36 @@
    "avg_hold": 9.0,
    "long_n": 1,
    "short_n": 0
+  },
+  "ALIGNED": {
+   "n": 1435,
+   "win_rate": 47.6,
+   "avg_R": -0.036,
+   "avg_pnl_pct": -0.17,
+   "profit_factor": 0.93,
+   "avg_hold": 6.3,
+   "long_n": 919,
+   "short_n": 516
+  },
+  "ALIGNED_long": {
+   "n": 919,
+   "win_rate": 49.9,
+   "avg_R": 0.034,
+   "avg_pnl_pct": 0.299,
+   "profit_factor": 1.13,
+   "avg_hold": 6.3,
+   "long_n": 919,
+   "short_n": 0
+  },
+  "ALIGNED_short": {
+   "n": 516,
+   "win_rate": 43.4,
+   "avg_R": -0.16,
+   "avg_pnl_pct": -1.007,
+   "profit_factor": 0.67,
+   "avg_hold": 6.4,
+   "long_n": 0,
+   "short_n": 516
   }
  },
  "disabled": [

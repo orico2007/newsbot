@@ -5,6 +5,9 @@ Entry near the signal day's close (bot buys 15 min before close), stop first on 
 | Pattern | Trades | Win % | Avg R | Avg % | Profit factor | Avg hold (d) | Long/Short |
 |---|---|---|---|---|---|---|---|
 | ALL | 2414 | 46.8 | -0.061 | -0.253 | 0.9 | 6.3 | 1216/1198 |
+| ALIGNED with market+sector | 1435 | 47.6 | -0.036 | -0.17 | 0.93 | 6.3 | 919/516 |
+| ALIGNED longs | 919 | 49.9 | 0.034 | 0.299 | 1.13 | 6.3 | 919/0 |
+| ALIGNED shorts | 516 | 43.4 | -0.16 | -1.007 | 0.67 | 6.4 | 0/516 |
 | ALL longs | 1216 | 50.9 | 0.031 | 0.359 | 1.16 | 6.3 | 1216/0 |
 | ALL shorts | 1198 | 42.7 | -0.155 | -0.874 | 0.69 | 6.3 | 0/1198 |
 | SIDE|momentum_burst|short | 4 | 100.0 | 1.8 | 8.804 | None | 6.5 | 0/4 |
@@ -143,6 +146,8 @@ Entry near the signal day's close (bot buys 15 min before close), stop first on 
 | SIDE|three_white_soldiers|short | 1 | 0.0 | -1.013 | -4.213 | 0.0 | 3.0 | 0/1 |
 | SIDE|keltner_thrust|long | 1 | 0.0 | -1.013 | -3.831 | 0.0 | 9.0 | 1/0 |
 | SIDE|bollinger_squeeze|short | 1 | 0.0 | -1.018 | -2.862 | 0.0 | 2.0 | 0/1 |
+
+Auto-disabled directions (n>=15): base_breakout:short, ema21_bounce:short, fib_pullback:short, morning_star:short, pocket_pivot:short, rsi2_reversion:short, ttm_squeeze:short
 
 Auto-disabled directions (n>=15): base_breakout:short, ema21_bounce:short, fib_pullback:short, morning_star:short, pocket_pivot:short, rsi2_reversion:short, ttm_squeeze:short
 
