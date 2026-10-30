@@ -56,3 +56,21 @@ def test_mr_position_size_is_10_pct(mk3):
     b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e._mr_scan(NOW)
     qty, px = b.orders[0][1], b.snap["AAA"][0]
     assert abs(qty * px / 100000 - 0.10) < 0.02
+
+from helpers import FakeBrain, news as _news
+
+def test_bearish_news_vetoes_dip(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"
+    e.brain = FakeBrain(8, "bearish", "swing"); b._news = [_news("1", ("AAA",), 600, "Company slashes guidance")]
+    assert e._mr_scan(NOW) == 0 and not b.orders
+
+def test_neutral_or_no_news_allows_dip(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"
+    b._news = [_news("1", ("AAA",), 600, "Company holds conference")]
+    assert e._mr_scan(NOW) == 1
+
+def test_shrinking_revenue_vetoes_dip(mk3):
+    class F:
+        def get(self, s): return {"rev_yoy": -5, "eps_positive": True}
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.funds = F()
+    assert e._mr_scan(NOW) == 0

@@ -333,6 +333,24 @@ class Engine:
             if self._enter_signal(now, sym, "swing", sig, sc, why, True, daily): taken += 1
         return taken
 
+    def _mr_news(self, now, sym, cfg):
+        """A pullback caused by bad news/fundamentals is a falling knife, not a dip. Returns (veto, rank_bonus, text)"""
+        if not cfg.get("news_filter", True): return False, 0, ""
+        f = self._fund(sym)
+        if self._fund_ok(f, "long") is False: return True, 0, "weak fundamentals (revenue shrinking)"
+        bonus, notes = 0, []
+        try: items = self.b.news(minutes=cfg.get("news_lookback_hours", 48) * 60, limit=10, symbol=sym)
+        except Exception as e:
+            log.warning("mr news fetch failed %s: %s", sym, e); return False, 0, ""
+        for it in [i for i in items if i.symbols and len(i.symbols) <= 2][:cfg.get("max_headlines", 3)]:
+            try: v = self.brain.rate(sym, it.headline, it.summary, it.content, f)
+            except Exception as e:
+                log.warning("mr news rate failed %s: %s", sym, e); continue
+            if v.direction == "bearish" and v.score >= cfg.get("veto_score", 6):
+                return True, 0, f"bearish news ({v.score}/10): {it.headline[:70]}"
+            if v.direction == "bullish" and v.score >= 7: bonus += 10; notes.append(f"bullish news: {it.headline[:50]}")
+        return False, min(bonus, 20), "; ".join(notes)
+
     def _mr_scan(self, now):
         """mean-reversion longs (rules A/E): bull market only, strongest rule first"""
         s = self.r["swing"]; cfg = s.get("mr", {})
@@ -347,7 +365,10 @@ class Engine:
                 if not sig: continue
                 ok, why, pts = self._gate(sym, "long")
                 if not ok: continue
-                cands.append((mr.RULES[sig.name]["rank"], sym, sig, why, daily))
+                veto, bonus, nwhy = self._mr_news(now, sym, cfg)
+                if veto:
+                    self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: {nwhy}"); continue
+                cands.append((mr.RULES[sig.name]["rank"] + bonus, sym, sig, f"{why}; {nwhy}" if nwhy else why, daily))
             except Exception as e:
                 log.warning("mr scan failed %s: %s", sym, e)
         cands.sort(key=lambda x: -x[0])

@@ -22,9 +22,10 @@ class AlpacaBroker:
     def market_open(self): return self.clock()["is_open"]
     def asset(self, symbol): return self._get(self.t, f"/v2/assets/{symbol}")
 
-    def news(self, minutes=30, limit=50):
+    def news(self, minutes=30, limit=50, symbol=None):
         start = (datetime.now(timezone.utc) - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        items = self._get(self.d, "/v1beta1/news", start=start, limit=limit, sort="desc", include_content="true").get("news", [])
+        extra = {"symbols": symbol} if symbol else {}
+        items = self._get(self.d, "/v1beta1/news", start=start, limit=limit, sort="desc", include_content="true", **extra).get("news", [])
         return [NewsItem(str(n["id"]), n.get("headline", ""), n.get("summary", ""), n.get("symbols", []),
                          datetime.fromisoformat(n["created_at"].replace("Z", "+00:00")), n.get("content", "")) for n in items]
 
@@ -151,7 +152,7 @@ class MockBroker:
     def positions(self): return self._pos
     def market_open(self): return self.is_open
     def clock(self): return self._clock
-    def news(self, minutes=30, limit=50): return self._news
+    def news(self, minutes=30, limit=50, symbol=None): return [n for n in self._news if symbol is None or symbol in n.symbols]
     def snapshot(self, symbol): return self.snap[symbol]
     def bars(self, symbol, timeframe, start): return self.bar_data.get((symbol, timeframe), [])
     def asset(self, symbol): return self.assets.get(symbol, {"shortable": True, "easy_to_borrow": True, "tradable": True})

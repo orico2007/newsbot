@@ -41,6 +41,10 @@ swing:
     new_per_day: 4
     size_mult: 2.5               # x4% = 10% of equity per trade (backtest: 10% x 12 positions)
     hold_days: 7
+    news_filter: true            # skip dips caused by bearish news (Claude score >= veto_score) or shrinking revenue; bullish news ranks higher
+    veto_score: 6
+    news_lookback_hours: 48
+    max_headlines: 3
     stop_atr: 4.0
   max_hold_days: 10              # יציאת זמן (ימי מסחר)
   scan_minutes_before_close: 15  # פריצות סווינג נבדקות רק 15 דקות לפני הסגירה, כשהנר היומי כמעט סופי
