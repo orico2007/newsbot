@@ -1,7 +1,8 @@
 """לוח דוחות: לא מחזיקים סווינג דרך דוח (פער מחיר לא נשלט). מקור: לוח הדוחות הציבורי של Nasdaq.
 כל כשל = "לא ידוע" ואז לא חוסמים (fail-open) כדי שהבוט ימשיך לעבוד."""
 import requests
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 URL = "https://api.nasdaq.com/api/calendar/earnings"
 HEADERS = {"User-Agent": "Mozilla/5.0 (newsbot-paper)", "Accept": "application/json"}
@@ -30,7 +31,7 @@ class Earnings:
 
     def days_until(self, sym, today=None):
         """כמה ימים עד הדוח הקרוב (0=היום), או None אם אין / לא ידוע"""
-        today = today or date.today()
+        today = today or datetime.now(ZoneInfo("America/New_York")).date()
         for i in range(self.n + 1):
             d = today + timedelta(days=i)
             if d.weekday() >= 5: continue

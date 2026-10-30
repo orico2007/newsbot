@@ -28,3 +28,11 @@ def test_stats_and_disable():
     assert st["x"]["win_rate"] == 0 and st["y"]["avg_R"] == 1.0 and st["ALL"]["n"] == 80
     assert BT.disabled_from(st) == ["x"]
     assert "| x |" in BT.to_markdown(st, ["A"], 3, ["x"])
+
+def test_per_direction_disable_and_short_guard(tmp_path):
+    import backtest, bot, json
+    from patterns import Signal
+    mk = lambda p, side, R: {"pattern": p, "side": side, "R": R, "pnl_pct": R, "held": 5}
+    tr = [mk("x", "long", 1.0) for _ in range(20)] + [mk("x", "short", -1.0) for _ in range(20)]
+    st = backtest.stats(tr)
+    assert backtest.disabled_sides_from(st) == ["x:short"] and "x" not in backtest.disabled_from(st)

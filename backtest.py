@@ -55,6 +55,9 @@ def stats(trades):
     for side in ("long", "short"):
         ts = [t for t in allt_sides(trades) if t["side"] == side]
         if ts: out[f"ALL_{side}"] = _one(ts)
+    ps = defaultdict(list)
+    for t in trades: ps[(t["pattern"], t["side"])].append(t)
+    for (p, side), ts in ps.items(): out[f"SIDE|{p}|{side}"] = _one(ts)      # per pattern AND direction
     return out
 
 def allt_sides(trades): return trades
@@ -66,10 +69,22 @@ def _one(ts):
             "avg_pnl_pct": round(sum(t["pnl_pct"] for t in ts) / len(ts), 3), "profit_factor": round(gp / gl, 2) if gl > 0 else None,
             "avg_hold": round(sum(t["held"] for t in ts) / len(ts), 1), "long_n": sum(1 for t in ts if t["side"] == "long"), "short_n": sum(1 for t in ts if t["side"] == "short")}
 
+def _bad(v, min_n, max_avg_r, min_pf):
+    return v["n"] >= min_n and (v["avg_R"] <= max_avg_r or (v["profit_factor"] is not None and v["profit_factor"] < min_pf))
+
 def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
     """גלאים עם מספיק עסקאות ותוחלת שלילית (או profit factor נמוך) - מכבים אוטומטית"""
-    return sorted(k for k, v in st.items() if not k.startswith("ALL") and v["n"] >= min_n and
-                  (v["avg_R"] <= max_avg_r or (v["profit_factor"] is not None and v["profit_factor"] < min_pf)))
+    return sorted(k for k, v in st.items() if not k.startswith(("ALL", "SIDE|")) and _bad(v, min_n, max_avg_r, min_pf))
+
+def disabled_sides_from(st, min_n=15, max_avg_r=-0.05, min_pf=0.85):
+    """pattern:side - כיוון ספציפי של גלאי שמפסיד (למשל רק ה-short שלו), גם אם הגלאי כולו לא כבוי"""
+    whole = set(disabled_from(st))
+    out = []
+    for k, v in st.items():
+        if k.startswith("SIDE|"):
+            _, p, side = k.split("|")
+            if p not in whole and _bad(v, min_n, max_avg_r, min_pf): out.append(f"{p}:{side}")
+    return sorted(out)
 
 def to_markdown(st, symbols, years, disabled):
     rows = sorted(((k, v) for k, v in st.items() if not k.startswith("ALL")), key=lambda kv: -kv[1]["avg_R"])
@@ -78,6 +93,7 @@ def to_markdown(st, symbols, years, disabled):
           "| Pattern | Trades | Win % | Avg R | Avg % | Profit factor | Avg hold (d) | Long/Short |", "|---|---|---|---|---|---|---|---|"]
     for k, v in [("ALL", st.get("ALL")), ("ALL longs", st.get("ALL_long")), ("ALL shorts", st.get("ALL_short"))] + rows:
         if v: md.append(f"| {k} | {v['n']} | {v['win_rate']} | {v['avg_R']} | {v['avg_pnl_pct']} | {v['profit_factor']} | {v['avg_hold']} | {v['long_n']}/{v['short_n']} |")
+    md += ["", f"Auto-disabled directions (n>=15): {', '.join(disabled_sides_from(st)) or 'none'}"]
     md += ["", f"Auto-disabled (n>=30 and avg R <= -0.05 or profit factor < 0.85): {', '.join(disabled) or 'none'}"]
     return "\n".join(md)
 
@@ -104,7 +120,7 @@ def main():
     st = stats(allt) if allt else {}
     dis = disabled_from(st)
     d = pathlib.Path("data"); d.mkdir(exist_ok=True)
-    (d / "backtest.json").write_text(json.dumps({"updated": datetime.now(timezone.utc).isoformat(), "stats": st, "disabled": dis}, indent=1), encoding="utf-8")
+    (d / "backtest.json").write_text(json.dumps({"updated": datetime.now(timezone.utc).isoformat(), "stats": st, "disabled": dis, "disabled_sides": disabled_sides_from(st)}, indent=1), encoding="utf-8")
     (d / "backtest.md").write_text(to_markdown(st, syms, a.years, dis), encoding="utf-8")
     log.info("done: %d trades, disabled=%s", len(allt), dis)
 

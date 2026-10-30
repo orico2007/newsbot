@@ -289,6 +289,7 @@ class Engine:
                         w.name += "_W"; w.quality = min(1.0, w.quality + 0.1); w.notes = "weekly " + w.notes
                         sigs.append(w)
                 for sig in sigs:
+                    if self._side_blocked(sig): continue
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     htf = tf.htf_points(daily, sig.side)
@@ -298,7 +299,7 @@ class Engine:
                     fo = self._fund_ok(f, sig.side)
                     if fo is False: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok, None, None, fo, rs if sig.side == "long" else -rs)
-                    if sc >= sg["min_confluence"]: cands.append((sc, sym, sig, why, daily))
+                    if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc): cands.append((sc, sym, sig, why, daily))
             except Exception as e:
                 log.warning("pattern scan failed %s: %s", sym, e)
         cands.sort(key=lambda x: -x[0])
@@ -369,14 +370,14 @@ class Engine:
                         x.name += "_15m"; x.quality = min(1.0, x.quality + 0.05); sigs.append(x)
                 off = self._disabled_patterns()
                 for sig in sigs:
-                    if sig.name.replace("_15m", "") in off: continue
+                    if sig.name.replace("_15m", "") in off or self._side_blocked(sig): continue
                     lvl = tf.near_level(daily_ctx, sig.price, sig.side) if daily_ctx else None
                     if lvl:
                         self._j(now, sym, f"DAY {sig.name}", None, "day", sig.side, "blocked", f"daily level {lvl:.2f} right in front"); continue
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok)
-                    if sc >= sg["min_confluence"]: cands.append((sc, sym, sig, why))
+                    if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc, "day"): cands.append((sc, sym, sig, why))
             except Exception as e:
                 log.warning("day scan failed %s: %s", sym, e)
         cands.sort(key=lambda x: -x[0])
@@ -465,6 +466,21 @@ class Engine:
             alerts.send(f"Day summary: {pnl:+,.2f} USD ({pnl / float(acct['last_equity']) * 100:+.2f}%)\nEquity {float(acct['equity']):,.2f}", "NewsBot daily")
         except Exception as e:
             log.warning("report failed: %s", e)
+
+    def _bt(self):
+        try: return json.loads((DATA / "backtest.json").read_text(encoding="utf-8"))
+        except Exception: return {}
+
+    def _side_blocked(self, sig, sc=None, strategy="swing"):
+        """True = דלג: כיוון שה-backtest הראה שמפסיד, או short בלי הוכחת edge (רק ב-bear ובביטחון גבוה)"""
+        bt = self._bt(); base = sig.name.replace("_15m", "").replace("_W", "")
+        if f"{base}:{sig.side}" in set(bt.get("disabled_sides", [])): return True
+        if sig.side == "short":
+            st = (bt.get("stats") or {}).get("ALL_short")
+            if st and st["n"] >= 100 and ((st["profit_factor"] or 0) < 1.0 or st["avg_R"] < 0):
+                need = self.r.get("signals", {}).get(strategy, {}).get("min_confluence", 45) + 10
+                if self.mkt.regime != "bear" or (sc is not None and sc < need): return True
+        return False
 
     def _disabled_patterns(self):
         """גלאים שה-backtest סימן כמפסידים (data/backtest.json) - מכבים אוטומטית"""
