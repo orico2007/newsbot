@@ -5,6 +5,7 @@ from rules_loader import load_rules
 from risk import evaluate_entry
 import chart
 import tools
+import features as _feat
 from structure import pivots
 import patterns
 from models import Verdict
@@ -257,10 +258,10 @@ class Engine:
                     except Exception as e:
                         log.warning("earnings exit failed %s: %s", sym, e)
         for sym, m in list(self.state["meta"].items()):
-            if m.get("strategy") == "swing" and sym in held and weekdays_between(m["entry_date"], today) >= s["max_hold_days"]:
+            if m.get("strategy") == "swing" and sym in held and weekdays_between(m["entry_date"], today) >= self._hold_days():
                 try:
                     self.b.close_position(sym)
-                    self._j(now, sym, strategy="swing", side=m.get("side", ""), action="EXIT", detail=f"time stop {s['max_hold_days']}d")
+                    self._j(now, sym, strategy="swing", side=m.get("side", ""), action="EXIT", detail=f"time stop {self._hold_days()}d")
                 except Exception as e:
                     log.warning("time-stop failed %s: %s", sym, e)
         if s["scan"]["enabled"]:
@@ -290,8 +291,10 @@ class Engine:
                     for w in patterns.detect_all(weekly, det or None, {"rs": rs}, shorts=s["allow_short"]):
                         w.name += "_W"; w.quality = min(1.0, w.quality + 0.1); w.notes = "weekly " + w.notes
                         sigs.append(w)
+                feat = _feat.compute(daily); rsch = self._research()
                 for sig in sigs:
                     if self._side_blocked(sig): continue
+                    if not self._research_ok(sig, feat, rsch): continue
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     htf = tf.htf_points(daily, sig.side)
@@ -428,8 +431,12 @@ class Engine:
             if sig.side == "short":
                 a = self.b.asset(sym); shortable = bool(a.get("shortable") and a.get("easy_to_borrow") and a.get("tradable", True))
             mult = size_mult(sc, self.r["signals"]["size_multiplier"]["min"], self.r["signals"]["size_multiplier"]["max"])
+            if strategy == "swing" and self.r.get("research", {}).get("enforce"):
+                ve = self._research()["validated"].get(f"{sig.name.replace('_W', '')}:{sig.side}")
+                if ve: mult = round(max(self.r["signals"]["size_multiplier"]["min"], min(self.r["signals"]["size_multiplier"]["max"], mult * ve.get("mult", 1.0))), 2)
+            ov = self._apply_exits(sig, price, atr) if strategy == "swing" else (sig.stop, sig.target)
             dec = evaluate_entry(self.r, strategy, sig.side, sym, price, prev, adv, self.b.account(), self._pos(), self.state,
-                                 is_open, atr=atr, shortable=shortable, override=(sig.stop, sig.target), size_mult=mult)
+                                 is_open, atr=atr, shortable=shortable, override=ov, size_mult=mult)
         except Exception as e:
             log.warning("signal eval failed %s: %s", sym, e)
             self._j(now, sym, head, None, strategy, sig.side, "error", str(e)); return False
@@ -455,8 +462,10 @@ class Engine:
 
     def scale_out(self, now, positions):
         """מימוש רווח חלקי ביעדי ביניים; אחרי כל יעד הסטופ מוצמד לנמוך (שיא לשורט) הבא; אחר כך נגרר לפי מבנה"""
-        so = self.r.get("scale_out", {})
+        so = dict(self.r.get("scale_out", {}))
         if not so.get("enabled"): return
+        ex = self._research()["exits"] if self.r.get("research", {}).get("enforce") else {}
+        if ex.get("scale"): so["levels"] = [{"r": r, "pct": p} for r, p in ex["scale"]]
         for p in positions:
             sym = p["symbol"]; m = self.state["meta"].get(sym)
             if not m or not m.get("stop0") or not m.get("take") or p.get("asset_class") == "crypto": continue
@@ -537,6 +546,43 @@ class Engine:
             alerts.send(f"Day summary: {pnl:+,.2f} USD ({pnl / float(acct['last_equity']) * 100:+.2f}%)\nEquity {float(acct['equity']):,.2f}", "NewsBot daily")
         except Exception as e:
             log.warning("report failed: %s", e)
+
+    def _research(self):
+        """תוצרי research.py: תבניות מאומתות (whitelist + משטרי שוק + מכפיל גודל), מסנני מאפיינים, והגדרות יציאה"""
+        out = {"validated": {}, "filters": {}, "exits": {}}
+        for k, f in (("validated", "validated.json"), ("filters", "filters.json"), ("exits", "exits.json")):
+            try:
+                d = json.loads((DATA / f).read_text(encoding="utf-8"))
+                out[k] = d.get("patterns", {}) if k == "validated" else d
+            except Exception: pass
+        return out
+
+    def _research_ok(self, sig, feat, rs):
+        """False = לדלג. whitelist רק כשיש מספיק תבניות מאומתות; מסננים לפי מאפיינים; משטר שוק מתאים"""
+        cfg = self.r.get("research", {})
+        if not cfg.get("enforce"): return True
+        v = rs["validated"]; base = sig.name.replace("_W", "")
+        if len(v) >= cfg.get("min_validated", 5):
+            e = v.get(f"{base}:{sig.side}")
+            if not e: return False
+            if self.mkt.regime in ("bull", "bear", "neutral") and self.mkt.regime not in e.get("regimes", []): return False
+        return _feat.passes(feat, (rs["filters"] or {}).get(sig.side))
+
+    def _hold_days(self):
+        ex = self._research()["exits"] if self.r.get("research", {}).get("enforce") else {}
+        return int(ex.get("hold") or self.r["swing"]["max_hold_days"])
+
+    def _apply_exits(self, sig, price, atr):
+        """הגדרות יציאה שנבחרו במחקר (רק אם שיפרו גם על נתוני האימות וגם על ה-holdout)"""
+        ex = self._research()["exits"]
+        if not ex or not self.r.get("research", {}).get("enforce"): return sig.stop, sig.target
+        long = sig.side == "long"; stop, target = sig.stop, sig.target
+        if ex.get("stop_atr") and atr: stop = price - ex["stop_atr"] * atr if long else price + ex["stop_atr"] * atr
+        risk = abs(price - stop)
+        if ex.get("target_r"): target = price + ex["target_r"] * risk if long else price - ex["target_r"] * risk
+        elif ex.get("no_target"): target = price + 6 * risk if long else price - 6 * risk
+        ok = (stop < price < target) if long else (target < price < stop)
+        return (stop, target) if ok and risk > 0 else (sig.stop, sig.target)
 
     def _bt(self):
         try: return json.loads((DATA / "backtest.json").read_text(encoding="utf-8"))

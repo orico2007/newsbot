@@ -1,0 +1,36 @@
+name: Research (walk-forward)
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: "years of history"
+        default: "6"
+      wide:
+        description: "wide universe (~150 symbols, slower)"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "30 3 * * 0"     # פעם בשבוע, ביום ראשון
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      PYTHONUTF8: "1"
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - name: Research
+        run: python research.py --years "${{ github.event.inputs.years || '6' }}" ${{ github.event.inputs.wide == 'true' && '--wide' || '' }}
+      - name: Save results
+        run: bash scripts/save_data.sh "research results"

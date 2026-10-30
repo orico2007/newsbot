@@ -90,6 +90,10 @@ trailing:                        # ניהול פוזיציה פתוחה: ברי�
   trail_atr: 2.5                 # אחרי 2 ATR רווח - סטופ נגרר 2.5 ATR מתחת לשיא
   trail_activate_atr: 2.0
 
+research:                        # תוצרי research.py (walk-forward): רק מה שהוכיח את עצמו על נתונים שלא נבחרו עליהם
+  enforce: true
+  min_validated: 5               # whitelist פעיל רק כשיש לפחות 5 תבניות מאומתות (אחרת חוזרים לכיבוי לפי ה-backtest)
+
 scale_out:                       # מימוש רווח חלקי + סטופ מוצמד לנמוך הבא אחרי כל יעד
   enabled: true
   levels: [{r: 1.0, pct: 33}, {r: 2.0, pct: 33}]    # ב-1R מוכרים 33%, ב-2R עוד 33%, השאר רץ ליעד/סטופ מבני
