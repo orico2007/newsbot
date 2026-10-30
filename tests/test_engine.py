@@ -76,7 +76,8 @@ def test_swing_news_blocked_by_bad_fundamentals(mk, tmp_path):
     b, e = mk(brain=FakeBrain(8, "bullish", "swing"), funds=Funds({"rev_yoy": -5})); e.step()
     assert not b.orders and "fundamentals disagree" in journal_text(tmp_path)
 def test_swing_short_in_downtrend(mk):
-    b, e = mk(brain=FakeBrain(8, "bearish", "swing"), daily=daily_downtrend(), prev=51); e.step()
+    r = copy.deepcopy(R); r["swing"]["allow_short"] = True
+    b, e = mk(brain=FakeBrain(8, "bearish", "swing"), daily=daily_downtrend(), prev=51, rules=r); e.step()
     assert len(b.orders) == 1 and b.orders[0][2] == "sell"
 def test_swing_horizon_but_score_9_goes_day_if_swing_disabled(mk):
     r = copy.deepcopy(R); r["swing"]["enabled"] = False

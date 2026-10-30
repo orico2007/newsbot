@@ -94,19 +94,28 @@ def _one(ts):
 def _bad(v, min_n, max_avg_r, min_pf):
     return v["n"] >= min_n and (v["avg_R"] <= max_avg_r or (v["profit_factor"] is not None and v["profit_factor"] < min_pf))
 
-def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
-    """גלאים עם מספיק עסקאות ותוחלת שלילית (או profit factor נמוך) - מכבים אוטומטית"""
-    return sorted(k for k, v in st.items() if not k.startswith(("ALL", "SIDE|", "ALIGNED")) and _bad(v, min_n, max_avg_r, min_pf))
-
-def disabled_sides_from(st, min_n=15, max_avg_r=-0.05, min_pf=0.85):
-    """pattern:side - כיוון ספציפי של גלאי שמפסיד (למשל רק ה-short שלו), גם אם הגלאי כולו לא כבוי"""
-    whole = set(disabled_from(st))
-    out = []
+def _bad_sides(st, min_n=15, max_avg_r=-0.05, min_pf=0.85):
+    bad = {}
     for k, v in st.items():
         if k.startswith("SIDE|"):
             _, p, side = k.split("|")
-            if p not in whole and _bad(v, min_n, max_avg_r, min_pf): out.append(f"{p}:{side}")
+            if _bad(v, min_n, max_avg_r, min_pf): bad.setdefault(p, set()).add(side)
+    return bad
+
+def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
+    """גלאי כבוי כולו רק אם כל הכיוונים שלו מפסידים; אם רק כיוון אחד מפסיד - כבוי רק הכיוון (disabled_sides)"""
+    bad = _bad_sides(st)
+    out = set()
+    for k, v in st.items():
+        if k.startswith(("ALL", "SIDE|", "ALIGNED")): continue
+        sides = {s for s, n in (("long", v["long_n"]), ("short", v["short_n"])) if n}
+        if v["n"] >= min_n and _bad(v, min_n, max_avg_r, min_pf) and (not bad or (sides and sides <= bad.get(k, set()))): out.add(k)
     return sorted(out)
+
+def disabled_sides_from(st, min_n=15, max_avg_r=-0.05, min_pf=0.85):
+    """pattern:side - כיוון ספציפי שמפסיד, גם אם הגלאי כולו לא כבוי"""
+    whole = set(disabled_from(st))
+    return sorted(f"{p}:{s}" for p, ss in _bad_sides(st).items() if p not in whole for s in ss)
 
 def to_markdown(st, symbols, years, disabled):
     rows = sorted(((k, v) for k, v in st.items() if not k.startswith(("ALL", "SIDE|", "ALIGNED"))), key=lambda kv: -kv[1]["avg_R"])

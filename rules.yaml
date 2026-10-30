@@ -34,7 +34,7 @@ day:
 swing:
   enabled: true
   catalyst_min_score: 8          # חדשות/דוח עם horizon=swing
-  allow_short: true
+  allow_short: false            # backtest: swing shorts lose (PF 0.69) even with market+sector filters
   max_positions: 4
   max_hold_days: 10              # יציאת זמן (ימי מסחר)
   scan_minutes_before_close: 15  # פריצות סווינג נבדקות רק 15 דקות לפני הסגירה, כשהנר היומי כמעט סופי

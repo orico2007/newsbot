@@ -1423,23 +1423,23 @@
   }
  },
  "disabled": [
-  "breakout_retest",
-  "donchian55",
-  "double_bottom",
-  "ibs_reversion",
   "ichimoku_breakout",
-  "spring_reversal",
-  "stoch_oversold",
-  "trend_pullback",
   "tweezer_bottom"
  ],
  "disabled_sides": [
   "base_breakout:short",
+  "breakout_retest:short",
+  "donchian55:long",
+  "double_bottom:short",
   "ema21_bounce:short",
   "fib_pullback:short",
+  "ibs_reversion:short",
   "morning_star:short",
   "pocket_pivot:short",
   "rsi2_reversion:short",
+  "spring_reversal:short",
+  "stoch_oversold:short",
+  "trend_pullback:long",
   "ttm_squeeze:short"
  ]
 }
