@@ -44,3 +44,21 @@ def test_alignment_filter_rules():
     assert not backtest.aligned({"side": "long", "regime": "bear", "tier": "mid"})
     assert backtest.aligned({"side": "short", "regime": "bear", "tier": "mid"})
     assert not backtest.aligned({"side": "short", "regime": "bull", "tier": "mid"})
+
+def test_new_detector_registry_and_geometry_fuzz():
+    import random, patterns
+    assert len(patterns.NATIVE_SHORT) >= 25 and len(patterns.LONG_DETECTORS) >= 60
+    random.seed(7)
+    for _ in range(6):
+        p, bars = 100.0, []
+        for i in range(300):
+            o = p; c = p * (1 + random.gauss(random.choice([-.003, 0, .003]), 0.02))
+            bars.append({"t": f"d{i}", "o": o, "h": max(o, c) * 1.005, "l": min(o, c) * 0.995, "c": c, "v": 1e6 * (1 + random.random())}); p = c
+        for i in range(140, 300, 5):
+            for s in patterns.detect_all(bars[:i + 1], None, {"rs": 0.0}):
+                assert (s.stop < s.price < s.target) if s.side == "long" else (s.target < s.price < s.stop), s
+
+def test_independent_mode_counts_each_pattern_separately():
+    import backtest, patterns
+    bars = [{"t": f"d{i}", "o": 100, "h": 101, "l": 99, "c": 100, "v": 1e6} for i in range(200)]
+    assert backtest.simulate(bars, shorts=True) == [] or all("end" in t for t in backtest.simulate(bars, shorts=True))

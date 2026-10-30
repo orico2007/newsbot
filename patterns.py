@@ -315,6 +315,7 @@ def bollinger_squeeze_long(bars):
     if widths[-1] > min(widths) * 1.15 or last["c"] <= cur[1] or last["v"] < 1.3 * _vavg(bars): return None
     return Signal("bollinger_squeeze", "long", "swing", last["c"], cur[0], last["c"] + 3 * a, 0.6, f"squeeze width {widths[-1]:.1f}%", True)
 
+NATIVE_SHORT = {}     # v6: גלאי שורט ילידיים (patterns4)
 LONG_DETECTORS = {
     "flag": lambda b, c: flag_long(b),
     "base_breakout": lambda b, c: base_breakout_long(b),
@@ -345,6 +346,13 @@ def detect_all(bars, enabled=None, ctx=None, shorts=True):
         except Exception:
             pass
     if shorts and len(bars) > 40:
+        for name, fn in NATIVE_SHORT.items():
+            if enabled is not None and not enabled.get(name, True): continue
+            try:
+                s = fn(bars, ctx)
+                if s: out.append(s)
+            except Exception:
+                pass
         mb, k2 = mirror(bars)
         mctx = dict(ctx); mctx["rs"] = -ctx.get("rs", 0.0)
         for name in names:
@@ -354,7 +362,7 @@ def detect_all(bars, enabled=None, ctx=None, shorts=True):
                 if s: out.append(unmirror(s, k2))
             except Exception:
                 pass
-    return out
+    return [s for s in out if (s.stop < s.price < s.target if s.side == "long" else s.target < s.price < s.stop)]
 
 # =================== אסטרטגיות יום (נרות 5 דקות) ===================
 def orb_long(bars5, ctx=None, or_bars=3):
@@ -420,3 +428,4 @@ def detect_day(bars5, ctx=None, enabled=None, shorts=True):
 
 import patterns2  # noqa: E402,F401  (רושם גלאים נוספים)
 import patterns3  # noqa: E402,F401
+import patterns4  # noqa: E402,F401

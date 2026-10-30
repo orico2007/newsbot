@@ -7,37 +7,50 @@ import patterns
 
 log = logging.getLogger("backtest")
 
-def simulate(bars, detectors=None, shorts=True, max_hold=10, warmup=130, cooldown=3, slip_pct=0.05, min_conf_quality=0.0, sym=None):
-    trades, i, n = [], warmup, len(bars)
+def _run_trade(bars, i, sig, max_hold, slip_pct):
+    n, long = len(bars), sig.side == "long"
+    entry = bars[i]["c"] * (1 + slip_pct / 100 if long else 1 - slip_pct / 100)     # כניסה סמוך לסגירה (15 דקות לפני), כמו בבוט
+    stop, target = sig.stop, sig.target
+    if (long and not (stop < entry < target)) or (not long and not (target < entry < stop)): return None
+    risk = abs(entry - stop)
+    if risk <= 0: return None
+    exit_px, reason, j = None, "time", i + 1
+    for j in range(i + 1, min(n, i + 1 + max_hold)):
+        b = bars[j]
+        if long:
+            if b["o"] <= stop: exit_px, reason = b["o"], "stop-gap"; break
+            if b["l"] <= stop: exit_px, reason = stop, "stop"; break
+            if b["h"] >= target: exit_px, reason = target, "target"; break
+        else:
+            if b["o"] >= stop: exit_px, reason = b["o"], "stop-gap"; break
+            if b["h"] >= stop: exit_px, reason = stop, "stop"; break
+            if b["l"] <= target: exit_px, reason = target, "target"; break
+    if exit_px is None: exit_px = bars[j]["c"]
+    exit_px = exit_px * (1 - slip_pct / 100 if long else 1 + slip_pct / 100)
+    pnl = (exit_px - entry) if long else (entry - exit_px)
+    return {"pattern": sig.name, "side": sig.side, "R": pnl / risk, "pnl_pct": pnl / entry * 100, "held": j - i, "reason": reason, "i": i,
+            "t": bars[i].get("t", ""), "end": j}
+
+def simulate(bars, detectors=None, shorts=True, max_hold=10, warmup=130, cooldown=3, slip_pct=0.05, min_conf_quality=0.0, sym=None, independent=True):
+    """independent=True: כל (תבנית, כיוון) נבדקת בנפרד עם סמן משלה, כך שאף גלאי לא 'מסתיר' אחר.
+    independent=False: התנהגות ישנה - רק האיתות הטוב ביותר בכל נר."""
+    trades, n = [], len(bars)
+    free = {}          # (name, side) -> האינדקס הראשון שבו מותר לפתוח שוב
+    i = warmup
     while i < n - 2:
         sigs = [s for s in patterns.detect_all(bars[:i + 1], detectors, {"rs": 0.0}, shorts=shorts) if s.quality >= min_conf_quality]
         if not sigs: i += 1; continue
-        sig = max(sigs, key=lambda s: s.quality)
-        long = sig.side == "long"
-        entry = bars[i]["c"] * (1 + slip_pct / 100 if long else 1 - slip_pct / 100)     # כניסה סמוך לסגירה (15 דקות לפני), כמו בבוט
-        stop, target = sig.stop, sig.target
-        if (long and not (stop < entry < target)) or (not long and not (target < entry < stop)):
-            i += 1; continue
-        risk = abs(entry - stop)
-        if risk <= 0: i += 1; continue
-        exit_px, reason, j = None, "time", i + 1
-        for j in range(i + 1, min(n, i + 1 + max_hold)):
-            b = bars[j]
-            if long:
-                if b["o"] <= stop: exit_px, reason = b["o"], "stop-gap"; break
-                if b["l"] <= stop: exit_px, reason = stop, "stop"; break
-                if b["h"] >= target: exit_px, reason = target, "target"; break
-            else:
-                if b["o"] >= stop: exit_px, reason = b["o"], "stop-gap"; break
-                if b["h"] >= stop: exit_px, reason = stop, "stop"; break
-                if b["l"] <= target: exit_px, reason = target, "target"; break
-        if exit_px is None:
-            exit_px = bars[j]["c"]
-        exit_px = exit_px * (1 - slip_pct / 100 if long else 1 + slip_pct / 100)
-        pnl = (exit_px - entry) if long else (entry - exit_px)
-        trades.append({"pattern": sig.name, "side": sig.side, "R": pnl / risk, "pnl_pct": pnl / entry * 100,
-                       "held": j - i, "reason": reason, "i": i, "t": bars[i].get("t", ""), "sym": sym})
-        i = j + cooldown
+        if independent:
+            for sig in sigs:
+                if i < free.get((sig.name, sig.side), 0): continue
+                t = _run_trade(bars, i, sig, max_hold, slip_pct)
+                if t: t["sym"] = sym; free[(sig.name, sig.side)] = t["end"] + cooldown; trades.append(t)
+            i += 1
+        else:
+            sig = max(sigs, key=lambda s: s.quality)
+            t = _run_trade(bars, i, sig, max_hold, slip_pct)
+            if not t: i += 1; continue
+            t["sym"] = sym; trades.append(t); i = t["end"] + cooldown
     return trades
 
 def stats(trades):
@@ -128,6 +141,12 @@ def to_markdown(st, symbols, years, disabled):
     md += ["", f"Auto-disabled (n>=30 and avg R <= -0.05 or profit factor < 0.85): {', '.join(disabled) or 'none'}"]
     return "\n".join(md)
 
+def _sim_one(args):
+    s, bars, shorts = args
+    try: return s, simulate(bars, shorts=shorts, sym=s)
+    except Exception as e:
+        log.warning("%s sim failed: %s", s, e); return s, []
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--years", type=int, default=3)
     ap.add_argument("--symbols", default=""); ap.add_argument("--no-shorts", action="store_true")
@@ -139,15 +158,17 @@ def main():
     syms = [s for s in a.symbols.split(",") if s] or rules["swing"]["watchlist"]
     b = AlpacaBroker(paper=True)
     start = (datetime.now(timezone.utc) - timedelta(days=365 * a.years + 30)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    allt = []
+    allt, work = [], []
     for s in syms:
         try:
             bars = b.bars(s, "1Day", start)
-            if len(bars) < 200: continue
-            t = simulate(bars, shorts=not a.no_shorts, sym=s); allt += t
-            log.info("%s: %d trades", s, len(t))
+            if len(bars) >= 200: work.append((s, bars, not a.no_shorts))
         except Exception as e:
             log.warning("%s failed: %s", s, e)
+    import multiprocessing as mp
+    with mp.Pool(min(4, mp.cpu_count())) as pool:
+        for s, t in pool.imap_unordered(_sim_one, work):
+            allt += t; log.info("%s: %d trades", s, len(t))
     try:
         spy = b.bars("SPY", "1Day", start)
         import market
