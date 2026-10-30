@@ -29,9 +29,16 @@ class AlpacaBroker:
                          datetime.fromisoformat(n["created_at"].replace("Z", "+00:00")), n.get("content", "")) for n in items]
 
     def bars(self, symbol, timeframe, start):
-        """timeframe: '5Min' או '1Day'; start: ISO UTC"""
-        return self._get(self.d, f"/v2/stocks/{symbol}/bars", timeframe=timeframe, start=start,
-                         feed="iex", limit=1000, adjustment="split").get("bars") or []
+        """timeframe: '5Min' או '1Day'; start: ISO UTC. מעבר על כל העמודים (בעבר נחתך ב-1000 נרות = ~4 שנים)"""
+        out, token = [], None
+        for _ in range(40):
+            params = dict(timeframe=timeframe, start=start, feed="iex", limit=10000, adjustment="split")
+            if token: params["page_token"] = token
+            d = self._get(self.d, f"/v2/stocks/{symbol}/bars", **params)
+            out += d.get("bars") or []
+            token = d.get("next_page_token")
+            if not token: break
+        return out
 
     def snapshot(self, symbol):
         """מחיר אחרון, סגירה קודמת, ומחזור דולרי ממוצע (IEX בלבד, ~3% מהמחזור האמיתי, לכן הסף בכללים נמוך)"""
