@@ -88,14 +88,14 @@ def test_market_closed_penny_illiquid():
     assert not ev(open_=False).ok and not ev(price=3).ok and not ev(adv=1e5).ok
 def test_duplicate_and_max_positions():
     assert not ev(pos=[{"symbol": "AAA"}]).ok
-    assert not ev(pos=[{"symbol": s} for s in "BCDEFGHI"]).ok
+    assert not ev(pos=[{"symbol": s} for s in "BCDEFGHIJKLM"]).ok
 def test_strategy_slot_limit():
     st = {"meta": {s: {"strategy": "day"} for s in "BCD"}}
     assert not ev(pos=[{"symbol": s} for s in "BCD"], state=st).ok
 def test_gross_exposure_cap():
-    pos = [{"symbol": "B", "market_value": "58000"}]
-    assert ev(pos=pos).qty == 40            # נשארו 2000$ עד תקרת 60%
-    assert not ev(pos=[{"symbol": "B", "market_value": "59990"}]).ok
+    pos = [{"symbol": "B", "market_value": "88000"}]
+    assert ev(pos=pos).qty == 40            # 2000$ left under the 90% cap
+    assert not ev(pos=[{"symbol": "B", "market_value": "89990"}]).ok
 def test_daily_loss_halts():
     st = {}; d = ev(acc={"equity": 97500, "last_equity": 100000, "buying_power": 1e5}, state=st)
     assert not d.ok and st["halted"] and not ev(state=st).ok

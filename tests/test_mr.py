@@ -46,3 +46,13 @@ def test_engine_exits_above_prior_high(mk3):
     d = b.bar_data[("AAA", "1Day")]; d[-1] = dict(d[-1], c=d[-2]["h"] * 1.01, h=d[-2]["h"] * 1.02)
     e.state["swing_done"] = None; e.swing_pass(NOW, 10)
     assert "AAA" in b.closed
+
+def test_rule_f_fires_without_ibs_condition():
+    d = uptrend_pullback(); d[-1]["l"] = d[-1]["c"] * 0.9; d[-1]["h"] = d[-1]["c"] * 1.01     # close near the high: A (IBS) fails
+    s = mr.detect(d)
+    assert s and s.name in ("mr_F", "mr_E")
+
+def test_mr_position_size_is_10_pct(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e._mr_scan(NOW)
+    qty, px = b.orders[0][1], b.snap["AAA"][0]
+    assert abs(qty * px / 100000 - 0.10) < 0.02

@@ -3,8 +3,8 @@
 mode: paper            # הבוט מסרב לעבוד על חשבון אמיתי אלא אם mode: live וגם ALLOW_LIVE=1
 
 account:
-  max_open_positions_total: 8
-  max_gross_exposure_pct: 60     # [A] סך החשיפה (לונג+שורט) עד 60% מההון
+  max_open_positions_total: 12
+  max_gross_exposure_pct: 90     # [A] סך החשיפה (לונג+שורט) עד 60% מההון
   max_daily_loss_pct: 2          # [A] הפסד יומי מעל זה = עוצר לשאר היום
   max_trades_per_day: 12
   market_hours_only: true
@@ -35,10 +35,11 @@ swing:
   enabled: true
   catalyst_min_score: 8          # חדשות/דוח עם horizon=swing
   allow_short: false            # backtest: swing shorts lose (PF 0.69) even with market+sector filters
-  max_positions: 4
+  max_positions: 12
   mr:                            # mean-reversion longs (mr.py): PF ~1.4-1.5, win ~65% in 2021-2026 backtest; bull market only
     enabled: true
-    new_per_day: 2
+    new_per_day: 4
+    size_mult: 2.5               # x4% = 10% of equity per trade (backtest: 10% x 12 positions)
     hold_days: 7
     stop_atr: 4.0
   max_hold_days: 10              # יציאת זמן (ימי מסחר)

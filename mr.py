@@ -1,10 +1,11 @@
 """Mean-reversion long rules found by the systematic sweep (sweep*.py, portfolio_test*.py).
 Rule A: uptrend (close > SMA50 > SMA200), RSI(2) < 5 and IBS < 0.25, ATR% < 4.
 Rule E: uptrend, RSI(2) < 10 and close < SMA20 - 1.5 ATR, price >= 15.
+Rule F: uptrend, RSI(2) < 5, no 3-day crash (3d return > -12%).
 Exit: close above the prior day's high (or time stop / ATR stop). Long only, bull market only."""
 from patterns import Signal
 
-RULES = {"mr_A": {"rank": 90}, "mr_E": {"rank": 65}}
+RULES = {"mr_A": {"rank": 90}, "mr_E": {"rank": 65}, "mr_F": {"rank": 60}}
 
 def _rsi(c, n=2):
     if len(c) <= n: return None
@@ -36,6 +37,7 @@ def detect(daily, stop_atr=4.0):
     name = None
     if r2 < 5 and ibs < 0.25 and atr / px * 100 < 4: name = "mr_A"
     elif r2 < 10 and px < s20 - 1.5 * atr and px >= 15: name = "mr_E"
+    if not name and r2 < 5 and len(c) > 3 and (px / c[-4] - 1) * 100 > -12: name = "mr_F"
     if not name: return None
     return Signal(name, "long", "swing", px, px - stop_atr * atr, px + 8 * atr, quality=0.7,
                   notes=f"RSI2={r2:.1f} IBS={ibs:.2f} uptrend pullback", volume_ok=False)

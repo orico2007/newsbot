@@ -468,6 +468,7 @@ class Engine:
             if sig.side == "short":
                 a = self.b.asset(sym); shortable = bool(a.get("shortable") and a.get("easy_to_borrow") and a.get("tradable", True))
             mult = size_mult(sc, self.r["signals"]["size_multiplier"]["min"], self.r["signals"]["size_multiplier"]["max"])
+            if sig.name.startswith("mr_"): mult = self.r["swing"].get("mr", {}).get("size_mult", 2.5)
             if strategy == "swing" and self.r.get("research", {}).get("enforce"):
                 ve = self._research()["validated"].get(f"{sig.name.replace('_W', '')}:{sig.side}")
                 if ve: mult = round(max(self.r["signals"]["size_multiplier"]["min"], min(self.r["signals"]["size_multiplier"]["max"], mult * ve.get("mult", 1.0))), 2)
