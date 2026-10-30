@@ -23,7 +23,7 @@ def collect(args):
         f = features.compute(bars[:i + 1]); a = _atr(bars[:i + 1])
         for s in sigs:
             recs.append({"sym": sym, "i": i, "t": bars[i]["t"][:10], "p": s.name, "side": s.side, "stop": s.stop, "target": s.target,
-                         "vol": bool(s.volume_ok), "tools": tools.count(s, bars[:i + 1])[0], "f": f, "atr": a})
+                         "q": s.quality, "vol": bool(s.volume_ok), "tools": tools.count(s, bars[:i + 1])[0], "f": f, "atr": a})
     return sym, recs
 
 # ------------------------------------------------------------------ סימולציית עסקה עם הגדרות יציאה
@@ -66,13 +66,18 @@ def run_trade(bars, rec, cfg):
             cur = max(cur, entry if done == 1 else levels[done - 2][0]) if long else min(cur, entry if done == 1 else levels[done - 2][0])
         if tg is not None and (b["h"] >= tg if long else b["l"] <= tg):
             legs.append((left, tg)); left = 0; exit_j = j; break
+        mx = cfg.get("ma_exit")
+        if mx and j - mx >= 0:                       # יציאת מומנטום-חוזר: סגירה מעל (מתחת בשורט) לממוצע של mx ימים
+            ma = sum(x["c"] for x in bars[j - mx + 1:j + 1]) / mx
+            if (b["c"] > ma) if long else (b["c"] < ma):
+                legs.append((left, b["c"])); left = 0; exit_j = j; break
     if left > 0: legs.append((left, bars[last]["c"])); exit_j = last
     pnl = 0.0
     for frac, px in legs:
         px = px * (1 - SLIP / 100 if long else 1 + SLIP / 100)
         pnl += frac * ((px - entry) if long else (entry - px))
     return {"pattern": rec["p"], "side": rec["side"], "R": pnl / risk, "pnl_pct": pnl / entry * 100, "held": exit_j - i, "t": rec["t"], "sym": rec["sym"],
-            "f": rec["f"], "tools": rec["tools"], "end": exit_j, "i": i}
+            "f": rec["f"], "tools": rec["tools"], "end": exit_j, "i": i, "t_exit": bars[exit_j]["t"][:10], "q": rec.get("q", 0.6)}
 
 def evaluate(recs, bars_by_sym, cfg, cooldown=3):
     """סימולציה לכל (תבנית, כיוון, סימבול) עם סמן פנוי - כמו ב-backtest העצמאי"""
