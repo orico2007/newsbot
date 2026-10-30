@@ -36,9 +36,14 @@ swing:
   catalyst_min_score: 8          # חדשות/דוח עם horizon=swing
   allow_short: false            # backtest: swing shorts lose (PF 0.69) even with market+sector filters
   max_positions: 4
+  mr:                            # mean-reversion longs (mr.py): PF ~1.4-1.5, win ~65% in 2021-2026 backtest; bull market only
+    enabled: true
+    new_per_day: 2
+    hold_days: 7
+    stop_atr: 4.0
   max_hold_days: 10              # יציאת זמן (ימי מסחר)
   scan_minutes_before_close: 15  # פריצות סווינג נבדקות רק 15 דקות לפני הסגירה, כשהנר היומי כמעט סופי
-  long:  {position_pct: 4,   atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
+  long:  {position_pct: 4,   atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 12}
   short: {position_pct: 2.5, atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
   scan:                          # סריקה יומית של רשימת מעקב: מגמה + נסיגה + צמיחה בדוחות
     enabled: true

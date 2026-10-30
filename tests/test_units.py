@@ -102,7 +102,7 @@ def test_daily_loss_halts():
 def test_swing_uses_atr_and_gtc():
     d = ev("swing", atr=1.0); assert d.ok and d.tif == "gtc" and d.stop_price == 48.0 and d.take_profit_price == 54.0 and d.qty == 80
 def test_swing_stop_capped_by_max_pct():
-    d = ev("swing", atr=10.0); assert d.stop_price == 46.0       # 8% מ-50
+    d = ev("swing", atr=10.0); assert d.stop_price == 44.0       # 12% from 50
 def test_swing_needs_atr():                  assert not ev("swing", atr=None).ok
 def test_disabled_strategy():
     import copy; r = copy.deepcopy(R); r["day"]["enabled"] = False

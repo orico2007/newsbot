@@ -8,6 +8,7 @@ import tools
 import features as _feat
 from structure import pivots
 import patterns
+import mr
 from models import Verdict
 from market import Market, SECTOR_OF
 from scoring import confluence, size_mult
@@ -257,6 +258,17 @@ class Engine:
                         self._j(now, sym, strategy="swing", side=m.get("side", ""), action="EXIT", detail="earnings tomorrow/today - flatten")
                     except Exception as e:
                         log.warning("earnings exit failed %s: %s", sym, e)
+        mr_cfg = s.get("mr", {})
+        for sym, m in list(self.state["meta"].items()):
+            if not str(m.get("pattern", "")).startswith("mr_") or sym not in held: continue
+            try:
+                daily = self.b.bars(sym, "1Day", daily_start_iso(now))
+                why = "close above prior-day high" if mr.exit_now(daily) else (f"time stop {mr_cfg.get('hold_days', 7)}d" if weekdays_between(m["entry_date"], today) >= mr_cfg.get("hold_days", 7) else None)
+                if why:
+                    self.b.close_position(sym); held.discard(sym)
+                    self._j(now, sym, strategy="swing", side="long", action="EXIT", detail=f"mean-reversion exit: {why}")
+            except Exception as e:
+                log.warning("mr exit failed %s: %s", sym, e)
         for sym, m in list(self.state["meta"].items()):
             if m.get("strategy") == "swing" and sym in held and weekdays_between(m["entry_date"], today) >= self._hold_days():
                 try:
@@ -321,9 +333,34 @@ class Engine:
             if self._enter_signal(now, sym, "swing", sig, sc, why, True, daily): taken += 1
         return taken
 
+    def _mr_scan(self, now):
+        """mean-reversion longs (rules A/E): bull market only, strongest rule first"""
+        s = self.r["swing"]; cfg = s.get("mr", {})
+        if not cfg.get("enabled") or self.mkt.regime != "bull": return 0
+        held = {p["symbol"] for p in self._pos()}
+        cands = []
+        for sym in s["watchlist"]:
+            if sym in held: continue
+            try:
+                daily = self.b.bars(sym, "1Day", daily_start_iso(now))
+                sig = mr.detect(daily, cfg.get("stop_atr", 4.0))
+                if not sig: continue
+                ok, why, pts = self._gate(sym, "long")
+                if not ok: continue
+                cands.append((mr.RULES[sig.name]["rank"], sym, sig, why, daily))
+            except Exception as e:
+                log.warning("mr scan failed %s: %s", sym, e)
+        cands.sort(key=lambda x: -x[0])
+        taken = 0
+        for rank, sym, sig, why, daily in cands:
+            if taken >= cfg.get("new_per_day", 2): break
+            if self._enter_signal(now, sym, "swing", sig, rank, f"{why}; {sig.notes}", True, daily): taken += 1
+        return taken
+
     def _scan(self, now):
         s, held = self.r["swing"], {p["symbol"] for p in self._pos()}
-        taken0 = self._pattern_scan(now)
+        taken0 = self._mr_scan(now)
+        taken0 += self._pattern_scan(now)
         cands = []
         for sym in s["watchlist"]:
             if sym in held: continue
@@ -468,7 +505,7 @@ class Engine:
         if ex.get("scale"): so["levels"] = [{"r": r, "pct": p} for r, p in ex["scale"]]
         for p in positions:
             sym = p["symbol"]; m = self.state["meta"].get(sym)
-            if not m or not m.get("stop0") or not m.get("take") or p.get("asset_class") == "crypto": continue
+            if not m or not m.get("stop0") or not m.get("take") or p.get("asset_class") == "crypto" or str(m.get("pattern", "")).startswith("mr_"): continue
             try: price, entry, qty = float(p["current_price"]), float(p["avg_entry_price"]), abs(int(float(p["qty"])))
             except (KeyError, TypeError, ValueError): continue
             long = m["side"] == "long"; risk = abs(m["entry"] - m["stop0"]); done = m.setdefault("tp_done", [])
@@ -513,7 +550,7 @@ class Engine:
         if not t.get("enabled"): return
         for p in positions:
             m = self.state["meta"].get(p["symbol"])
-            if not m or not m.get("atr") or not m.get("stop"): continue
+            if not m or not m.get("atr") or not m.get("stop") or str(m.get("pattern", "")).startswith("mr_"): continue
             try: price, entry = float(p["current_price"]), float(p["avg_entry_price"])
             except (KeyError, TypeError, ValueError): continue
             a, long = m["atr"], m["side"] == "long"
