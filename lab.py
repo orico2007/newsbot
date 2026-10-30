@@ -71,3 +71,48 @@ def portfolio(trades, max_pos=8, per_day=2, size_pct=8.0, sector_cap=2, start_eq
     yrs = max(1e-9, (len(days) / 252)) if days else 1
     return {"n": s["n"], "win": s["win"], "pf": s["pf"], "pf_pct": s["pf_pct"], "avg_pct": s["avg_pct"], "avgR": s["avgR"], "alpha": s["alpha"],
             "ret_pct": round(eq - start_equity, 1), "mdd": round(mdd, 1), "sharpe": round(sharpe, 2), "trades": taken}
+
+# ------------------------------------------------------------------ הקשר שוק לכל איתות
+def annotate_recs(recs, bars_by):
+    """regime (כלל הבוט), spy_above200, ודירוג סקטור - לכל איתות לפי תאריך"""
+    spy = bars_by["SPY"]; reg = spy_regime_series(spy); a200 = sma_flags(spy, 200); a50 = sma_flags(spy, 50)
+    etf = {e: bars_by[e] for e in market.SECTORS if e in bars_by}
+    tiers = {}
+    def tier(day):
+        if day not in tiers:
+            sl = [x for x in spy if x["t"][:10] <= day]
+            ranked = market.rank_sectors({e: [x for x in bs if x["t"][:10] <= day] for e, bs in etf.items()}, sl) if len(sl) >= 60 else []
+            tiers[day] = [r["etf"] for r in ranked]
+        return tiers[day]
+    for r in recs:
+        d = r["t"]; r["regime"] = reg.get(d, "neutral"); r["a200"] = a200.get(d, True); r["a50"] = a50.get(d, True)
+        order = tier(d); sec = market.SECTOR_OF.get(r["sym"])
+        r["tier"] = "top" if sec in order[:3] else "bottom" if order and sec in order[-3:] else "mid"
+    return recs
+
+def trades_for(recs, bars_by, cfg, name):
+    f = CACHE / f"trades_{name}.pkl"
+    if f.exists(): return pickle.load(open(f, "rb"))
+    ts = research.evaluate(recs, bars_by, cfg)
+    pickle.dump(ts, open(f, "wb"))
+    return ts
+
+EXITS = {
+    "pattern10": dict(research.DEFAULT_CFG),
+    "pattern5": dict(research.DEFAULT_CFG, hold=5),
+    "ma5": {"stop": "atr", "stop_k": 3.0, "target": "none", "target_k": None, "hold": 10, "scale": [], "ma_exit": 5},
+    "ma5_pstop": {"stop": "pattern", "stop_k": None, "target": "none", "target_k": None, "hold": 10, "scale": [], "ma_exit": 5},
+    "ma10": {"stop": "atr", "stop_k": 3.0, "target": "none", "target_k": None, "hold": 15, "scale": [], "ma_exit": 10},
+    "atr2_r2": {"stop": "atr", "stop_k": 2.0, "target": "r", "target_k": 2.0, "hold": 10, "scale": []},
+    "atr3_r3_h20": {"stop": "atr", "stop_k": 3.0, "target": "r", "target_k": 3.0, "hold": 20, "scale": []},
+    "atr2_r1": {"stop": "atr", "stop_k": 2.0, "target": "r", "target_k": 1.0, "hold": 8, "scale": []},
+}
+
+def summarize(ts, label):
+    s = research.stat(ts)
+    return f"{label:44}{s['n']:7}{s['win']:7}{s['pf']!s:>6}{s['avgR']:8}{s['avg_pct']:8}{s['alpha']!s:>8}"
+
+def by_year(ts):
+    d = defaultdict(list)
+    for t in ts: d[t["t"][:4]].append(t)
+    return d
