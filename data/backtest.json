@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-30T09:18:45.886127+00:00",
+ "updated": "2026-10-30T10:15:21.326365+00:00",
  "stats": {
   "ema21_bounce": {
    "n": 518,
@@ -861,26 +861,6 @@
    "long_n": 18,
    "short_n": 8
   },
-  "gap_down_reclaim": {
-   "n": 30,
-   "win_rate": 53.3,
-   "avg_R": 0.177,
-   "avg_pnl_pct": 1.894,
-   "profit_factor": 1.72,
-   "avg_hold": 5.5,
-   "long_n": 17,
-   "short_n": 13
-  },
-  "oversold_bounce": {
-   "n": 11,
-   "win_rate": 45.5,
-   "avg_R": 0.633,
-   "avg_pnl_pct": 0.426,
-   "profit_factor": 1.16,
-   "avg_hold": 5.0,
-   "long_n": 5,
-   "short_n": 6
-  },
   "evening_star": {
    "n": 29,
    "win_rate": 41.4,
@@ -890,6 +870,16 @@
    "avg_hold": 6.5,
    "long_n": 0,
    "short_n": 29
+  },
+  "gap_down_reclaim": {
+   "n": 30,
+   "win_rate": 53.3,
+   "avg_R": 0.177,
+   "avg_pnl_pct": 1.894,
+   "profit_factor": 1.72,
+   "avg_hold": 5.5,
+   "long_n": 17,
+   "short_n": 13
   },
   "shooting_star": {
    "n": 12,
@@ -910,6 +900,16 @@
    "avg_hold": 9.1,
    "long_n": 0,
    "short_n": 22
+  },
+  "oversold_bounce": {
+   "n": 11,
+   "win_rate": 45.5,
+   "avg_R": 0.633,
+   "avg_pnl_pct": 0.426,
+   "profit_factor": 1.16,
+   "avg_hold": 5.0,
+   "long_n": 5,
+   "short_n": 6
   },
   "capitulation_reversal": {
    "n": 10,
@@ -2301,6 +2301,66 @@
    "long_n": 18,
    "short_n": 0
   },
+  "SIDE|evening_star|short": {
+   "n": 29,
+   "win_rate": 41.4,
+   "avg_R": -0.14,
+   "avg_pnl_pct": -0.786,
+   "profit_factor": 0.75,
+   "avg_hold": 6.5,
+   "long_n": 0,
+   "short_n": 29
+  },
+  "SIDE|gap_up_hold|short": {
+   "n": 55,
+   "win_rate": 36.4,
+   "avg_R": -0.152,
+   "avg_pnl_pct": -1.42,
+   "profit_factor": 0.67,
+   "avg_hold": 6.8,
+   "long_n": 0,
+   "short_n": 55
+  },
+  "SIDE|gap_down_reclaim|long": {
+   "n": 17,
+   "win_rate": 52.9,
+   "avg_R": 0.288,
+   "avg_pnl_pct": 2.749,
+   "profit_factor": 2.4,
+   "avg_hold": 6.2,
+   "long_n": 17,
+   "short_n": 0
+  },
+  "SIDE|shooting_star|short": {
+   "n": 12,
+   "win_rate": 25.0,
+   "avg_R": -0.392,
+   "avg_pnl_pct": -2.96,
+   "profit_factor": 0.36,
+   "avg_hold": 4.5,
+   "long_n": 0,
+   "short_n": 12
+  },
+  "SIDE|bollinger_squeeze|short": {
+   "n": 66,
+   "win_rate": 45.5,
+   "avg_R": -0.13,
+   "avg_pnl_pct": -1.121,
+   "profit_factor": 0.61,
+   "avg_hold": 7.3,
+   "long_n": 0,
+   "short_n": 66
+  },
+  "SIDE|double_top|short": {
+   "n": 22,
+   "win_rate": 36.4,
+   "avg_R": -0.195,
+   "avg_pnl_pct": -1.678,
+   "profit_factor": 0.34,
+   "avg_hold": 9.1,
+   "long_n": 0,
+   "short_n": 22
+  },
   "SIDE|island_bottom|long": {
    "n": 28,
    "win_rate": 78.6,
@@ -2309,6 +2369,26 @@
    "profit_factor": 1.04,
    "avg_hold": 2.6,
    "long_n": 28,
+   "short_n": 0
+  },
+  "SIDE|avwap_reclaim|long": {
+   "n": 68,
+   "win_rate": 45.6,
+   "avg_R": -0.006,
+   "avg_pnl_pct": 0.397,
+   "profit_factor": 1.15,
+   "avg_hold": 6.2,
+   "long_n": 68,
+   "short_n": 0
+  },
+  "SIDE|bullish_engulfing_support|long": {
+   "n": 57,
+   "win_rate": 52.6,
+   "avg_R": 0.268,
+   "avg_pnl_pct": 1.613,
+   "profit_factor": 1.96,
+   "avg_hold": 7.7,
+   "long_n": 57,
    "short_n": 0
   },
   "SIDE|falling_wedge|long": {
@@ -2321,16 +2401,6 @@
    "long_n": 30,
    "short_n": 0
   },
-  "SIDE|gap_down_reclaim|long": {
-   "n": 17,
-   "win_rate": 52.9,
-   "avg_R": 0.288,
-   "avg_pnl_pct": 2.749,
-   "profit_factor": 2.4,
-   "avg_hold": 6.2,
-   "long_n": 17,
-   "short_n": 0
-  },
   "SIDE|oversold_bounce|long": {
    "n": 5,
    "win_rate": 20.0,
@@ -2339,36 +2409,6 @@
    "profit_factor": 0.33,
    "avg_hold": 3.2,
    "long_n": 5,
-   "short_n": 0
-  },
-  "SIDE|gap_up_hold|short": {
-   "n": 55,
-   "win_rate": 36.4,
-   "avg_R": -0.152,
-   "avg_pnl_pct": -1.42,
-   "profit_factor": 0.67,
-   "avg_hold": 6.8,
-   "long_n": 0,
-   "short_n": 55
-  },
-  "SIDE|bollinger_squeeze|short": {
-   "n": 66,
-   "win_rate": 45.5,
-   "avg_R": -0.13,
-   "avg_pnl_pct": -1.121,
-   "profit_factor": 0.61,
-   "avg_hold": 7.3,
-   "long_n": 0,
-   "short_n": 66
-  },
-  "SIDE|avwap_reclaim|long": {
-   "n": 68,
-   "win_rate": 45.6,
-   "avg_R": -0.006,
-   "avg_pnl_pct": 0.397,
-   "profit_factor": 1.15,
-   "avg_hold": 6.2,
-   "long_n": 68,
    "short_n": 0
   },
   "SIDE|bb_lower_bounce|short": {
@@ -2389,46 +2429,6 @@
    "profit_factor": 1.06,
    "avg_hold": 7.3,
    "long_n": 39,
-   "short_n": 0
-  },
-  "SIDE|evening_star|short": {
-   "n": 29,
-   "win_rate": 41.4,
-   "avg_R": -0.14,
-   "avg_pnl_pct": -0.786,
-   "profit_factor": 0.75,
-   "avg_hold": 6.5,
-   "long_n": 0,
-   "short_n": 29
-  },
-  "SIDE|shooting_star|short": {
-   "n": 12,
-   "win_rate": 25.0,
-   "avg_R": -0.392,
-   "avg_pnl_pct": -2.96,
-   "profit_factor": 0.36,
-   "avg_hold": 4.5,
-   "long_n": 0,
-   "short_n": 12
-  },
-  "SIDE|double_top|short": {
-   "n": 22,
-   "win_rate": 36.4,
-   "avg_R": -0.195,
-   "avg_pnl_pct": -1.678,
-   "profit_factor": 0.34,
-   "avg_hold": 9.1,
-   "long_n": 0,
-   "short_n": 22
-  },
-  "SIDE|bullish_engulfing_support|long": {
-   "n": 57,
-   "win_rate": 52.6,
-   "avg_R": 0.268,
-   "avg_pnl_pct": 1.613,
-   "profit_factor": 1.96,
-   "avg_hold": 7.7,
-   "long_n": 57,
    "short_n": 0
   },
   "SIDE|capitulation_reversal|short": {
@@ -2461,6 +2461,16 @@
    "long_n": 24,
    "short_n": 0
   },
+  "SIDE|three_white_soldiers|short": {
+   "n": 3,
+   "win_rate": 33.3,
+   "avg_R": -0.451,
+   "avg_pnl_pct": -3.757,
+   "profit_factor": 0.15,
+   "avg_hold": 7.7,
+   "long_n": 0,
+   "short_n": 3
+  },
   "SIDE|rsi_divergence|long": {
    "n": 34,
    "win_rate": 73.5,
@@ -2490,16 +2500,6 @@
    "avg_hold": 8.8,
    "long_n": 5,
    "short_n": 0
-  },
-  "SIDE|three_white_soldiers|short": {
-   "n": 3,
-   "win_rate": 33.3,
-   "avg_R": -0.451,
-   "avg_pnl_pct": -3.757,
-   "profit_factor": 0.15,
-   "avg_hold": 7.7,
-   "long_n": 0,
-   "short_n": 3
   },
   "SIDE|parabolic_reversal|short": {
    "n": 7,
