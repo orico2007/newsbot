@@ -36,3 +36,11 @@ def test_per_direction_disable_and_short_guard(tmp_path):
     tr = [mk("x", "long", 1.0) for _ in range(20)] + [mk("x", "short", -1.0) for _ in range(20)]
     st = backtest.stats(tr)
     assert backtest.disabled_sides_from(st) == ["x:short"] and "x" not in backtest.disabled_from(st)
+
+def test_alignment_filter_rules():
+    import backtest
+    assert backtest.aligned({"side": "long", "regime": "bull", "tier": "top"})
+    assert not backtest.aligned({"side": "long", "regime": "bull", "tier": "bottom"})
+    assert not backtest.aligned({"side": "long", "regime": "bear", "tier": "mid"})
+    assert backtest.aligned({"side": "short", "regime": "bear", "tier": "mid"})
+    assert not backtest.aligned({"side": "short", "regime": "bull", "tier": "mid"})
