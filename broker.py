@@ -64,6 +64,25 @@ class AlpacaBroker:
         if not r.ok:
             raise RuntimeError(f"close failed {r.status_code}: {r.text[:200]}")
 
+    def partial_close(self, symbol, qty):
+        """סוגר חלק מהפוזיציה (מימוש רווח חלקי). קודם מבטל את רגלי ה-bracket שתופסים את המניות"""
+        self.cancel_open_orders(symbol)
+        time.sleep(1.5)
+        r = requests.delete(f"{self.t}/v2/positions/{symbol}", headers=self.h, params={"qty": str(int(qty))}, timeout=15)
+        if not r.ok:
+            raise RuntimeError(f"partial close failed {r.status_code}: {r.text[:200]}")
+
+    def protect(self, symbol, qty, side, stop, take):
+        """מגן על מה שנשאר: OCO (סטופ + יעד) לכמות הנותרת. side = צד הסגירה (sell ללונג, buy לשורט)"""
+        body = {"symbol": symbol, "qty": str(int(qty)), "side": side, "type": "limit", "time_in_force": "gtc", "order_class": "oco",
+                "take_profit": {"limit_price": str(round(take, 2))}, "stop_loss": {"stop_price": str(round(stop, 2))}}
+        r = requests.post(self.t + "/v2/orders", headers=self.h, json=body, timeout=15)
+        if r.ok: return r.json()
+        r2 = requests.post(self.t + "/v2/orders", headers=self.h, timeout=15, json={"symbol": symbol, "qty": str(int(qty)), "side": side, "type": "stop",
+                           "time_in_force": "gtc", "stop_price": str(round(stop, 2))})
+        if not r2.ok: raise RuntimeError(f"protect failed {r.status_code}/{r2.status_code}: {r.text[:100]} {r2.text[:100]}")
+        return r2.json()
+
     # ---- קריפטו (24/7, ללא bracket וללא שורט ב-Alpaca) ----
     def crypto_bars(self, symbol, timeframe, start):
         d = self._get(self.d, "/v1beta3/crypto/us/bars", symbols=symbol, timeframe=timeframe, start=start, limit=1000)
@@ -142,5 +161,13 @@ class MockBroker:
     def actives(self, top=40): return self.act
     def last_fill(self, symbol, side): return self.fills.get(symbol)
     def raise_stop(self, symbol, new_stop): self.raised.append((symbol, new_stop)); return True
+    def partial_close(self, symbol, qty):
+        if not hasattr(self, "partials"): self.partials = []
+        self.partials.append((symbol, int(qty)))
+        for p in self._pos:
+            if p["symbol"] == symbol: p["qty"] = str(int(float(p["qty"])) - int(qty))
+    def protect(self, symbol, qty, side, stop, take):
+        if not hasattr(self, "protected"): self.protected = []
+        self.protected.append((symbol, int(qty), side, stop, take))
     def close_position(self, symbol):
         self.closed.append(symbol); self._pos = [p for p in self._pos if p["symbol"] != symbol]

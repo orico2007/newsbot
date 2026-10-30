@@ -109,3 +109,51 @@ def test_sector_cap(mk3):
     ok, why, _ = e._gate("MU", "long")                              # כולם SMH
     assert not ok and "sector cap" in why
     assert e._gate("JPM", "long")[0]
+
+# ---------- scale-out: מימוש חלקי + סטופ לנמוך הבא ----------
+def _pos(px, qty, side="long", entry=100):
+    return [{"symbol": "AAA", "current_price": str(px), "avg_entry_price": str(entry), "qty": str(qty), "side": side}]
+
+def _meta(side="long"):
+    return {"strategy": "swing", "side": side, "entry": 100, "qty": 90, "qty0": 90, "take": 115 if side == "long" else 85,
+            "stop": 95 if side == "long" else 105, "stop0": 95 if side == "long" else 105, "ext": 100, "atr": 2, "ts": 0, "entry_date": "2026-10-20"}
+
+def _bars_with_low(low_px):
+    out = []
+    for i in range(40):
+        px = 98 + i * 0.2 if i != 30 else low_px
+        out.append({"o": px, "h": px + 1, "l": px - (0.3 if i != 30 else 0), "c": px + 0.3, "v": 1e6})
+    out[30]["l"] = low_px
+    return out
+
+def test_scale_out_long_takes_partial_and_squeezes_stop_to_swing_low(mk3):
+    b, e = mk3()
+    e.state["meta"]["AAA"] = _meta(); b._pos = _pos(105.5, 90)
+    b.bar_data[("AAA", "1Day")] = _bars_with_low(102.0)
+    e.scale_out(NOW, b._pos)                                          # 1R = +5 -> מוכרים 33%
+    assert b.partials == [("AAA", 29)]
+    sym, qty, side, stop, take = b.protected[-1]
+    assert qty == 61 and side == "sell" and take == 115 and 100 <= stop < 105.5      # לפחות ברייק-אבן, לא מעל המחיר
+    e.scale_out(NOW, _pos(105.9, 61))                                 # אותו יעד לא נמכר פעמיים
+    assert len(b.partials) == 1
+
+def test_scale_out_second_level_and_final_blended_record(mk3):
+    b, e = mk3()
+    e.state["meta"]["AAA"] = _meta(); b._pos = _pos(105.5, 90)
+    e.scale_out(NOW, b._pos)
+    e.scale_out(NOW, _pos(110.5, 61))                                 # 2R = +10
+    assert len(b.partials) == 2 and b.protected[-1][1] == 32
+    m = e.state["meta"]["AAA"]
+    assert m["qty"] == 32 and m["tp_done"] == [0, 1] and m["stop"] >= 105              # הסטופ הוצמד מעל מחיר הכניסה
+
+def test_scale_out_short_mirrors(mk3):
+    b, e = mk3()
+    e.state["meta"]["AAA"] = _meta("short"); b._pos = _pos(94.5, -90, "short")
+    e.scale_out(NOW, b._pos)
+    assert b.partials == [("AAA", 29)] and b.protected[-1][2] == "buy" and b.protected[-1][3] <= 100
+
+def test_scale_out_skipped_when_target_too_close(mk3):
+    b, e = mk3()
+    m = _meta(); m["take"] = 104; e.state["meta"]["AAA"] = m; b._pos = _pos(106, 90)
+    e.scale_out(NOW, b._pos)
+    assert not getattr(b, "partials", [])

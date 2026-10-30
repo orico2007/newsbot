@@ -5,6 +5,7 @@ from rules_loader import load_rules
 from risk import evaluate_entry
 import chart
 import tools
+from structure import pivots
 import patterns
 from models import Verdict
 from market import Market, SECTOR_OF
@@ -135,7 +136,7 @@ class Engine:
             return False
         ref = price or ((dec.stop_price + dec.take_profit_price) / 2)
         self.state["meta"][sym] = {"strategy": strategy, "side": side, "entry_date": str(date.today()), "ts": time.time(),
-                                   "entry": ref, "qty": dec.qty, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
+                                   "entry": ref, "qty": dec.qty, "qty0": dec.qty, "take": dec.take_profit_price, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
                                    "atr": atr or max(abs(ref - dec.stop_price) / 1.5, 0.01)}
         self.state["trades_today"] = self.state.get("trades_today", 0) + 1
         self._j(now, sym, headline, v, strategy, side, "ENTER",
@@ -438,6 +439,66 @@ class Engine:
         return self._submit(now, sym, head, None, strategy, sig.side, dec, f"conf={sc} x{mult} {why}", price=price, atr=atr, pattern=sig.name)
 
     # --- ניהול פוזיציות פתוחות: ברייק-אבן וסטופ נגרר ---
+    def _swing_stop(self, sym, m, now, price):
+        """'הנמוך הבא': הפיבוט התחתון (לונג) / העליון (שורט) הקרוב ביותר למחיר, מעל הסטופ הנוכחי - ומתחתיו מרווח קטן"""
+        try:
+            bars = self.b.bars(sym, "1Day", daily_start_iso(now)) if m["strategy"] == "swing" else self.b.bars(sym, "5Min", session_open_iso(now))
+            piv = pivots(bars[-80:], 2, 2); a = m.get("atr") or 0; buf = 0.1 * a
+            if m["side"] == "long":
+                c = [p[1] - buf for p in piv if p[2] == "L" and m["stop"] + 0.01 < p[1] - buf < price - 0.01]
+                return max(c) if c else None
+            c = [p[1] + buf for p in piv if p[2] == "H" and price + 0.01 < p[1] + buf < m["stop"] - 0.01]
+            return min(c) if c else None
+        except Exception as e:
+            log.warning("swing stop failed %s: %s", sym, e)
+            return None
+
+    def scale_out(self, now, positions):
+        """מימוש רווח חלקי ביעדי ביניים; אחרי כל יעד הסטופ מוצמד לנמוך (שיא לשורט) הבא; אחר כך נגרר לפי מבנה"""
+        so = self.r.get("scale_out", {})
+        if not so.get("enabled"): return
+        for p in positions:
+            sym = p["symbol"]; m = self.state["meta"].get(sym)
+            if not m or not m.get("stop0") or not m.get("take") or p.get("asset_class") == "crypto": continue
+            try: price, entry, qty = float(p["current_price"]), float(p["avg_entry_price"]), abs(int(float(p["qty"])))
+            except (KeyError, TypeError, ValueError): continue
+            long = m["side"] == "long"; risk = abs(m["entry"] - m["stop0"]); done = m.setdefault("tp_done", [])
+            if risk <= 0: continue
+            tdist = abs(m["take"] - entry)
+            for i, lv in enumerate(so.get("levels", [])):
+                if i in done: continue
+                dist = lv["r"] * risk
+                if dist >= 0.9 * tdist: done.append(i); continue                  # היעד הסופי קרוב מדי - אין טעם בחלקי
+                lvl = entry + dist if long else entry - dist
+                if not (price >= lvl if long else price <= lvl): break
+                chunk = max(1, int(m.get("qty0", qty) * lv["pct"] / 100))
+                if qty - chunk < max(1, so.get("min_remaining", 1)): done.append(i); continue
+                closing = "sell" if long else "buy"
+                try:
+                    self.b.partial_close(sym, chunk)
+                    swing = self._swing_stop(sym, m, now, price)
+                    prev = entry if i == 0 else (entry + so["levels"][i - 1]["r"] * risk if long else entry - so["levels"][i - 1]["r"] * risk)
+                    new = max(swing or prev, prev) if long else min(swing or prev, prev)
+                    if not (new < price - 0.01 if long else new > price + 0.01): new = prev
+                    self.b.protect(sym, qty - chunk, closing, new, m["take"])
+                except Exception as e:
+                    self._j(now, sym, strategy=m["strategy"], side=m["side"], action="error", detail=f"order failed: partial TP {e}")
+                    done.append(i); break
+                usd = ((price - entry) if long else (entry - price)) * chunk
+                m.setdefault("partials", []).append((chunk, price)); m["qty"] = qty - chunk; m["stop"] = round(new, 2); done.append(i)
+                alerts.send(f"TAKE PROFIT {i + 1} {sym} {m['side']}: sold {chunk} @ {price:.2f} ({usd:+,.2f} USD)\nstop -> {new:.2f}, {qty - chunk} left", "NewsBot")
+                journal([now.isoformat(), sym, "", "", "", "", "", m["strategy"], m["side"], "PARTIAL", f"TP{i + 1} sold {chunk} @ {price:.2f} stop->{new:.2f}", ""])
+                break
+            if done and so.get("structure_trail", True) and m.get("tp_done"):
+                new = self._swing_stop(sym, m, now, price)
+                if new and (new > m["stop"] + 0.01 if long else new < m["stop"] - 0.01):
+                    try:
+                        if self.b.raise_stop(sym, new):
+                            self._j(now, sym, strategy=m["strategy"], side=m["side"], action="TRAIL", detail=f"structure stop {m['stop']} -> {round(new, 2)}")
+                            m["stop"] = round(new, 2)
+                    except Exception as e:
+                        log.warning("structure trail failed %s: %s", sym, e)
+
     def manage_positions(self, now, positions):
         t = self.r.get("trailing", {})
         if not t.get("enabled"): return
@@ -524,6 +585,9 @@ class Engine:
             except Exception: pass
             exit_px = exit_px or m.get("last")
             if not exit_px: return
+            if m.get("partials"):                           # ממוצע משוקלל של המימושים החלקיים והיציאה האחרונה
+                rem = max(0, m.get("qty") or 0); tot = rem + sum(q for q, _ in m["partials"])
+                if tot: exit_px = (sum(q * px for q, px in m["partials"]) + rem * exit_px) / tot
             long = m["side"] == "long"
             pnl = ((exit_px / fill - 1) if long else (fill / exit_px - 1)) * 100
             risk = abs(fill - m["stop0"]) if m.get("stop0") else 0
@@ -534,7 +598,7 @@ class Engine:
                                    "pattern": m.get("pattern", ""), "side": m["side"], "entry": round(fill, 4), "exit": round(exit_px, 4),
                                    "pnl_pct": round(pnl, 3), "R": round(r, 2) if r != "" else "", "held_days": held,
                                    "entry_slip_pct": m.get("slip", ""), "reason": reason})
-            usd = ((exit_px - fill) if long else (fill - exit_px)) * (m.get("qty") or 0)
+            usd = ((exit_px - fill) if long else (fill - exit_px)) * (m.get("qty0") or m.get("qty") or 0)
             icon = "WIN" if pnl > 0 else "LOSS"
             alerts.send(f"{icon} {sym} {m['strategy']} {m['side']}: {pnl:+.2f}%" + (f" ({usd:+,.2f} USD)" if m.get("qty") else "") +
                         f"\nentry {fill:.2f} -> exit {exit_px:.2f}", "NewsBot")
@@ -566,6 +630,7 @@ class Engine:
         self.reconcile(positions)
         self.day_flatten(mtc, positions)
         self.track_positions(now, positions)
+        self.scale_out(now, positions)
         self.manage_positions(now, positions)
         self.process_queue(now, mtc, c["is_open"])
         self.news_pass(now, mtc, c["is_open"])
