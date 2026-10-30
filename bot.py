@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 from rules_loader import load_rules
 from risk import evaluate_entry
 import chart
+import tools
 import patterns
 from models import Verdict
 from market import Market, SECTOR_OF
@@ -299,6 +300,11 @@ class Engine:
                     fo = self._fund_ok(f, sig.side)
                     if fo is False: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok, None, None, fo, rs if sig.side == "long" else -rs)
+                    nt, tl = tools.count(sig, daily)
+                    nt += (1 if htf > 0 else 0) + (1 if pts - 0.5 * htf > 0 else 0)
+                    if nt < sg.get("min_tools", 3):
+                        log.debug("%s %s skipped: only %d tools (%s)", sym, sig.name, nt, ", ".join(tl)); continue
+                    why += f"; {nt} tools: {', '.join(tl)}"
                     if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc): cands.append((sc, sym, sig, why, daily))
             except Exception as e:
                 log.warning("pattern scan failed %s: %s", sym, e)
@@ -377,6 +383,10 @@ class Engine:
                     ok, why, pts = self._gate(sym, sig.side)
                     if not ok: continue
                     sc = confluence(sig.quality, pts, sig.volume_ok)
+                    nt, tl = tools.count(sig, bars5, "day")
+                    nt += 1 if pts > 0 else 0
+                    if nt < sg.get("min_tools", 3): continue
+                    why += f"; {nt} tools: {', '.join(tl)}"
                     if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc, "day"): cands.append((sc, sym, sig, why))
             except Exception as e:
                 log.warning("day scan failed %s: %s", sym, e)

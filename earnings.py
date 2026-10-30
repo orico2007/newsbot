@@ -30,11 +30,13 @@ class Earnings:
         return self.cache[d]
 
     def days_until(self, sym, today=None):
-        """כמה ימים עד הדוח הקרוב (0=היום), או None אם אין / לא ידוע"""
+        """כמה ימי מסחר עד הדוח הקרוב (0=היום; שישי->שני = 1), או None אם אין / לא ידוע"""
         today = today or datetime.now(ZoneInfo("America/New_York")).date()
-        for i in range(self.n + 1):
-            d = today + timedelta(days=i)
-            if d.weekday() >= 5: continue
-            s = self.on(d)
-            if s and sym.upper() in s: return i
+        td, d = 0, today
+        while td <= self.n:
+            if d.weekday() < 5:
+                s = self.on(d)
+                if s and sym.upper() in s: return td
+                td += 1
+            d += timedelta(days=1)
         return None

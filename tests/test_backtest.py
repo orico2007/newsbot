@@ -62,3 +62,15 @@ def test_independent_mode_counts_each_pattern_separately():
     import backtest, patterns
     bars = [{"t": f"d{i}", "o": 100, "h": 101, "l": 99, "c": 100, "v": 1e6} for i in range(200)]
     assert backtest.simulate(bars, shorts=True) == [] or all("end" in t for t in backtest.simulate(bars, shorts=True))
+
+def test_tools_count_rule():
+    import tools
+    from patterns import Signal
+    bars = [{"o": 100 + i * .1, "h": 101 + i * .1, "l": 99 + i * .1, "c": 100.5 + i * .1, "v": 1e6} for i in range(80)]
+    flag = Signal("flag", "long", "swing", 108.5, 105, 115, 0.6, "", True)
+    n, why = tools.count(flag, bars)
+    assert "flag" in why and "breakout" in why and "volume" in why and n >= 3          # דגל(1)+פריצה(1)+נפח(1)
+    h = Signal("head_shoulders", "short", "swing", 100, 104, 90, 0.6, "", False)
+    assert tools.count(h, bars)[0] >= 3 and "pattern(2)" in tools.count(h, bars)[1]      # תבנית(2)+פריצה(1)
+    weak = Signal("rsi2_overbought", "short", "swing", 100, 104, 90, 0.5, "", False)
+    assert tools.count(weak, bars)[0] < 3                                                  # אות בודד בלי אישורים נחסם

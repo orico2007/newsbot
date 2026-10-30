@@ -68,6 +68,7 @@ signals:                         # אין יחס סיכוי-סיכון מיני�
   swing:
     enabled: true
     min_confluence: 45
+    min_tools: 3                 # כלל המחברת: לפחות 3 כלים בגרף (תבנית=2, פריצה=1, נפח=1, דגל=1, ...)
     scan_watchlist_patterns: true
     use_actives: true            # + המניות הפעילות ביותר היום
     max_universe: 120
@@ -75,6 +76,7 @@ signals:                         # אין יחס סיכוי-סיכון מיני�
   day:
     enabled: true
     min_confluence: 45
+    min_tools: 3
     use_movers: true
     use_actives: true
     max_symbols: 40

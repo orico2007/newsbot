@@ -28,7 +28,11 @@ def eng(tmp_path, monkeypatch):
         b = MockBroker(); b._news = []; b._clock = clock(10)
         r = copy.deepcopy(R); r["swing"]["watchlist"] = ["AAA"]
         today = NOW.astimezone(ZoneInfo("America/New_York")).date()
-        e = Earnings(4, cal({today + timedelta(days=report_day_offset): ["AAA"]}))
+        d = today
+        for _ in range(report_day_offset):          # ימי מסחר קדימה (מדלגים על סופ"ש)
+            d += timedelta(days=1)
+            while d.weekday() >= 5: d += timedelta(days=1)
+        e = Earnings(4, cal({d: ["AAA"]}))
         return b, bot.Engine(b, FakeBrain(1, "neutral"), r, bot.roll({}), None, e)
     return make
 

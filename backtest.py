@@ -3,7 +3,7 @@
 import json, argparse, pathlib, logging
 from collections import defaultdict
 from datetime import datetime, timezone, timedelta
-import patterns
+import patterns, tools
 
 log = logging.getLogger("backtest")
 
@@ -29,7 +29,7 @@ def _run_trade(bars, i, sig, max_hold, slip_pct):
     exit_px = exit_px * (1 - slip_pct / 100 if long else 1 + slip_pct / 100)
     pnl = (exit_px - entry) if long else (entry - exit_px)
     return {"pattern": sig.name, "side": sig.side, "R": pnl / risk, "pnl_pct": pnl / entry * 100, "held": j - i, "reason": reason, "i": i,
-            "t": bars[i].get("t", ""), "end": j}
+            "t": bars[i].get("t", ""), "end": j, "tools": tools.count(sig, bars[:i + 1])[0]}
 
 def simulate(bars, detectors=None, shorts=True, max_hold=10, warmup=130, cooldown=3, slip_pct=0.05, min_conf_quality=0.0, sym=None, independent=True):
     """independent=True: כל (תבנית, כיוון) נבדקת בנפרד עם סמן משלה, כך שאף גלאי לא 'מסתיר' אחר.
@@ -120,7 +120,7 @@ def disabled_from(st, min_n=30, max_avg_r=-0.05, min_pf=0.85):
     bad = _bad_sides(st)
     out = set()
     for k, v in st.items():
-        if k.startswith(("ALL", "SIDE|", "ALIGNED")): continue
+        if k.startswith(("ALL", "SIDE|", "ALIGNED", "TOOLS3", "FULLRULE")): continue
         sides = {s for s, n in (("long", v["long_n"]), ("short", v["short_n"])) if n}
         if v["n"] >= min_n and _bad(v, min_n, max_avg_r, min_pf) and (not bad or (sides and sides <= bad.get(k, set()))): out.add(k)
     return sorted(out)
@@ -131,11 +131,13 @@ def disabled_sides_from(st, min_n=15, max_avg_r=-0.05, min_pf=0.85):
     return sorted(f"{p}:{s}" for p, ss in _bad_sides(st).items() if p not in whole for s in ss)
 
 def to_markdown(st, symbols, years, disabled):
-    rows = sorted(((k, v) for k, v in st.items() if not k.startswith(("ALL", "SIDE|", "ALIGNED"))), key=lambda kv: -kv[1]["avg_R"])
+    rows = sorted(((k, v) for k, v in st.items() if not k.startswith(("ALL", "SIDE|", "ALIGNED", "TOOLS3", "FULLRULE"))), key=lambda kv: -kv[1]["avg_R"])
     md = [f"# Backtest - {years}y daily, {len(symbols)} symbols", "",
           "Entry near the signal day's close (bot buys 15 min before close), stop first on conflict, 0.05% slippage each side, 10-day time stop. Past results do not guarantee future results.", "",
           "| Pattern | Trades | Win % | Avg R | Avg % | Profit factor | Avg hold (d) | Long/Short |", "|---|---|---|---|---|---|---|---|"]
-    for k, v in [("ALL", st.get("ALL")), ("ALIGNED with market+sector", st.get("ALIGNED")), ("ALIGNED longs", st.get("ALIGNED_long")), ("ALIGNED shorts", st.get("ALIGNED_short")), ("ALL longs", st.get("ALL_long")), ("ALL shorts", st.get("ALL_short"))] + rows:
+    for k, v in [("ALL", st.get("ALL")), ("3+ chart tools", st.get("TOOLS3")), ("3+ chart tools longs", st.get("TOOLS3_long")), ("3+ chart tools shorts", st.get("TOOLS3_short")),
+                                  ("FULL RULE (3 tools + market/sector aligned)", st.get("FULLRULE")), ("FULL RULE longs", st.get("FULLRULE_long")), ("FULL RULE shorts", st.get("FULLRULE_short")),
+                                  ("ALIGNED with market+sector", st.get("ALIGNED")), ("ALIGNED longs", st.get("ALIGNED_long")), ("ALIGNED shorts", st.get("ALIGNED_short")), ("ALL longs", st.get("ALL_long")), ("ALL shorts", st.get("ALL_short"))] + rows:
         if v: md.append(f"| {k} | {v['n']} | {v['win_rate']} | {v['avg_R']} | {v['avg_pnl_pct']} | {v['profit_factor']} | {v['avg_hold']} | {v['long_n']}/{v['short_n']} |")
     md += ["", f"Auto-disabled directions (n>=15): {', '.join(disabled_sides_from(st)) or 'none'}"]
     md += ["", f"Auto-disabled (n>=30 and avg R <= -0.05 or profit factor < 0.85): {', '.join(disabled) or 'none'}"]
@@ -181,6 +183,14 @@ def main():
     st = stats(allt) if allt else {}
     if al:
         sa = stats(al)
+        tl3 = [t for t in allt if t.get("tools", 0) >= 3]; st3 = stats(tl3) if tl3 else {}
+        for kk in ("ALL", "ALL_long", "ALL_short"):
+            if kk in st3: st["TOOLS3" + kk[3:]] = st3[kk]
+        # הכלל המלא של הבוט: 3 כלים כשהשוק/סקטור מיושרים נספר ככלי נוסף
+        full = [t for t in allt if t.get("tools", 0) + (1 if aligned(t) else 0) >= 3 and aligned(t)]
+        sf = stats(full) if full else {}
+        for kk in ("ALL", "ALL_long", "ALL_short"):
+            if kk in sf: st["FULLRULE" + kk[3:]] = sf[kk]
         for k in ("ALL", "ALL_long", "ALL_short"):
             if k in sa: st["ALIGNED_" + k[4:] if k != "ALL" else "ALIGNED"] = sa[k]
     dis = disabled_from(st)
