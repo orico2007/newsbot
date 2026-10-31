@@ -10,3 +10,7 @@ time,symbol,headline,score,strategy,action,detail
 2026-10-30T16:08:02.959963+00:00,BCH/USD,pullback to SMA20 candle=None,45.8,trend_pullback,ENTER,qty=6.506384 entry=290.442 stop=266.312 tp=340.867 x0.63
 2026-10-30T16:47:56.154914+00:00,BTC/USD,Intel’s Agentic AI Overshadowed By Weak PC Sales; Soft Retail Overshadows Amazon AI; Record Crypto Heist,7,news,scored,bearish other
 2026-10-30T17:07:21.738275+00:00,BTC/USD,"Nasdaq Tumbles Over 3%, Chip Stocks Sink: Stock Market Today",4,news,scored,bearish macro
+2026-10-30T21:55:36.122321+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
+2026-10-30T22:02:44.138371+00:00,BTC/USD,"Bitcoin’s Q4 Selloff Could End Quickly, Analyst Says: ‘This Is the Bottoming Window’",3,news,scored,neutral other
+2026-10-30T22:56:27.532096+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
+2026-10-30T23:57:13.971670+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
