@@ -20,3 +20,24 @@ time,symbol,headline,score,strategy,action,detail
 2026-10-31T20:21:38.007461+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
 2026-10-31T21:21:57.959542+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
 2026-10-31T22:22:11.524458+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
+2026-10-31T23:02:38.157019+00:00,LINK/USD,failed break of 11.21,45.8,spring_reversal,blocked,max crypto positions
+2026-11-01T00:03:26.084521+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-01T00:03:26.084521+00:00,ETH/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T00:03:26.084521+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T00:03:26.084521+00:00,AVAX/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T00:03:26.084521+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T00:03:26.084521+00:00,ETH/USD,,20.3,oversold_bounce,blocked,BTC regime down
+2026-11-01T01:04:13.349754+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T01:04:13.349754+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T01:04:13.349754+00:00,ETH/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T01:04:13.349754+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T01:04:13.349754+00:00,SOL/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-01T02:05:00.172482+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T02:05:00.172482+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T02:05:00.172482+00:00,ETH/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T02:05:00.172482+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T02:05:00.172482+00:00,SOL/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-01T03:05:48.225544+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T03:05:48.225544+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T04:06:40.774610+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T04:06:40.774610+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
