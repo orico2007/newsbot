@@ -85,3 +85,19 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-01T17:41:37.917654+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
 2026-11-01T17:41:37.917654+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
 2026-11-01T17:41:37.917654+00:00,ETH/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-01T21:40:39.323749+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T21:40:39.323749+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-01T22:40:54.580163+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T22:40:54.580163+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-01T22:40:54.580163+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-01T22:40:54.580163+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-01T23:41:10.763187+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-01T23:41:10.763187+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-01T23:41:10.763187+00:00,ETH/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-02T00:41:24.781955+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T00:41:24.781955+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T01:41:40.765655+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T01:41:40.765655+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T02:41:57.118988+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T02:41:57.118988+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T03:03:26.515488+00:00,BTC/USD,'98% Chose to Stay': Binance Hack Continues to Be Probed by Secret Service as Changpeng Zhao Touts 'Trust' in Platform,3,news,scored,neutral regulatory
