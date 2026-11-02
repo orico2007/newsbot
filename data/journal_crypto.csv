@@ -101,3 +101,22 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-02T02:41:57.118988+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
 2026-11-02T02:41:57.118988+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
 2026-11-02T03:03:26.515488+00:00,BTC/USD,'98% Chose to Stay': Binance Hack Continues to Be Probed by Secret Service as Changpeng Zhao Touts 'Trust' in Platform,3,news,scored,neutral regulatory
+2026-11-02T04:18:45.308802+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T04:18:45.308802+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T04:23:51.213369+00:00,BTC/USD,Netanyahu Reportedly Wants Trump to 'Immediately' Strike Iran After the Midterms: Here's What the Crypto Bettors Think the President Will Do,3,news,scored,bearish macro
+2026-11-02T05:19:36.813137+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T05:19:36.813137+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T05:19:36.813137+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T06:04:11.459706+00:00,BTC/USD,Can Republicans Flip Senate Swing States in the Midterms? Crypto Bettors Assign Odds,1,news,scored,neutral macro
+2026-11-02T06:20:26.129107+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T06:20:26.129107+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T07:21:13.647866+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T07:21:13.647866+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T07:21:13.647866+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T08:22:02.172567+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T08:22:02.172567+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T08:22:02.172567+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T09:22:50.641984+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T09:22:50.641984+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T09:22:50.641984+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T09:28:57.845911+00:00,BTC/USD,CRCL Faces Q3 Test as Prediction Markets Bet on Earnings Beat Despite AI Revenue Risks,3,news,scored,neutral earnings
