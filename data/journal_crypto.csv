@@ -120,3 +120,33 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-02T09:22:50.641984+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
 2026-11-02T09:22:50.641984+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
 2026-11-02T09:28:57.845911+00:00,BTC/USD,CRCL Faces Q3 Test as Prediction Markets Bet on Earnings Beat Despite AI Revenue Risks,3,news,scored,neutral earnings
+2026-11-02T14:43:03.323029+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T14:43:03.323029+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T14:43:03.323029+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T15:43:22.394834+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-02T15:43:22.394834+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T15:43:22.394834+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T16:39:40.706406+00:00,BTC/USD,Apple—A Safe Haven From The AI Storm?,2,news,scored,neutral other
+2026-11-02T16:43:45.631255+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T16:43:45.631255+00:00,SOL/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T17:34:01.964663+00:00,BTC/USD,"Dow Rises 1%, Oil Sinks 7% on Iran Peace Hopes: Stock Market Today",2,news,scored,neutral macro
+2026-11-02T17:44:09.134978+00:00,BTC/USD,Strive Eyes Second-Biggest Bitcoin Holder Spot by Year-End After $10M Buy,2,news,scored,neutral other
+2026-11-02T17:44:09.134978+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T17:44:09.134978+00:00,SOL/USD,,28.5,rsi2_reversion,blocked,BTC regime down
+2026-11-02T17:44:09.134978+00:00,LTC/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T17:44:09.134978+00:00,SOL/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T17:44:09.134978+00:00,AVAX/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T17:44:09.134978+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T18:34:28.674221+00:00,BTC/USD,Galaxy Digital Stock Is Falling Monday: What's Going On?,4,news,scored,bearish macro
+2026-11-02T18:44:36.218739+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
+2026-11-02T18:44:36.218739+00:00,SOL/USD,,28.5,rsi2_reversion,blocked,BTC regime down
+2026-11-02T18:44:36.218739+00:00,LTC/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T18:44:36.218739+00:00,ETH/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T18:44:36.218739+00:00,SOL/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T18:44:36.218739+00:00,AVAX/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,SOL/USD,,28.5,rsi2_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,LTC/USD,,23.0,rsi2_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,ETH/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,SOL/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,AVAX/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-02T19:44:54.635940+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
