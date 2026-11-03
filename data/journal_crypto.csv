@@ -181,3 +181,49 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-03T05:30:57.142737+00:00,SOL/USD,,31.9,cum_rsi2,blocked,BTC regime down
 2026-11-03T05:30:57.142737+00:00,SOL/USD,,28.5,rsi2_reversion,blocked,BTC regime down
 2026-11-03T05:59:07.672422+00:00,BTC/USD,Elon Musk Will Launch a US Phone Plan? Crypto Bettors Raise Odds SpaceX Becomes a Mobile Carrier in 2027,2,news,scored,neutral other
+2026-11-03T13:36:46.929371+00:00,BTC/USD,"Stock Market Today: S&P 500, Nasdaq 100, Dow Jones Futures Mixed as Trump Touts Iran Settlement Hopes — AAPL, PLTR, AMD in Focus (UPDATED)",1,news,scored,neutral macro
+2026-11-03T13:36:46.929371+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T13:36:46.929371+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T13:36:46.929371+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T13:36:46.929371+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T13:36:46.929371+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T13:36:46.929371+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T14:37:30.207185+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T15:38:06.510577+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T16:38:40.262160+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-03T17:24:47.889378+00:00,BTC/USD,Nasdaq 100 Gets a Lift As Nvidia Overtakes Apple: Stock Market Today,2,news,scored,neutral macro
+2026-11-03T17:30:00.005602+00:00,BTC/USD,Peter Schiff Challenges Saylor After Strategy Spends $2.25B on Buybacks,3,news,scored,neutral other
+2026-11-03T17:30:00.005602+00:00,BTC/USD,Riot Platforms Stock Flies Ahead of Earnings: What's Going On?,3,news,scored,bullish other
+2026-11-03T17:39:21.715093+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T17:39:21.715093+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T17:39:21.715093+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T17:39:21.715093+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T17:39:21.715093+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T17:39:21.715093+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
+2026-11-03T17:49:39.594992+00:00,BTC/USD,Coinbase Stock Pops: What's Going On?,3,news,scored,neutral other
+2026-11-03T17:49:39.594992+00:00,BTC/USD,QUICK SPARK: Bitcoin Finishes Higher 1 Year After Every US Midterm Election Since Its Launch,2,news,scored,neutral other
+2026-11-03T17:54:52.656730+00:00,BTC/USD,"AMD Earnings To Test Whether PC Weakness Is Intel-Specific, Apple’s AI Agent Problem",1,news,scored,neutral macro
+2026-11-03T18:00:04.300380+00:00,BTC/USD,Why Is Galaxy Digital Stock Surging on Tuesday?,3,news,scored,bullish macro
+2026-11-03T18:05:15.057822+00:00,BTC/USD,"Bitcoin Could Face Third and Final 2026 Low in Q4 if S&P500 Drops, Analyst Cautions",3,news,scored,bearish macro
+2026-11-03T18:24:45.736438+00:00,BTC/USD,Why Is CleanSpark Stock Surging on Tuesday?,3,news,scored,neutral other
+2026-11-03T18:40:10.200320+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T18:40:10.200320+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T18:40:10.200320+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T18:40:10.200320+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-03T18:40:10.200320+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-03T18:40:10.200320+00:00,ETH/USD,,23.0,tweezer_bottom,blocked,BTC regime down
