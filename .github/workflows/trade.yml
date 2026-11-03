@@ -6,6 +6,14 @@ on:
     - cron: "0 13 * * 1-5"
     - cron: "10 18 * * 1-5"
     - cron: "10 19 * * 1-5"
+    # GitHub drops/delays scheduled runs (Mon 2026-11-02 had none during the US session), so add several off-peak backups.
+    # A new run just queues behind a running session (concurrency group) and exits at once if the market is closed.
+    - cron: "7 12 * * 1-5"
+    - cron: "41 13 * * 1-5"
+    - cron: "23 14 * * 1-5"
+    - cron: "47 14 * * 1-5"
+    - cron: "17 15 * * 1-5"
+    - cron: "37 16 * * 1-5"
     - cron: "0 */6 * * *"      # קריפטו 24/7
   workflow_dispatch:
 
