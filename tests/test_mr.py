@@ -74,3 +74,10 @@ def test_shrinking_revenue_vetoes_dip(mk3):
         def get(self, s): return {"rev_yoy": -5, "eps_positive": True}
     b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.funds = F()
     assert e._mr_scan(NOW) == 0
+
+def test_pattern_scan_blocked_by_bearish_news(mk3):
+    from test_v3_engine import _flag_setup
+    b, e = mk3(); _flag_setup(b)
+    e.brain = FakeBrain(8, "bearish", "swing"); b._news = [_news("1", ("AAA",), 600, "Company slashes guidance")]
+    e.swing_pass(NOW, 10)
+    assert not b.orders

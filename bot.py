@@ -321,7 +321,13 @@ class Engine:
                     if nt < sg.get("min_tools", 3):
                         log.debug("%s %s skipped: only %d tools (%s)", sym, sig.name, nt, ", ".join(tl)); continue
                     why += f"; {nt} tools: {', '.join(tl)}"
-                    if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc): cands.append((sc, sym, sig, why, daily))
+                    if sc >= sg["min_confluence"] and not self._side_blocked(sig, sc):
+                        if sig.side == "long" and sg.get("news_filter", True):
+                            veto, bonus, nwhy = self._mr_news(now, sym, {"news_filter": True, **(self.r["swing"].get("mr", {}))})
+                            if veto:
+                                self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: {nwhy}"); continue
+                            sc += bonus; why += f"; {nwhy}" if nwhy else ""
+                        cands.append((sc, sym, sig, why, daily))
             except Exception as e:
                 log.warning("pattern scan failed %s: %s", sym, e)
         cands.sort(key=lambda x: -x[0])

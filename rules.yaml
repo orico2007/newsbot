@@ -78,6 +78,7 @@ signals:                         # אין יחס סיכוי-סיכון מיני�
   swing:
     enabled: true
     min_confluence: 45
+    news_filter: true            # long pattern entries: skip when recent news is bearish (Claude score >= mr.veto_score) or revenue is shrinking
     min_tools: 3                 # כלל המחברת: לפחות 3 כלים בגרף (תבנית=2, פריצה=1, נפח=1, דגל=1, ...)
     scan_watchlist_patterns: true
     use_actives: true            # + המניות הפעילות ביותר היום
