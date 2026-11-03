@@ -38,6 +38,7 @@ swing:
   max_positions: 12
   mr:                            # mean-reversion longs (mr.py): PF ~1.4-1.5, win ~65% in 2021-2026 backtest; bull market only
     enabled: true
+    gate: spy200                 # SPY above its 200-day average (backtest PF 1.44-1.5); 'bull' = stricter regime (fewer trades)
     new_per_day: 4
     size_mult: 2.5               # x4% = 10% of equity per trade (backtest: 10% x 12 positions)
     hold_days: 7

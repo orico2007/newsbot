@@ -34,14 +34,14 @@ def _setup(b, e):
     d = uptrend_pullback(); b.bar_data[("AAA", "1Day")] = d; b.snap["AAA"] = (d[-1]["c"], d[-2]["c"], 2e8)
 
 def test_engine_enters_only_in_bull_regime(mk3):
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bear"
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bear"; e.mkt.spy_above200 = False
     assert e._mr_scan(NOW) == 0 and not b.orders
-    e.mkt.regime = "bull"
+    e.mkt.regime = "neutral"; e.mkt.spy_above200 = True
     assert e._mr_scan(NOW) == 1 and b.orders[0][2] == "buy"
     assert e.state["meta"]["AAA"]["pattern"] == "mr_A"
 
 def test_engine_exits_above_prior_high(mk3):
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e._mr_scan(NOW)
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True; e._mr_scan(NOW)
     b._pos = [{"symbol": "AAA", "qty": "10", "current_price": "1", "avg_entry_price": "1", "market_value": "10"}]
     d = b.bar_data[("AAA", "1Day")]; d[-1] = dict(d[-1], c=d[-2]["h"] * 1.01, h=d[-2]["h"] * 1.02)
     e.state["swing_done"] = None; e.swing_pass(NOW, 10)
@@ -53,26 +53,26 @@ def test_rule_f_fires_without_ibs_condition():
     assert s and s.name in ("mr_F", "mr_E")
 
 def test_mr_position_size_is_10_pct(mk3):
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e._mr_scan(NOW)
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True; e._mr_scan(NOW)
     qty, px = b.orders[0][1], b.snap["AAA"][0]
     assert abs(qty * px / 100000 - 0.10) < 0.02
 
 from helpers import FakeBrain, news as _news
 
 def test_bearish_news_vetoes_dip(mk3):
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True
     e.brain = FakeBrain(8, "bearish", "swing"); b._news = [_news("1", ("AAA",), 600, "Company slashes guidance")]
     assert e._mr_scan(NOW) == 0 and not b.orders
 
 def test_neutral_or_no_news_allows_dip(mk3):
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True
     b._news = [_news("1", ("AAA",), 600, "Company holds conference")]
     assert e._mr_scan(NOW) == 1
 
 def test_shrinking_revenue_vetoes_dip(mk3):
     class F:
         def get(self, s): return {"rev_yoy": -5, "eps_positive": True}
-    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.funds = F()
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True; e.funds = F()
     assert e._mr_scan(NOW) == 0
 
 def test_pattern_scan_blocked_by_bearish_news(mk3):

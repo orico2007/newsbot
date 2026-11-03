@@ -60,6 +60,7 @@ class Market:
         self.b, self.cfg, self.start = broker, cfg, start_iso_fn
         self.regime, self.ranked, self.t = "neutral", [], 0
         self.spy_ret60, self.risk, self.rt = 0.0, {"spy": 0.0, "vix": 0.0}, 0
+        self.spy_above200 = False
 
     def refresh(self, now, force=False):
         if not self.cfg.get("enabled", True): return
@@ -70,6 +71,7 @@ class Market:
             bars = {e: self.b.bars(e, "1Day", start) for e in SECTORS}
             self.regime, self.ranked, self.t = regime(spy), rank_sectors(bars, spy), time.time()
             self.spy_ret60 = pct_return([b["c"] for b in spy], 60) or 0.0
+            sc = [b["c"] for b in spy]; self.spy_above200 = len(sc) >= 200 and sc[-1] > sma(sc, 200)
         except Exception:
             self.t = time.time() - 3000      # ננסה שוב בעוד ~10 דקות
 

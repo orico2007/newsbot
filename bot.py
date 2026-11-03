@@ -360,7 +360,8 @@ class Engine:
     def _mr_scan(self, now):
         """mean-reversion longs (rules A/E): bull market only, strongest rule first"""
         s = self.r["swing"]; cfg = s.get("mr", {})
-        if not cfg.get("enabled") or self.mkt.regime != "bull": return 0
+        if not cfg.get("enabled"): return 0
+        if (self.mkt.regime != "bull") if cfg.get("gate") == "bull" else (not self.mkt.spy_above200): return 0      # tested gate: SPY above its 200-day average
         held = {p["symbol"] for p in self._pos()}
         cands = []
         for sym in s["watchlist"]:
