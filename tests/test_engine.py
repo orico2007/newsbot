@@ -97,7 +97,7 @@ def test_daily_scan_not_before_window(mk):
 def test_swing_time_stop(mk):
     r = scan_rules(); r["swing"]["scan"]["enabled"] = False
     b, e = mk(rules=r, mtc=15, news_items=[]); b._pos = [{"symbol": "AAA", "market_value": "4000"}]
-    old = str(date.today() - timedelta(days=21))
+    old = str(date.today() - timedelta(days=35))
     e.state["meta"] = {"AAA": {"strategy": "swing", "side": "long", "entry_date": old, "ts": 1e12}}
     e.step(); assert b.closed == ["AAA"]
 def test_swing_not_closed_before_max_hold(mk):
