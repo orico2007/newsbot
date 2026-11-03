@@ -46,7 +46,7 @@ swing:
     news_lookback_hours: 48
     max_headlines: 3
     stop_atr: 4.0
-  max_hold_days: 10              # יציאת זמן (ימי מסחר)
+  max_hold_days: 21              # יציאת זמן (ימי מסחר)
   scan_minutes_before_close: 15  # פריצות סווינג נבדקות רק 15 דקות לפני הסגירה, כשהנר היומי כמעט סופי
   long:  {position_pct: 4,   atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 12}
   short: {position_pct: 2.5, atr_stop_mult: 2, atr_target_mult: 4, max_stop_pct: 8}
