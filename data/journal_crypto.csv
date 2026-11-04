@@ -293,3 +293,72 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-04T09:56:44.705377+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
 2026-11-04T09:56:44.705377+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
 2026-11-04T10:19:52.711474+00:00,BTC/USD,"Stock Market Today: Dow Jones, S&P 500 Futures Rise as Democrats Take Control of Congress—AMD, AMGN, NVO in Focus",2,news,scored,neutral macro
+2026-11-04T13:45:28.599815+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T13:45:28.599815+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T13:45:28.599815+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T13:45:28.599815+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T13:45:28.599815+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,BCH/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,SOL/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T14:45:44.018553+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T15:03:12.049658+00:00,BTC/USD,,,crypto,EXIT,target 79405.53 price=79447.6 entry=77191.5
+2026-11-04T15:45:55.958284+00:00,BTC/USD,Riot Stock Surges on Surprising Q3 Results,8,news,scored,bullish earnings
+2026-11-04T15:45:55.958284+00:00,BTC/USD,Riot Stock Surges on Surprising Q3 Results,35.0,news,ENTER,qty=0.018694 entry=80160.5 stop=74527.3 tp=91426.9 x0.5
+2026-11-04T15:45:55.958284+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,SOL/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T15:45:55.958284+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,SOL/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T16:46:19.088078+00:00,BCH/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T17:05:46.232103+00:00,BTC/USD,Why Investors May Be Getting The Blue Wave Trade Wrong; Iran Remains The Wild Card,1,news,scored,neutral macro
+2026-11-04T17:35:23.948217+00:00,BTC/USD,"Dow Rallies 2.9%, Oil Sinks 7% After Midterms: Stock Market Today",3,news,scored,neutral macro
+2026-11-04T17:46:39.877832+00:00,ETH/USD,Why Is Bitmine Stock Surging on Wednesday?,4,news,scored,bullish macro
+2026-11-04T17:46:39.877832+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,SOL/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T17:46:39.877832+00:00,BCH/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T18:46:54.299387+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T19:21:38.084633+00:00,BTC/USD,Hut 8 Stock Sinks After Democratic Midterm Wins,7,news,scored,bearish macro
