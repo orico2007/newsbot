@@ -1,103 +1,103 @@
 {
- "updated": "2026-11-03T19:59:42.611391+00:00",
+ "updated": "2026-11-04T20:18:57.052289+00:00",
  "regime": "neutral",
  "ranked": [
   {
    "etf": "XLV",
    "name": "Healthcare",
-   "score": 12.86,
-   "ret20": 10.3,
+   "score": 13.36,
+   "ret20": 12.2,
    "above50": true
   },
   {
    "etf": "XLP",
    "name": "Consumer Staples",
-   "score": 10.83,
-   "ret20": 9.1,
-   "above50": true
-  },
-  {
-   "etf": "XLE",
-   "name": "Energy",
-   "score": 9.69,
-   "ret20": 4.9,
-   "above50": true
-  },
-  {
-   "etf": "XLU",
-   "name": "Utilities",
-   "score": 7.83,
-   "ret20": 5.8,
-   "above50": true
-  },
-  {
-   "etf": "XLF",
-   "name": "Financials",
-   "score": 7.46,
-   "ret20": 6.0,
+   "score": 12.46,
+   "ret20": 12.7,
    "above50": true
   },
   {
    "etf": "XLRE",
    "name": "Real Estate",
-   "score": 7.29,
-   "ret20": 6.0,
-   "above50": true
-  },
-  {
-   "etf": "XLB",
-   "name": "Materials",
-   "score": 7.11,
-   "ret20": 5.7,
+   "score": 9.78,
+   "ret20": 10.9,
    "above50": true
   },
   {
    "etf": "XLY",
    "name": "Consumer Discretionary",
-   "score": 6.4,
-   "ret20": 4.9,
+   "score": 9.25,
+   "ret20": 9.8,
    "above50": true
   },
   {
-   "etf": "ITA",
-   "name": "Aerospace & Defense",
-   "score": 3.34,
-   "ret20": 4.1,
+   "etf": "XLF",
+   "name": "Financials",
+   "score": 8.88,
+   "ret20": 9.8,
    "above50": true
   },
   {
-   "etf": "XLI",
-   "name": "Industrials",
-   "score": 2.49,
-   "ret20": -0.1,
+   "etf": "XLB",
+   "name": "Materials",
+   "score": 8.09,
+   "ret20": 9.6,
+   "above50": true
+  },
+  {
+   "etf": "XLU",
+   "name": "Utilities",
+   "score": 6.07,
+   "ret20": 6.2,
    "above50": true
   },
   {
    "etf": "XBI",
    "name": "Biotech",
-   "score": 2.08,
-   "ret20": 2.7,
+   "score": 4.79,
+   "ret20": 5.0,
+   "above50": true
+  },
+  {
+   "etf": "XLE",
+   "name": "Energy",
+   "score": -1.09,
+   "ret20": -0.2,
+   "above50": false
+  },
+  {
+   "etf": "ITA",
+   "name": "Aerospace & Defense",
+   "score": -2.61,
+   "ret20": 4.5,
+   "above50": false
+  },
+  {
+   "etf": "XLI",
+   "name": "Industrials",
+   "score": -2.74,
+   "ret20": 0.9,
    "above50": false
   },
   {
    "etf": "XLC",
    "name": "Communication",
-   "score": -6.75,
-   "ret20": -9.4,
+   "score": -4.83,
+   "ret20": -5.7,
    "above50": false
   },
   {
    "etf": "XLK",
    "name": "Technology",
-   "score": -8.26,
-   "ret20": -12.9,
+   "score": -9.68,
+   "ret20": -12.1,
    "above50": false
   },
   {
    "etf": "SMH",
    "name": "Semiconductors",
-   "score": -12.18,
-   "ret20": -18.4,
+   "score": -16.39,
+   "ret20": -19.5,
    "above50": false
   }
  ]

@@ -1,0 +1,39 @@
+{
+ "stats": {
+  "ALL": {
+   "n": 1,
+   "win_rate": 0.0,
+   "avg_pnl_pct": -8.359,
+   "avg_win": 0,
+   "avg_loss": -8.36,
+   "profit_factor": 0.0,
+   "avg_R": -1.01,
+   "avg_slippage_pct": null
+  },
+  "strategy": {
+   "crypto": {
+    "n": 1,
+    "win_rate": 0.0,
+    "avg_pnl_pct": -8.359,
+    "avg_win": 0,
+    "avg_loss": -8.36,
+    "profit_factor": 0.0,
+    "avg_R": -1.01,
+    "avg_slippage_pct": null
+   }
+  },
+  "pattern": {
+   "trend_pullback": {
+    "n": 1,
+    "win_rate": 0.0,
+    "avg_pnl_pct": -8.359,
+    "avg_win": 0,
+    "avg_loss": -8.36,
+    "profit_factor": 0.0,
+    "avg_R": -1.01,
+    "avg_slippage_pct": null
+   }
+  }
+ },
+ "disabled": []
+}
