@@ -16,6 +16,10 @@ on:
     - cron: "37 16 * * 1-5"
     - cron: "0 */6 * * *"      # קריפטו 24/7
   workflow_dispatch:
+    inputs:
+      stock_only:
+        description: "true = only the stock job (used by the self-chaining dispatch)"
+        default: "false"
 
 permissions:
   contents: write
@@ -62,7 +66,7 @@ jobs:
           ran=$(( $(date +%s) - T0 ))
           echo "market open: $open, this run lasted ${ran}s"
           if [ "$open" = "True" ] && [ "$ran" -gt 600 ]; then      # the >10 min guard stops a crash loop
-            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main
+            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main -f 'inputs[stock_only]=true'
           fi
 
   crypto:
@@ -71,7 +75,7 @@ jobs:
     concurrency:
       group: newsbot-crypto
       cancel-in-progress: false
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */6 * * *'
+    if: (github.event_name == 'workflow_dispatch' && github.event.inputs.stock_only != 'true') || github.event.schedule == '0 */6 * * *'
     env:
       PYTHONUTF8: "1"
       ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
@@ -102,7 +106,7 @@ jobs:
           print(bool(c.get('is_open')) or (t(c['next_open']) - t(c['timestamp'])).total_seconds() < 5400)" 2>/dev/null || echo False)
           echo "start stock session: $go"
           if [ "$go" = "True" ]; then
-            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main
+            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main -f 'inputs[stock_only]=true'
           fi
       - name: Crypto session (paper)
         run: python crypto.py --session --minutes 340
