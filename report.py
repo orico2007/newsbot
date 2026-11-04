@@ -2,11 +2,22 @@
 import csv, json, pathlib
 from collections import Counter
 
+JOURNAL_COLS = ["time", "symbol", "headline", "score", "direction", "event", "horizon", "strategy", "side", "action", "detail", "reason"]
+
 def read_journal(path, day):
     p = pathlib.Path(path)
     if not p.exists(): return []
     with p.open(encoding="utf-8-sig", newline="") as f:
-        return [r for r in csv.DictReader(f) if (r.get("time") or "").startswith(day)]
+        rows = list(csv.reader(f))
+    if not rows: return []
+    head, body = rows[0], rows[1:]
+    if p.name == "journal.csv" and head != JOURNAL_COLS:      # old files had a shorter header than the rows written to them
+        head = JOURNAL_COLS
+    out = []
+    for r in body:
+        d = dict(zip(head, r))
+        if (d.get("time") or "").startswith(day): out.append(d)
+    return out
 
 def build(day, account, positions, rows, sectors=None, crypto_rows=None):
     eq, last = float(account["equity"]), float(account["last_equity"])

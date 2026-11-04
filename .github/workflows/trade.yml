@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   trade:
@@ -37,6 +38,7 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
+      - run: echo "T0=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11", cache: pip }
@@ -50,6 +52,18 @@ jobs:
       - name: Save journal and state
         if: always()
         run: bash scripts/save_data.sh "journal update"
+      - name: Keep the stock session going while the market is open
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GitHub drops/delays scheduled runs, so the session chains itself: if the market is still open, start the next one.
+          open=$(curl -s -H "APCA-API-KEY-ID: $ALPACA_KEY_ID" -H "APCA-API-SECRET-KEY: $ALPACA_SECRET_KEY" https://paper-api.alpaca.markets/v2/clock | python3 -c "import sys,json; print(json.load(sys.stdin).get('is_open'))" 2>/dev/null || echo False)
+          ran=$(( $(date +%s) - T0 ))
+          echo "market open: $open, this run lasted ${ran}s"
+          if [ "$open" = "True" ] && [ "$ran" -gt 600 ]; then      # the >10 min guard stops a crash loop
+            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main
+          fi
 
   crypto:
     runs-on: ubuntu-latest
@@ -75,6 +89,21 @@ jobs:
       - run: npm install -g @anthropic-ai/claude-code
       - run: pip install -r requirements.txt
       - run: python -m pytest -q
+      - name: Start a stock session if the market is open or opens within 90 minutes
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          go=$(curl -s -H "APCA-API-KEY-ID: $ALPACA_KEY_ID" -H "APCA-API-SECRET-KEY: $ALPACA_SECRET_KEY" https://paper-api.alpaca.markets/v2/clock | python3 -c "
+          import sys, json
+          from datetime import datetime
+          c = json.load(sys.stdin)
+          t = lambda x: datetime.fromisoformat(x)
+          print(bool(c.get('is_open')) or (t(c['next_open']) - t(c['timestamp'])).total_seconds() < 5400)" 2>/dev/null || echo False)
+          echo "start stock session: $go"
+          if [ "$go" = "True" ]; then
+            gh api -X POST repos/${{ github.repository }}/actions/workflows/trade.yml/dispatches -f ref=main
+          fi
       - name: Crypto session (paper)
         run: python crypto.py --session --minutes 340
       - name: Save crypto journal and state

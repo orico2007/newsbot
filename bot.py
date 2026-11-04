@@ -137,6 +137,9 @@ class Engine:
             self._j(now, sym, headline, v, strategy, side, "error", f"order failed: {e}")
             return False
         ref = price or ((dec.stop_price + dec.take_profit_price) / 2)
+        prev_meta = self.state["meta"].get(sym)
+        if prev_meta:      # the earlier trade in this symbol closed (stop/target) and wasn't reconciled yet: log it before the new one overwrites it
+            self._record_trade(sym, prev_meta)
         self.state["meta"][sym] = {"strategy": strategy, "side": side, "entry_date": str(date.today()), "ts": time.time(),
                                    "entry": ref, "qty": dec.qty, "qty0": dec.qty, "take": dec.take_profit_price, "stop": dec.stop_price, "stop0": dec.stop_price, "ext": ref, "pattern": pattern or ("news" if v else "scan"), "open_ts": datetime.now(timezone.utc).isoformat(),
                                    "atr": atr or max(abs(ref - dec.stop_price) / 1.5, 0.01)}
@@ -501,6 +504,9 @@ class Engine:
                 ve = self._research()["validated"].get(f"{sig.name.replace('_W', '')}:{sig.side}")
                 if ve: mult = round(max(self.r["signals"]["size_multiplier"]["min"], min(self.r["signals"]["size_multiplier"]["max"], mult * ve.get("mult", 1.0))), 2)
             ov = self._apply_exits(sig, price, atr) if strategy == "swing" else (sig.stop, sig.target)
+            if not sig.name.startswith("mr_") and ov and abs(price - ov[0]) > 0:
+                rr = abs(ov[1] - price) / abs(price - ov[0])
+                if rr < 1: mult = round(max(0.5, mult * rr), 2)       # reward smaller than risk: smaller position (never blocked)
             dec = evaluate_entry(self.r, strategy, sig.side, sym, price, prev, adv, self.b.account(), self._pos(), self.state,
                                  is_open, atr=atr, shortable=shortable, override=ov, size_mult=mult)
         except Exception as e:

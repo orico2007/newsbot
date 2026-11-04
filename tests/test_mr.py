@@ -81,3 +81,20 @@ def test_pattern_scan_blocked_by_bearish_news(mk3):
     e.brain = FakeBrain(8, "bearish", "swing"); b._news = [_news("1", ("AAA",), 600, "Company slashes guidance")]
     e.swing_pass(NOW, 10)
     assert not b.orders
+
+def test_new_entry_logs_previous_trade_in_same_symbol(mk3):
+    import csv, bot as _bot
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True
+    e.state["meta"]["AAA"] = {"strategy": "swing", "side": "long", "entry_date": "2026-11-03", "ts": 1.0, "entry": 100.0, "fill": 100.0, "qty": 5, "qty0": 5,
+                              "stop0": 95.0, "pattern": "old", "last": 103.0}
+    b.fills = {"AAA": 104.0}
+    e._mr_scan(NOW)
+    rows = list(csv.DictReader(open(_bot.DATA / "trades.csv")))
+    assert rows and rows[-1]["symbol"] == "AAA" and rows[-1]["pattern"] == "old" and float(rows[-1]["pnl_pct"]) > 0
+    assert e.state["meta"]["AAA"]["pattern"] == "mr_A"
+
+def test_report_reads_journal_with_old_short_header(tmp_path):
+    import report
+    p = tmp_path / "journal.csv"
+    p.write_text("time,symbol,headline,score,direction,reason,action,detail\n" + "2026-11-04T20:00:00+00:00,XOM,h,,,,,,,ENTER,buy,\n", encoding="utf-8")
+    assert [r["action"] for r in report.read_journal(p, "2026-11-04")] == ["ENTER"]
