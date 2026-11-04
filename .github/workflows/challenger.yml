@@ -1,0 +1,31 @@
+name: Champion vs challengers (backtest only)
+
+on:
+  schedule:
+    - cron: "37 5 * * 0"        # every Sunday; backtest only, never changes the live rules
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  challenge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    concurrency:
+      group: newsbot-challenger
+      cancel-in-progress: false
+    env:
+      PYTHONUTF8: "1"
+      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: python scripts/fetch_bars.py --years 9
+      - run: python challenger.py
+      - name: Save results (data/challengers.md only)
+        if: always()
+        run: bash scripts/save_data.sh "challenger results"
