@@ -362,3 +362,13 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-04T18:46:54.299387+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
 2026-11-04T18:46:54.299387+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
 2026-11-04T19:21:38.084633+00:00,BTC/USD,Hut 8 Stock Sinks After Democratic Midterm Wins,7,news,scored,bearish macro
+2026-11-04T21:39:02.283732+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T21:39:02.283732+00:00,BCH/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
