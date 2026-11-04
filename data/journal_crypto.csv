@@ -249,3 +249,47 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-04T03:54:39.424130+00:00,LINK/USD,,31.9,cum_rsi2,blocked,BTC regime down
 2026-11-04T03:54:39.424130+00:00,LINK/USD,,23.0,rsi2_reversion,blocked,BTC regime down
 2026-11-04T04:24:48.611092+00:00,BTC/USD,Jim Cramer’s ‘Crypto Put Us on’ Post Sets Off Speculation: Here’s What People Are Saying,2,news,scored,neutral other
+2026-11-04T04:55:04.528114+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T04:55:04.528114+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T04:55:04.528114+00:00,SOL/USD,,20.3,oversold_bounce,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,BCH/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-04T05:55:20.558079+00:00,SOL/USD,,20.3,oversold_bounce,blocked,BTC regime down
+2026-11-04T06:25:28.574601+00:00,BTC/USD,"Trump May Be Impeached ‘Multiple Times’ if Dems Have the House, Warns Ted Cruz — Crypto Bettors Raise the Stakes",3,news,scored,bearish macro
+2026-11-04T06:55:41.575886+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T06:55:41.575886+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T06:55:41.575886+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T06:55:41.575886+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T06:55:41.575886+00:00,BCH/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-04T06:55:41.575886+00:00,SOL/USD,,20.3,oversold_bounce,blocked,BTC regime down
+2026-11-04T07:44:56.085148+00:00,BTC/USD,Jack Dorsey-Led Block's Stock Has Popped Over 16% This Year; Now the CEO Sees AI Agent Opportunities Amid Sinking Bitcoin Ecosystem Profits,3,news,scored,neutral other
+2026-11-04T07:56:03.827604+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,BCH/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-04T07:56:03.827604+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,BCH/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T08:56:21.817983+00:00,SOL/USD,,20.3,oversold_bounce,blocked,BTC regime down
+2026-11-04T09:40:37.338525+00:00,BTC/USD,"Nancy Pelosi Backs Hakeem Jeffries for House Speaker — Crypto Bettors Agree, Giving Him 95% Odds",1,news,scored,neutral macro
+2026-11-04T09:56:44.705377+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T09:56:44.705377+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T10:19:52.711474+00:00,BTC/USD,"Stock Market Today: Dow Jones, S&P 500 Futures Rise as Democrats Take Control of Congress—AMD, AMGN, NVO in Focus",2,news,scored,neutral macro
