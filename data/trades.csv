@@ -1,0 +1,2 @@
+closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pct,reason
+2026-11-04T03:12:25.894353+00:00,BCH/USD,crypto,trend_pullback,long,290.442,266.163,-8.359,-1.01,4,,stop 266.31175
