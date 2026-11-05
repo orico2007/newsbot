@@ -45,15 +45,31 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("A+E+F, 15 positions, 5/day", ruleset(), dict(size_pct=8, max_pos=15, per_day=5)),
     ("size 8% x 10, 3/day", ruleset(), dict(size_pct=8, max_pos=10, per_day=3)),
     ("size 12% x 10, 4/day", ruleset(), dict(size_pct=12, max_pos=10, per_day=4)),
+    # lab run 7 (sector-peer weakness; see data/lab_log.md). Post-processors act on the champion's trade list.
+    ("lab: only if sector peers 3d < 0%", ruleset(), DEF_PORT, "peers_lt0"),
+    ("lab: rank by weakest sector peers first", ruleset(), DEF_PORT, "peers_rank"),
 ]
+
+def post(T, kind, F):
+    """Optional post-processing of a trade list using sector-peer features (lab_sector.feats)."""
+    g = lambda t: F.get((t["sym"], t["t"]))
+    if kind == "peers_lt0": return [t for t in T if g(t) and g(t)["m3"] < 0]
+    if kind == "peers_rank": return [dict(t, score=-g(t)["m3"]) for t in T if g(t)]
+    return T
 
 def run():
     AS, ctx = sweep.load_all()
     spy = lab.load_bars()["SPY"]; last = spy[-1]["t"][:10]
     cut = (datetime.date.fromisoformat(last) - datetime.timedelta(days=365)).isoformat()
     rows = []
-    for name, rules, kw in VARIANTS:
-        P = lab.portfolio(PT.gen(AS, ctx, rules), **kw)
+    F = None
+    for v in VARIANTS:
+        name, rules, kw = v[:3]; T0 = PT.gen(AS, ctx, rules)
+        if len(v) > 3:
+            if F is None:
+                import lab_sector; F = lab_sector.feats(AS)
+            T0 = post(T0, v[3], F)
+        P = lab.portfolio(T0, **kw)
         T = P["trades"]; l12 = research.stat([t for t in T if t["t"] >= cut])
         ys = {y: research.stat([t for t in T if t["t"][:4] == y])["pf_pct"] for y in sorted({t["t"][:4] for t in T})}
         rows.append(dict(name=name, n=P["n"], win=P["win"], pf=P["pf_pct"], ret=P["ret_pct"], mdd=P["mdd"], sharpe=P["sharpe"],

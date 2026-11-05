@@ -24,6 +24,8 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | A+E+F, 15 positions, 5/day | 763 | 66.1 | 1.46 | 34.5 | 5.0 | 1.18 | 173 | 67.6 | 1.55 | better in 3/5 years |
 | size 8% x 10, 3/day | 722 | 65.4 | 1.39 | 26.9 | 4.9 | 1.04 | 165 | 66.7 | 1.45 | better in 1/5 years |
 | size 12% x 10, 4/day | 739 | 65.8 | 1.4 | 45.8 | 7.5 | 1.05 | 170 | 67.6 | 1.49 | better in 2/5 years |
+| lab: only if sector peers 3d < 0% | 623 | 67.1 | 1.63 | 46.4 | 5.3 | 1.37 | 144 | 70.1 | 1.76 | PROMOTE-CANDIDATE |
+| lab: rank by weakest sector peers first | 749 | 66.8 | 1.49 | 46.7 | 6.5 | 1.23 | 172 | 69.2 | 1.58 | PROMOTE-CANDIDATE |
 
 ## Profit factor by year
 
@@ -49,3 +51,5 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | A+E+F, 15 positions, 5/day | 1.86 | 0.14 | 1.34 | 1.75 | 1.41 | 1.44 |
 | size 8% x 10, 3/day | 1.79 | 0.18 | 1.47 | 1.5 | 1.24 | 1.41 |
 | size 12% x 10, 4/day | 1.84 | 0.14 | 1.38 | 1.59 | 1.24 | 1.45 |
+| lab: only if sector peers 3d < 0% | 2.05 | 0.19 | 1.32 | 2.02 | 1.64 | 1.67 |
+| lab: rank by weakest sector peers first | 1.86 | 0.14 | 1.42 | 1.76 | 1.39 | 1.49 |

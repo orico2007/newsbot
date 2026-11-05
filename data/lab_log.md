@@ -104,3 +104,27 @@ Rules: take the champion's own trades (A+E+F, SPY>200d, hold 7, stop 4 ATR) and 
 | 3d avg vol >= 1.3x | 151 | 67.5 | 1.78 | 11.6 | 2.1 | 21 / 3.27 | 3.16/.06/1.32/1.91/1.71/2.52 |
 
 Verdict: NOT a promotion candidate; the published low-volume effect does NOT show up (low-volume entries PF 1.20-1.28, worse than champion). Heavier volume is mildly better (>=1.0x: PF 1.50, Sharpe 1.28, lower drawdown) but with 36% fewer trades, lower return (29.2 vs 36.8%), and 2023 PF 1.24 < champion 1.39, so it fails the beat-on-return and year tests. Notable: heavy-volume days (selling capitulation) pair with run 5's gap-recover finding; a volume-ranked tie-break was effectively covered in run 3 (dollar volume = noise). Not added to challenger.py. Follow-ups: sector-relative reversion, gap sleeve with own slots, pairs.
+
+## 2026-11-05 (run 7) - sector-relative reversion: filter/rank champion entries by sector-peer weakness (own idea)
+Source: none (own idea; follow-up listed in runs 3-6; related to fear-filter finding that weakness is where the edge is richest). Rules: take the champion's trades (A+E+F, SPY>200d, hold 7, stop 4 ATR). For each signal compute the mean 3-day (and 20-day) return of the other cached stocks in the same sector (market.SECTOR_OF, self excluded, >=2 peers) and the share of peers above SMA50, then filter or re-rank. Same simulator (10% x 12, 4/day). Scripts: lab_sector.py, lab_sector2.py. 16 variants tried (8 + 8 threshold/rank neighbours; discount applies). Year choice: 2021-23 were the early years, 2024-26 confirmation; 2026 never used for picking thresholds (the 0% threshold is the least tuned of the gradient).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| CHAMPION | 749 | 66.0 | 1.40 | 36.8 | 6.2 | 1.05 | 171 / 1.50 | 1.82/.14/1.39/1.57/1.24/1.45 |
+| stock-specific drop (3d idio < -3% vs peers) | 281 | 69.0 | 1.66 | 24.7 | 4.1 | 1.40 | 79 / 1.58 | 3.98/0/1.46/1.51/1.50/1.54 |
+| sector-wide drop (idio >= -3%) | 557 | 65.4 | 1.34 | 19.8 | 5.8 | 0.86 | 114 / 1.63 | 1.31/.17/1.07/2.02/1.28/1.44 |
+| peers 20d > 0 (strong sector) | 464 | 66.8 | 1.55 | 30.8 | 4.2 | 1.26 | 101 / 1.66 | 1.81/.08/1.93/1.65/1.32/1.55 |
+| peers 20d <= 0 (weak sector) | 347 | 66.0 | 1.32 | 12.2 | 5.8 | 0.64 | 80 / 1.40 | 1.58/.20/.79/2.14/1.55/1.18 |
+| weakest in strong sector (idio<-3 & m20>0) | 207 | 68.1 | 1.52 | 14.3 | 4.1 | 1.03 | 51 / 1.23 | 3.05/0/3.05/1.35/.99/1.37 |
+| peers >=50% above SMA50 | 520 | 66.2 | 1.48 | 30.0 | 6.6 | 1.10 | 109 / 1.49 | 1.93/.17/1.58/1.74/1.34/1.35 |
+| **peers 3d < 0%** | 623 | 67.1 | 1.63 | 46.4 | 5.3 | 1.37 | 144 / 1.76 | 2.05/.19/1.32/2.02/1.64/1.67 |
+| peers 3d < -0.5% | 562 | 66.5 | 1.65 | 43.2 | 5.9 | 1.37 | 132 / 1.80 | 2.03/.17/1.16/2.29/1.65/1.70 |
+| peers 3d < -1% | 489 | 67.3 | 1.80 | 44.5 | 5.9 | 1.56 | 123 / 1.90 | 2.71/.20/.92/2.82/1.75/1.74 |
+| peers 3d < -1.5% | 405 | 67.4 | 1.77 | 37.3 | 5.8 | 1.40 | 104 / 1.78 | 2.15/.19/1.02/2.87/1.73/1.67 |
+| peers 3d < -2% | 322 | 68.3 | 1.71 | 27.2 | 4.8 | 1.33 | 91 / 1.71 | 1.95/.09/1.19/2.67/2.18/1.52 |
+| peers 3d < -3% | 192 | 74.0 | 2.59 | 29.3 | 2.6 | 1.87 | 49 / 2.86 | 10.2/.05/1.50/3.64/2.05/2.71 |
+| **rank all signals by weakest peers first (no filter)** | 749 | 66.8 | 1.49 | 46.7 | 6.5 | 1.23 | 172 / 1.58 | 1.86/.14/1.42/1.76/1.39/1.49 |
+| rank by weak peers within rule tier | 749 | 66.6 | 1.43 | 40.6 | 6.5 | 1.12 | 171 / 1.51 | 1.97/.14/1.43/1.53/1.35/1.46 |
+
+Verdict: PROMOTION CANDIDATE (two forms, both added to challenger.py as "lab:" variants; weekly job now tracks them). The signal is "the stock's own sector fell over the last 3 days": PF rises monotonically with the threshold (1.63 at <0%, 1.65, 1.80, 1.77, 1.71, 2.59 at <-3%), a smooth gradient rather than one lucky cut, with L12 PF 1.71-2.86 and lower drawdown. Strict form "peers 3d < 0%": PF 1.63 vs 1.40, return 46.4% vs 36.8%, L12 PF 1.76 vs 1.50, Sharpe 1.37 vs 1.05, maxDD 5.3% vs 6.2%; beats the champion in 2021, 2024, 2025, 2026 and misses only 2023 (1.32 vs 1.39); 2022 stays bad (0.19), so the SPY>200d gate must stay. Tighter thresholds fail 2023 harder (0.92-1.19), so do not tighten. Soft form "rank by weakest peers first" keeps all trades and beats the champion in every year (PF 1.49, ret 46.7%, L12 1.58) with drawdown flat (6.5%), the safer change. Idiosyncratic vs sector-wide drop does not matter; what matters is that the sector is currently falling (this is the same effect as the SPY-3d-dip finding from the fear-filter round, localized to the sector, and it improved return, unlike the SPY version). Caveats: ~16 variants (but the gradient is monotone, which a pure data-mining artifact usually is not); the universe is today's ~126 survivors, with 4-17 stocks per sector so peer averages are noisy; costs are only 0.05% slippage; no independent out-of-sample beyond 2024-26. Suggested review step for the daily improvement task: consider the soft rank form first (a tie-break/priority change when more than 4 signals compete), then the strict <0% filter; the live bot needs a sector-peer 3d-return computation from its own bars. Live rules were NOT changed.
+Follow-ups: apply the same peer-weakness feature to the gap-recover sleeve (run 5, which failed 2023); test the weak-sector effect using the sector ETFs (XL*) instead of peers to check it is not a universe artifact.
