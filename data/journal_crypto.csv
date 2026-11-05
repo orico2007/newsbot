@@ -403,3 +403,16 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-05T10:15:32.470244+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
 2026-11-05T10:15:32.470244+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
 2026-11-05T10:30:53.722109+00:00,BTC/USD,"Stock Market Today: Dow Jones, S&P 500 Futures Trade Mixed After Post-Midterm Rally — TM, ARM, QCOM in Focus",1,news,scored,neutral macro
+2026-11-05T14:01:16.662224+00:00,BTC/USD,Trump Media Reportedly Moved $342M in Bitcoin to Crypto Exchange,3,news,scored,neutral other
+2026-11-05T14:26:51.657493+00:00,BTC/USD,"Bitcoin Is Bipartisan and a Blue Wave Doesn't Change That, Researcher Argues",2,news,scored,neutral other
+2026-11-05T14:51:25.187717+00:00,BTC/USD,VanEck's Matthew Sigel 'Quite Bullish' on Bitcoin Under Democratic-Led Congress,3,news,scored,bullish analyst
+2026-11-05T15:06:53.168579+00:00,BTC/USD,Why Is Cipher Digital Stock Falling on Thursday?,6,news,scored,bearish earnings
+2026-11-05T15:59:06.151211+00:00,AVAX/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-05T16:42:01.218917+00:00,BTC/USD,Is Strategy's Bitcoin Bet Hurting Shareholders? Here's What Investors Should Know,3,news,scored,neutral other
+2026-11-05T17:47:23.765615+00:00,BTC/USD,Market Bets On Democrats' Magic Wands—Why You Should Be Skeptical,2,news,scored,neutral other
+2026-11-05T17:59:38.923220+00:00,SOL/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-05T17:59:38.923220+00:00,AVAX/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-05T18:17:02.379933+00:00,BTC/USD,VIX Spikes 39% as AI Tech Rout Wipes Out $2.2 Trillion: Stock Market Today,7,news,scored,bearish macro
+2026-11-05T18:59:54.606129+00:00,SOL/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-05T19:11:10.791955+00:00,BTC/USD,Robinhood Stock Plunges as Bitcoin Dips After Elections,4,news,scored,bearish macro
+2026-11-05T19:11:10.791955+00:00,BTC/USD,"Riot Platforms’ Powered Land Lease Lowers Build Costs, But Texas Election Adds Timing Risk, Analysts Say",3,news,scored,neutral other
