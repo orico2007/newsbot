@@ -372,3 +372,23 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-04T21:39:02.283732+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
 2026-11-04T21:39:02.283732+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
 2026-11-04T21:39:02.283732+00:00,BCH/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,LTC/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,LTC/USD,,24.1,outside_day_reversal,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,SOL/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,LINK/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,LTC/USD,,23.0,morning_star,blocked,BTC regime down
+2026-11-04T23:11:32.338916+00:00,BCH/USD,,23.0,pullback_reversal_day,blocked,BTC regime down
+2026-11-05T01:12:40.601524+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-05T02:13:08.643386+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-05T02:13:08.643386+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-05T02:13:08.643386+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-05T02:51:31.653442+00:00,BTC/USD,Trump to Pardon Elon Musk Soon? Crypto Punters Bet as Ross Gerber Calls GOP Midterm Loss 'Worst Possible Outcome' for SpaceX CEO,2,news,scored,neutral other
+2026-11-05T03:13:47.818481+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-05T03:13:47.818481+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-05T04:14:16.093079+00:00,SOL/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-05T04:26:24.272461+00:00,BTC/USD,Circle CEO Backs Binance Despite $6.3 Billion Hack: ‘Remains an Extraordinarily Powerful Platform’ With 'Incredibly Strong' Reach,2,news,scored,neutral other
