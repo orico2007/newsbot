@@ -98,3 +98,17 @@ def test_report_reads_journal_with_old_short_header(tmp_path):
     p = tmp_path / "journal.csv"
     p.write_text("time,symbol,headline,score,direction,reason,action,detail\n" + "2026-11-04T20:00:00+00:00,XOM,h,,,,,,,ENTER,buy,\n", encoding="utf-8")
     assert [r["action"] for r in report.read_journal(p, "2026-11-04")] == ["ENTER"]
+
+def test_mr_scans_sector_constituents_beyond_watchlist(mk3):
+    import market
+    sym = next(x for x in market.SECTOR_OF if x.isalpha())
+    b, e = mk3(); e.r["swing"]["watchlist"] = ["ZZZ"]
+    d = uptrend_pullback(); b.bar_data[(sym, "1Day")] = d; b.snap[sym] = (d[-1]["c"], d[-2]["c"], 2e8)
+    e.mkt.regime = "bull"; e.mkt.spy_above200 = True
+    assert e._mr_scan(NOW) == 1 and b.orders[0][0] == sym
+
+def test_pattern_trades_are_smaller_than_mr_trades(mk3):
+    from test_v3_engine import _flag_setup
+    b, e = mk3(); _flag_setup(b); e.swing_pass(NOW, 10)
+    qty_pattern = b.orders[0][1] * b.snap["AAA"][0] / 100000
+    assert qty_pattern < 0.05          # half of a ~4-6% pattern position

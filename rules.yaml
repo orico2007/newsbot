@@ -34,10 +34,12 @@ day:
 swing:
   enabled: true
   catalyst_min_score: 8          # חדשות/דוח עם horizon=swing
+  pattern_size_mult: 0.5         # chart-pattern swing trades at half size (holdout PF ~1.2); mean-reversion (mr) keeps full size
   allow_short: false            # backtest: swing shorts lose (PF 0.69) even with market+sector filters
   max_positions: 12
   mr:                            # mean-reversion longs (mr.py): PF ~1.4-1.5, win ~65% in 2021-2026 backtest; bull market only
     enabled: true
+    universe: watchlist+sectors  # scan the watchlist plus sector constituents (~125 stocks, as in the backtest); 'watchlist' = only the 40 watchlist stocks
     gate: spy200                 # SPY above its 200-day average (backtest PF 1.44-1.5); 'bull' = stricter regime (fewer trades)
     new_per_day: 4
     size_mult: 2.5               # x4% = 10% of equity per trade (backtest: 10% x 12 positions)

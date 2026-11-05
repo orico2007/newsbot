@@ -367,7 +367,10 @@ class Engine:
         if (self.mkt.regime != "bull") if cfg.get("gate") == "bull" else (not self.mkt.spy_above200): return 0      # tested gate: SPY above its 200-day average
         held = {p["symbol"] for p in self._pos()}
         cands = []
-        for sym in s["watchlist"]:
+        uni = list(s["watchlist"])
+        if cfg.get("universe", "watchlist+sectors") == "watchlist+sectors":      # same ~125 stocks the backtest used (watchlist + sector constituents)
+            uni += [x for x in SECTOR_OF if x.isalpha() and x not in uni]
+        for sym in uni:
             if sym in held: continue
             try:
                 daily = self.b.bars(sym, "1Day", daily_start_iso(now))
@@ -503,6 +506,8 @@ class Engine:
             if strategy == "swing" and self.r.get("research", {}).get("enforce"):
                 ve = self._research()["validated"].get(f"{sig.name.replace('_W', '')}:{sig.side}")
                 if ve: mult = round(max(self.r["signals"]["size_multiplier"]["min"], min(self.r["signals"]["size_multiplier"]["max"], mult * ve.get("mult", 1.0))), 2)
+            if strategy == "swing" and not sig.name.startswith("mr_"):
+                mult = round(mult * self.r["swing"].get("pattern_size_mult", 1.0), 2)      # chart-pattern trades: weaker edge in backtests, so smaller
             ov = self._apply_exits(sig, price, atr) if strategy == "swing" else (sig.stop, sig.target)
             if not sig.name.startswith("mr_") and ov and abs(price - ov[0]) > 0:
                 rr = abs(ov[1] - price) / abs(price - ov[0])
