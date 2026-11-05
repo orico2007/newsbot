@@ -36,6 +36,13 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("trend filter: only close > SMA200", ruleset(trend="s200"), DEF_PORT),
     ("add rule G (3 down days)", ruleset() + [R(**G)], DEF_PORT),
     ("A+E only", [R(**A), R(**E)], DEF_PORT),
+    ("hold 8 days", ruleset(hold=8), DEF_PORT),
+    ("hold 12 days", ruleset(hold=12), DEF_PORT),
+    ("hold 15 days", ruleset(hold=15), DEF_PORT),
+    ("hold 10 + strict bull gate", ruleset(hold=10, gate="bullreg"), DEF_PORT),
+    ("hold 10 + stop 6 ATR", ruleset(hold=10, stop=6.0), DEF_PORT),
+    ("A only", [R(**A)], DEF_PORT),
+    ("A+E+F, 15 positions, 5/day", ruleset(), dict(size_pct=8, max_pos=15, per_day=5)),
     ("size 8% x 10, 3/day", ruleset(), dict(size_pct=8, max_pos=10, per_day=3)),
     ("size 12% x 10, 4/day", ruleset(), dict(size_pct=12, max_pos=10, per_day=4)),
 ]
@@ -57,10 +64,14 @@ def run():
 def markdown(rows, last):
     ch = rows[0]
     L = [f"# Champion vs challengers (data through {last})", "",
-         "Backtests only. The live bot is **not** changed by this file. A challenger marked PROMOTE-CANDIDATE beat the champion on profit factor, total return and the last 12 months; it still needs review before it goes live.", "",
+         "Backtests only. The live bot is **not** changed by this file. A challenger marked PROMOTE-CANDIDATE beat the champion on profit factor, total return, the last 12 months and all but at most one of the non-2022 years; it still needs review before it goes live.", "",
          "| Variant | Trades | Win % | PF | Return % | Max DD % | Sharpe | Last 12m n | Last 12m win % | Last 12m PF | Verdict |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        v = "champion" if r is ch else ("PROMOTE-CANDIDATE" if r["pf"] > ch["pf"] * 1.03 and r["ret"] > ch["ret"] and r["l12_pf"] > ch["l12_pf"] else "")
+        yrs = [y for y in ch["years"] if y != "2022" and r["years"].get(y) is not None]
+        beat = sum(1 for y in yrs if r["years"][y] > ch["years"][y])
+        r["beat"] = f"{beat}/{len(yrs)}"
+        v = "champion" if r is ch else ("PROMOTE-CANDIDATE" if r["pf"] > ch["pf"] * 1.03 and r["ret"] > ch["ret"] and r["l12_pf"] > ch["l12_pf"] and beat >= len(yrs) - 1 else "")
+        if v == "" and r is not ch: v = f"better in {beat}/{len(yrs)} years"
         L.append(f"| {r['name']} | {r['n']} | {r['win']} | {r['pf']} | {r['ret']} | {r['mdd']} | {r['sharpe']} | {r['l12_n']} | {r['l12_win']} | {r['l12_pf']} | {v} |")
     L += ["", "## Profit factor by year", "", "| Variant | " + " | ".join(sorted(ch["years"])) + " |", "|---|" + "---|" * len(ch["years"])]
     for r in rows: L.append(f"| {r['name']} | " + " | ".join(str(r["years"].get(y, "")) for y in sorted(ch["years"])) + " |")
