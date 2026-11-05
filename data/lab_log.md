@@ -87,3 +87,20 @@ Source: none (own idea; follow-up listed in runs 3-4). Rules: long, close > SMA2
 | RSI2<10 & IBS<.15 overnight only | 1566 | 51.4 | 1.03 | 1.5 | 6.7 | 387 / 1.16 | - |
 
 Verdict: NOT a promotion candidate, but the most interesting complement so far. A stock that gaps down 2%+ and then closes above its open (intraday buyers absorbed the gap) is a different entry condition from RSI2/IBS "close near the low": win rate 69-72%, PF 1.3-1.4 across thresholds -1/-2/-3% (neighbours agree, so not a single lucky threshold), L12 PF 1.23-1.67, and 2022 PF 0.58 at the -1% threshold (better than the champion's 0.14). The combined portfolio (champion + gap<-2%) keeps PF 1.40, raises return 36.8 -> 85.7% and L12 PF 1.50 -> 1.53, but max drawdown rises 6.2 -> 9.7%, Sharpe is flat (1.02 vs 1.05) and 2023 PF falls to 1.08 (sleeve alone 0.89-0.94 in 2023 at every threshold). It does not beat the champion on PF or on all-but-one year, and the extra return is mostly more capital deployed in shared slots. Overnight-only holds have no edge (PF 1.03-1.05): the reversion profit accrues over the multi-day hold, not the first night. Not added to challenger.py. Follow-ups: gap-recover with 2023-style regime check (why does it fail 2023?), a gap sleeve with its own non-shared slots/position sizing, and sector-relative reversion.
+
+## 2026-11-05 (run 6) - volume-conditioned short-term reversal filter on champion entries (web idea)
+Source: https://ideas.repec.org/a/bla/jfinan/v61y2006i5p2365-2394.html (Avramov, Chordia, Goyal 2006, liquidity and autocorrelations), https://users.nber.org/~confer/2004/mmsu04/goyal.pdf (search hits only; I did not fetch the papers, so the exact claims are unverified). Literature hypothesis: low-volume declines reverse more than high-volume ones. Daily-bar translation on the cached universe.
+Rules: take the champion's own trades (A+E+F, SPY>200d, hold 7, stop 4 ATR) and keep only those whose signal-day volume / 20d avg volume (or 3-day avg volume ratio) falls in a band; re-run the same simulator (10% x 12, 4/day). Script: lab_vol.py. 7 variants (multiple-comparison discount). Filtered lists are fewer trades, so total return falls mechanically.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| CHAMPION | 749 | 66.0 | 1.40 | 36.8 | 6.2 | 171 / 1.50 | 1.82/.14/1.39/1.57/1.24/1.45 |
+| vol ratio < 0.8 | 250 | 65.6 | 1.20 | 5.7 | 3.9 | 59 / 1.51 | 1.43/1.00/.78/1.30/1.14/1.42 |
+| vol ratio < 1.0 | 399 | 67.7 | 1.28 | 12.2 | 4.7 | 106 / 1.61 | 1.14/.16/1.13/1.54/.92/1.71 |
+| vol ratio >= 1.0 | 477 | 64.4 | 1.50 | 29.2 | 4.8 | 95 / 1.70 | 1.73/.13/1.24/1.96/1.54/1.50 |
+| vol ratio >= 1.5 | 201 | 63.2 | 1.30 | 7.8 | 3.5 | 38 / 2.12 | 1.69/.01/1.05/1.25/1.32/1.97 |
+| vol ratio >= 2.0 | 62 | 61.3 | 1.51 | 4.8 | 2.0 | 5 / 3.82 | 0.60/0/1.53/1.59/2.97/2.77 |
+| 3d avg vol < 1.0x | 449 | 64.6 | 1.26 | 14.0 | 5.7 | 113 / 1.28 | .88/.16/1.30/1.99/1.03/1.24 |
+| 3d avg vol >= 1.3x | 151 | 67.5 | 1.78 | 11.6 | 2.1 | 21 / 3.27 | 3.16/.06/1.32/1.91/1.71/2.52 |
+
+Verdict: NOT a promotion candidate; the published low-volume effect does NOT show up (low-volume entries PF 1.20-1.28, worse than champion). Heavier volume is mildly better (>=1.0x: PF 1.50, Sharpe 1.28, lower drawdown) but with 36% fewer trades, lower return (29.2 vs 36.8%), and 2023 PF 1.24 < champion 1.39, so it fails the beat-on-return and year tests. Notable: heavy-volume days (selling capitulation) pair with run 5's gap-recover finding; a volume-ranked tie-break was effectively covered in run 3 (dollar volume = noise). Not added to challenger.py. Follow-ups: sector-relative reversion, gap sleeve with own slots, pairs.
