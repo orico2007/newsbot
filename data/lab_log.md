@@ -249,3 +249,20 @@ Source: none. Script lab_bear2.py. Rules: live setup = champion A+E+F (SPY>200d,
 
 Verdict: usefully COMPLEMENTS the new live setup (WATCH-LIST / PROMOTION CANDIDATE for combined portfolio; added to challenger.py as "lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)"). The sleeve fills days when the SPY>200d gate is off: return 59.6% -> 82.5%, Sharpe 1.85 -> 1.96, L12 PF 2.65 -> 2.91, 2022 PF 0.13 -> 1.11, and the benefit shows in the early selection period too (2021-23 return 9.0% -> 17.7%, Sharpe 0.80 -> 1.02) as well as the later one, so it passes the walk-forward check. Cost: combined PF 1.88 -> 1.80 (it does not beat live on PF), maxDD 5.9 -> 6.8. Breadth>=20% on the sleeve looks better still (PF 1.90, 2022 1.43) but is the more tuned choice, treat as one-sided evidence. Caveats carry over from run 11: survivor universe flatters "stock still above its 200d in a bear market", only ~2 bear episodes in the data (2022, early 2025), sleeve n in the last 12 months is just 18-21. Note: bear_long raw signal count is 421, 251 survive the portfolio caps. Needs more bear-regime data before live; SPY>200d gate for the main strategy stays.
 Follow-ups: risk-matched sleeve size (5%); pairs/relative value and post-earnings drift remain untested.
+
+## 2026-11-06 (run 14) - short max-hold and volatility-targeted sizing on the NEW live setup (web idea)
+Source: https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-multi-asset-pullback-strategy-discovery/ (fetched; ETF pullback study 2006-2025 recommending 1-day holds and 10%/21d-vol sizing; its own caveats: parameters chosen in-sample, no costs, inconsistent sweep count; treated as an unverified hypothesis on ETFs, not single stocks). Script lab_hold.py. Rules: live setup (A+E+F, SPY>200d, stop 4 ATR, breadth>=10%, weakest-peer rank), vary max hold 1/2/3/5/10 days (prev-high exit unchanged); sizing post-hoc scaled by 2.5/ATR% (caps 1.5x, 1.0x). Same simulator (10% x 12, 4/day). 7 variants. Data through 2026-10-29.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE hold 7 (ref) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| hold 1 | 743 | 50.7 | 1.26 | 13.1 | 3.9 | 0.84 | 1.35 | 1.12/.19/1.04/1.63/1.49/1.25 |
+| hold 2 | 666 | 56.8 | 1.37 | 23.0 | 4.9 | 0.98 | 1.62 | 1.54/.13/1.20/1.69/1.21/1.59 |
+| hold 3 | 646 | 63.6 | 1.71 | 47.2 | 5.8 | 1.57 | 1.88 | 1.66/.12/1.27/2.49/1.66/1.94 |
+| hold 5 | 614 | 66.8 | 1.70 | 49.2 | 7.4 | 1.45 | 2.14 | 1.88/.14/1.23/2.15/1.71/2.10 |
+| hold 10 | 598 | 70.1 | 1.91 | 60.9 | 6.8 | 1.77 | 2.77 | 2.06/.14/1.46/2.32/1.69/2.84 |
+| size 2.5/ATR% cap 1.5x | - | - | - | 40.3 | 6.5 | 1.40 | - | 1.53/.10/1.34/1.72/1.84/2.13 |
+| size 2.5/ATR% cap 1.0x | - | - | - | 39.4 | 5.2 | 1.61 | - | 1.66/.12/1.40/1.96/1.85/2.24 |
+
+Verdict: NOT a promotion candidate. The published 1-day hold does not transfer to single stocks here: PF falls monotonically as the hold shortens (hold 1: PF 1.26, win 51%, return 13%). Hold 10 is a tie with hold 7 (PF 1.91 vs 1.88, return 60.9 vs 59.6, higher drawdown 6.8 vs 5.9, worse 2025), consistent with the earlier hold sweep. Vol-targeted sizing lowers return (39-40% vs 59.6%) and Sharpe in both the early and late periods (2021-23 Sharpe 0.80 -> 0.47; 2024-26 2.78 -> 2.29): this mean-reversion edge is richer in higher-volatility names, so scaling them down hurts. The current exit (hold 7, prior-high exit) stays.
+Follow-ups: pairs/relative value and post-earnings drift remain untested; sleeve sizing at 5%.
