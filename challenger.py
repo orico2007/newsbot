@@ -48,12 +48,14 @@ VARIANTS = [   # name, rules, portfolio kwargs
     # lab run 7 (sector-peer weakness; see data/lab_log.md). Post-processors act on the champion's trade list.
     ("lab: only if sector peers 3d < 0%", ruleset(), DEF_PORT, "peers_lt0"),
     ("lab: rank by weakest sector peers first", ruleset(), DEF_PORT, "peers_rank"),
+    ("lab: sector peers 3d < 0% and peers 20d > 0%", ruleset(), DEF_PORT, "peers_lt0_up20"),
 ]
 
 def post(T, kind, F):
     """Optional post-processing of a trade list using sector-peer features (lab_sector.feats)."""
     g = lambda t: F.get((t["sym"], t["t"]))
     if kind == "peers_lt0": return [t for t in T if g(t) and g(t)["m3"] < 0]
+    if kind == "peers_lt0_up20": return [t for t in T if g(t) and g(t)["m3"] < 0 and g(t)["m20"] > 0]
     if kind == "peers_rank": return [dict(t, score=-g(t)["m3"]) for t in T if g(t)]
     return T
 
