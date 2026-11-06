@@ -266,3 +266,21 @@ Source: https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-mult
 
 Verdict: NOT a promotion candidate. The published 1-day hold does not transfer to single stocks here: PF falls monotonically as the hold shortens (hold 1: PF 1.26, win 51%, return 13%). Hold 10 is a tie with hold 7 (PF 1.91 vs 1.88, return 60.9 vs 59.6, higher drawdown 6.8 vs 5.9, worse 2025), consistent with the earlier hold sweep. Vol-targeted sizing lowers return (39-40% vs 59.6%) and Sharpe in both the early and late periods (2021-23 Sharpe 0.80 -> 0.47; 2024-26 2.78 -> 2.29): this mean-reversion edge is richer in higher-volatility names, so scaling them down hurts. The current exit (hold 7, prior-high exit) stays.
 Follow-ups: pairs/relative value and post-earnings drift remain untested; sleeve sizing at 5%.
+
+## 2026-11-06 (run 15) - post-earnings-drift PROXY (gap + volume spike) as a sleeve (web idea: PEAD)
+Source: https://pl.tradingview.com/scripts/pead , https://doc.stocksharp.com/pt/api-examples/1161_PEAD (open PEAD strategy scripts found by search; snippets only, not fetched, unverified; academic PEAD is on earnings surprise, which we cannot test: no earnings dates offline). Script lab_pead.py.
+Rules: "earnings-like day" = open gap vs prior close >= X% AND volume >= 3x 20d avg AND close > open (continuation long), ATR/price < 9%, SPY>200d gate (one variant without), 10-day cooldown, enter at close (+slip), stop 4 ATR, fixed hold N, no other exit. Reversal variant: gap <= -5%, vol >= 3x, close > open, prev-high exit, hold 7. Same simulator (10% x 12, 4/day), standalone and combined with the NEW live setup (breadth>=10% + weakest-peer rank). 6 variants (multiple-comparison discount; nothing passed so no year selection).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (breadth+rank) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| gap-up>=5%, h10 | 101 | 58.4 | 1.34 | 8.6 | 8.0 | 0.52 | 24 / 1.03 | 10.5/0/1.39/2.19/.28/1.56 |
+| gap-up>=5%, h20 | 97 | 56.7 | 1.74 | 26.9 | 7.8 | 1.01 | 24 / 1.84 | 8.7/0/1.09/5.09/.30/2.63 |
+|   + live combined | 656 | 66.8 | 1.79 | 88.6 | 9.8 | 1.65 | 151 / 2.26 | 2.77/.08/1.26/2.69/1.15/2.43 |
+| gap-up>=8%, h20 | 59 | 54.2 | 1.81 | 19.6 | 9.5 | 0.96 | 15 / 1.89 | -/0/2.63/7.28/.10/2.48 |
+|   + live combined | 633 | 66.8 | 1.76 | 74.4 | 8.5 | 1.55 | 144 / 2.24 | 2.39/.08/1.65/2.57/1.06/2.33 |
+| gap-up>=5%, IBS>.7, h10 | 67 | 67.2 | 1.47 | 9.2 | 7.7 | 0.65 | 17 / 0.61 | -/0/2.39/3.31/.21/.97 |
+| gap-up>=5%, h10, no SPY gate | 115 | 56.5 | 1.19 | 5.9 | 8.8 | 0.30 | 24 / 1.03 | 10.5/.48/1.57/2.19/.28/1.56 |
+| gap-down<=-5% recover, h7 | 70 | 61.4 | 0.92 | -1.1 | 4.9 | -0.16 | 8 / 2.68 | 1.31/.98/1.70/.59/1.12/1.15 |
+
+Verdict: NOT a promotion candidate. Only ~60-115 signals in 5.8 years (this universe has few big earnings gaps that pass the filters), so every row is a tiny sample (2021 PF 8-10 comes from a handful of trades). Continuation after a volume-confirmed gap-up has a lower win rate (54-58%) than the live reversion (69%), 2025 PF is 0.1-0.3 in every gap-up variant, and combining with live lowers PF (1.88 -> 1.76-1.79) and Sharpe (1.85 -> 1.55-1.65) while raising drawdown (5.9 -> 8.5-9.8%); the higher combined return is again just more capital deployed. The gap-down reversal is flat (PF 0.92). A true PEAD test needs earnings dates and surprise data, which the sandbox cannot fetch. Not added to challenger.py. Follow-ups: pairs/relative value (long-only spread z-score vs most-correlated peer); sleeve sizing at 5%; extend the universe if the bars cache grows.
