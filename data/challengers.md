@@ -26,6 +26,8 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | size 12% x 10, 4/day | 739 | 65.8 | 1.4 | 45.8 | 7.5 | 1.05 | 170 | 67.6 | 1.49 | better in 2/5 years |
 | lab: only if sector peers 3d < 0% | 623 | 67.1 | 1.63 | 46.4 | 5.3 | 1.37 | 144 | 70.1 | 1.76 | PROMOTE-CANDIDATE |
 | lab: rank by weakest sector peers first | 749 | 66.8 | 1.49 | 46.7 | 6.5 | 1.23 | 172 | 69.2 | 1.58 | PROMOTE-CANDIDATE |
+| lab: sector peers 3d < 0% and peers 20d > 0% | 359 | 68.5 | 1.94 | 36.7 | 3.5 | 1.58 | 81 | 70.4 | 2.18 | better in 5/5 years |
+| lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly) | 910 | 64.7 | 1.57 | 83.1 | 7.9 | 1.35 | 198 | 65.7 | 1.58 | PROMOTE-CANDIDATE |
 
 ## Profit factor by year
 
@@ -53,3 +55,5 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | size 12% x 10, 4/day | 1.84 | 0.14 | 1.38 | 1.59 | 1.24 | 1.45 |
 | lab: only if sector peers 3d < 0% | 2.05 | 0.19 | 1.32 | 2.02 | 1.64 | 1.67 |
 | lab: rank by weakest sector peers first | 1.86 | 0.14 | 1.42 | 1.76 | 1.39 | 1.49 |
+| lab: sector peers 3d < 0% and peers 20d > 0% | 2.23 | 0.16 | 1.84 | 2.27 | 1.87 | 1.93 |
+| lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly) | 1.97 | 0.71 | 1.4 | 2.02 | 1.64 | 1.51 |

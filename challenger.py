@@ -4,7 +4,7 @@ reviews it and changes the live rules on purpose.
 
 A challenger is flagged PROMOTE-CANDIDATE only if it beats the champion on profit factor, total return AND the last 12 months."""
 import sys, pathlib, datetime
-import lab, research, sweep
+import lab, research, sweep, market
 import portfolio_test as PT
 
 orig_gate = sweep.gate_ok
@@ -49,6 +49,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: only if sector peers 3d < 0%", ruleset(), DEF_PORT, "peers_lt0"),
     ("lab: rank by weakest sector peers first", ruleset(), DEF_PORT, "peers_rank"),
     ("lab: sector peers 3d < 0% and peers 20d > 0%", ruleset(), DEF_PORT, "peers_lt0_up20"),
+    # lab run 10: champion + monthly ETF sector-momentum rotation sleeve (top 3 of 14 sector ETFs by 12-1m return, hold 21d), 18 slots shared
+    ("lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly)", ruleset(), dict(size_pct=10, max_pos=18, per_day=6), "rot_sleeve"),
 ]
 
 def post(T, kind, F):
@@ -67,7 +69,10 @@ def run():
     F = None
     for v in VARIANTS:
         name, rules, kw = v[:3]; T0 = PT.gen(AS, ctx, rules)
-        if len(v) > 3:
+        if len(v) > 3 and v[3] == "rot_sleeve":
+            import lab_rotation
+            T0 = T0 + lab_rotation.rotation(lab.load_bars(), list(market.SECTORS), 252, 21, 3, False, ctx=ctx)
+        elif len(v) > 3:
             if F is None:
                 import lab_sector; F = lab_sector.feats(AS)
             T0 = post(T0, v[3], F)
