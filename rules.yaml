@@ -40,6 +40,7 @@ swing:
   mr:                            # mean-reversion longs (mr.py): PF ~1.4-1.5, win ~65% in 2021-2026 backtest; bull market only
     enabled: true
     universe: watchlist+sectors  # scan the watchlist plus sector constituents (~125 stocks, as in the backtest); 'watchlist' = only the 40 watchlist stocks
+    breadth_min: 0.10            # only buy dips when >= 10% of the universe has RSI2 < 10 (backtest: PF 1.79 vs 1.40, return 52% vs 37%); dips of lone stocks lose
     gate: spy200                 # SPY above its 200-day average (backtest PF 1.44-1.5); 'bull' = stricter regime (fewer trades)
     new_per_day: 4
     size_mult: 2.5               # x4% = 10% of equity per trade (backtest: 10% x 12 positions)

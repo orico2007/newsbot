@@ -361,34 +361,56 @@ class Engine:
         return False, min(bonus, 20), "; ".join(notes)
 
     def _mr_scan(self, now):
-        """mean-reversion longs (rules A/E): bull market only, strongest rule first"""
+        """mean-reversion longs (rules A/E/F). Gate: SPY above its 200-day average. Breadth filter: only when >= breadth_min of the
+        universe is oversold (RSI2 < 10), because lone oversold stocks lose money (backtest PF 0.76 vs 1.79). Rank: weakest sector first."""
         s = self.r["swing"]; cfg = s.get("mr", {})
         if not cfg.get("enabled"): return 0
         if (self.mkt.regime != "bull") if cfg.get("gate") == "bull" else (not self.mkt.spy_above200): return 0      # tested gate: SPY above its 200-day average
         held = {p["symbol"] for p in self._pos()}
-        cands = []
         uni = list(s["watchlist"])
         if cfg.get("universe", "watchlist+sectors") == "watchlist+sectors":      # same ~125 stocks the backtest used (watchlist + sector constituents)
             uni += [x for x in SECTOR_OF if x.isalpha() and x not in uni]
+        bars, r2s, sigs = {}, {}, {}
         for sym in uni:
-            if sym in held: continue
             try:
                 daily = self.b.bars(sym, "1Day", daily_start_iso(now))
+                if len(daily) < 10: continue
+                bars[sym] = daily; r2s[sym] = mr._rsi([b["c"] for b in daily])
+                if sym in held: continue
                 sig = mr.detect(daily, cfg.get("stop_atr", 4.0))
-                if not sig: continue
+                if sig: sigs[sym] = sig
+            except Exception as e:
+                log.warning("mr scan failed %s: %s", sym, e)
+        if not sigs: return 0
+        known = [v for v in r2s.values() if v is not None]
+        breadth = (sum(1 for v in known if v < 10) / len(known)) if known else 0.0
+        if len(known) >= 30 and breadth < cfg.get("breadth_min", 0.10):
+            for sym, sig in sigs.items():
+                self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: only {breadth * 100:.0f}% of the market is oversold (need {cfg.get('breadth_min', 0.10) * 100:.0f}%) - lone dips lose")
+            return 0
+        def peer3(sym):
+            sec = SECTOR_OF.get(sym); xs = []
+            for p, b in bars.items():
+                if p != sym and SECTOR_OF.get(p) == sec and len(b) > 3 and b[-4]["c"]: xs.append(b[-1]["c"] / b[-4]["c"] - 1)
+            return sum(xs) / len(xs) * 100 if len(xs) >= 2 else 99.0       # unknown sector info ranks last
+        cands = []
+        for sym, sig in sigs.items():
+            try:
                 ok, why, pts = self._gate(sym, "long")
                 if not ok: continue
                 veto, bonus, nwhy = self._mr_news(now, sym, cfg)
                 if veto:
                     self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: {nwhy}"); continue
-                cands.append((mr.RULES[sig.name]["rank"] + bonus, sym, sig, f"{why}; {nwhy}" if nwhy else why, daily))
+                p3 = peer3(sym)
+                extra = f"market {breadth * 100:.0f}% oversold; sector 3d {p3:+.1f}%" if p3 != 99.0 else f"market {breadth * 100:.0f}% oversold"
+                cands.append((p3, -(mr.RULES[sig.name]["rank"] + bonus), sym, sig, f"{why}; {extra}" + (f"; {nwhy}" if nwhy else ""), bars[sym]))
             except Exception as e:
-                log.warning("mr scan failed %s: %s", sym, e)
-        cands.sort(key=lambda x: -x[0])
+                log.warning("mr candidate failed %s: %s", sym, e)
+        cands.sort(key=lambda x: (x[0], x[1]))
         taken = 0
-        for rank, sym, sig, why, daily in cands:
+        for p3, negrank, sym, sig, why, daily in cands:
             if taken >= cfg.get("new_per_day", 2): break
-            if self._enter_signal(now, sym, "swing", sig, rank, f"{why}; {sig.notes}", True, daily): taken += 1
+            if self._enter_signal(now, sym, "swing", sig, -negrank, f"{why}; {sig.notes}", True, daily): taken += 1
         return taken
 
     def _scan(self, now):

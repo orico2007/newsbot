@@ -112,3 +112,41 @@ def test_pattern_trades_are_smaller_than_mr_trades(mk3):
     b, e = mk3(); _flag_setup(b); e.swing_pass(NOW, 10)
     qty_pattern = b.orders[0][1] * b.snap["AAA"][0] / 100000
     assert qty_pattern < 0.05          # half of a ~4-6% pattern position
+
+def _calm(n=240):
+    return [bar(50 + 0.1 * i, 2_000_000, spread=0.3) for i in range(n)]
+
+def test_breadth_filter_blocks_lone_dip(mk3):
+    b, e = mk3(); e.r["swing"]["watchlist"] = ["AAA"] + [f"N{i}" for i in range(40)]
+    _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True
+    for i in range(40): b.bar_data[(f"N{i}", "1Day")] = _calm()
+    assert e._mr_scan(NOW) == 0 and not b.orders             # 1 of 41 stocks oversold = 2% < 10%
+
+def test_breadth_filter_allows_market_wide_washout(mk3):
+    b, e = mk3(); e.r["swing"]["watchlist"] = ["AAA"] + [f"N{i}" for i in range(9)]
+    _setup(b, e); e.mkt.regime = "bull"; e.mkt.spy_above200 = True
+    for i in range(9): b.bar_data[(f"N{i}", "1Day")] = _calm()
+    # fewer than 30 stocks known -> filter cannot judge breadth, so it stays out of the way
+    assert e._mr_scan(NOW) == 1
+
+def test_weakest_sector_ranked_first(mk3, monkeypatch):
+    import market
+    secs = {}
+    for sym, sec in market.SECTOR_OF.items():
+        if sym.isalpha(): secs.setdefault(sec, []).append(sym)
+    (s1, l1), (s2, l2) = [(k, v) for k, v in secs.items() if len(v) >= 3][:2]
+    X, Y = l1[0], l2[0]
+    b, e = mk3(); e.r["swing"]["watchlist"] = []; e.r["swing"]["mr"]["new_per_day"] = 1
+    e.mkt.regime = "bull"; e.mkt.spy_above200 = True
+    def bars_for(chg):                                  # last 3 days move by chg
+        d = _calm(); last = d[-4]["c"]
+        for k, f in zip((-3, -2, -1), (1, 1, 1)): d[k] = bar(last * (1 + chg * (4 + k)), 2_000_000, spread=0.3)
+        return d
+    sig_ids = {}
+    for sym in l1 + l2:
+        weak = sym in l1
+        d = bars_for(-0.02 if weak else 0.02); b.bar_data[(sym, "1Day")] = d; b.snap[sym] = (d[-1]["c"], d[-2]["c"], 2e8)
+    from patterns import Signal
+    monkeypatch.setattr(bot.mr, "detect", lambda daily, stop=4.0: Signal("mr_A", "long", "swing", daily[-1]["c"], daily[-1]["c"] * 0.9, daily[-1]["c"] * 1.2) if daily[-1]["c"] and (daily is b.bar_data[(X, "1Day")] or daily is b.bar_data[(Y, "1Day")]) else None)
+    assert e._mr_scan(NOW) == 1
+    assert b.orders[0][0] == X                          # X's sector fell, Y's sector rose: weakest sector first
