@@ -51,6 +51,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: sector peers 3d < 0% and peers 20d > 0%", ruleset(), DEF_PORT, "peers_lt0_up20"),
     # lab run 10: champion + monthly ETF sector-momentum rotation sleeve (top 3 of 14 sector ETFs by 12-1m return, hold 21d), 18 slots shared
     ("lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly)", ruleset(), dict(size_pct=10, max_pos=18, per_day=6), "rot_sleeve"),
+    # lab run 11: champion + bear-regime long sleeve (SPY<200d, stock>own 200d, rsi2<5, prevhl exit hold 7 stop 4 ATR), same 12 slots
+    ("lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5)", ruleset(), DEF_PORT, "bear_sleeve"),
 ]
 
 def post(T, kind, F):
@@ -69,7 +71,10 @@ def run():
     F = None
     for v in VARIANTS:
         name, rules, kw = v[:3]; T0 = PT.gen(AS, ctx, rules)
-        if len(v) > 3 and v[3] == "rot_sleeve":
+        if len(v) > 3 and v[3] == "bear_sleeve":
+            import lab_bear
+            T0 = T0 + lab_bear.bear_long(AS, ctx)
+        elif len(v) > 3 and v[3] == "rot_sleeve":
             import lab_rotation
             T0 = T0 + lab_rotation.rotation(lab.load_bars(), list(market.SECTORS), 252, 21, 3, False, ctx=ctx)
         elif len(v) > 3:
