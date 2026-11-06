@@ -29,6 +29,7 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab: sector peers 3d < 0% and peers 20d > 0% | 359 | 68.5 | 1.94 | 36.7 | 3.5 | 1.58 | 81 | 70.4 | 2.18 | better in 5/5 years |
 | lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly) | 910 | 64.7 | 1.57 | 83.1 | 7.9 | 1.35 | 198 | 65.7 | 1.58 | PROMOTE-CANDIDATE |
 | lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5) | 994 | 66.7 | 1.47 | 63.3 | 7.5 | 1.46 | 188 | 68.6 | 1.63 | better in 2/5 years |
+| lab: only if >=10% of universe RSI2<10 (breadth washout) | 605 | 68.6 | 1.79 | 52.3 | 5.6 | 1.75 | 137 | 73.7 | 2.59 | PROMOTE-CANDIDATE |
 
 ## Profit factor by year
 
@@ -59,3 +60,4 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab: sector peers 3d < 0% and peers 20d > 0% | 2.23 | 0.16 | 1.84 | 2.27 | 1.87 | 1.93 |
 | lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly) | 1.97 | 0.71 | 1.4 | 2.02 | 1.64 | 1.51 |
 | lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5) | 1.82 | 1.21 | 1.6 | 1.57 | 1.21 | 1.61 |
+| lab: only if >=10% of universe RSI2<10 (breadth washout) | 2.04 | 0.13 | 1.35 | 1.93 | 1.71 | 2.66 |

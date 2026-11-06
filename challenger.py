@@ -53,6 +53,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly)", ruleset(), dict(size_pct=10, max_pos=18, per_day=6), "rot_sleeve"),
     # lab run 11: champion + bear-regime long sleeve (SPY<200d, stock>own 200d, rsi2<5, prevhl exit hold 7 stop 4 ATR), same 12 slots
     ("lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5)", ruleset(), DEF_PORT, "bear_sleeve"),
+    # lab run 12: only enter when >=10% of the universe has RSI2<10 on the signal day (market-wide washout, not an idiosyncratic dip)
+    ("lab: only if >=10% of universe RSI2<10 (breadth washout)", ruleset(), DEF_PORT, "breadth10"),
 ]
 
 def post(T, kind, F):
@@ -74,6 +76,10 @@ def run():
         if len(v) > 3 and v[3] == "bear_sleeve":
             import lab_bear
             T0 = T0 + lab_bear.bear_long(AS, ctx)
+        elif len(v) > 3 and v[3] == "breadth10":
+            import lab_breadth
+            B = lab_breadth.breadth_series(AS)
+            T0 = [t for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10]
         elif len(v) > 3 and v[3] == "rot_sleeve":
             import lab_rotation
             T0 = T0 + lab_rotation.rotation(lab.load_bars(), list(market.SECTORS), 252, 21, 3, False, ctx=ctx)
