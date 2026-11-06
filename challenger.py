@@ -55,6 +55,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5)", ruleset(), DEF_PORT, "bear_sleeve"),
     # lab run 12: only enter when >=10% of the universe has RSI2<10 on the signal day (market-wide washout, not an idiosyncratic dip)
     ("lab: only if >=10% of universe RSI2<10 (breadth washout)", ruleset(), DEF_PORT, "breadth10"),
+    # lab run 13: NEW LIVE setup (breadth>=10% + weakest-peer rank) plus bear-regime long sleeve filtered by the same breadth>=10%
+    ("lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)", ruleset(), DEF_PORT, "live_bear10"),
 ]
 
 def post(T, kind, F):
@@ -76,6 +78,12 @@ def run():
         if len(v) > 3 and v[3] == "bear_sleeve":
             import lab_bear
             T0 = T0 + lab_bear.bear_long(AS, ctx)
+        elif len(v) > 3 and v[3] == "live_bear10":
+            import lab_breadth, lab_bear, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            ok = lambda t: B.get(t["t"][:10], (0, 0))[0] >= 0.10
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 + lab_bear.bear_long(AS, ctx) if ok(t)]
         elif len(v) > 3 and v[3] == "breadth10":
             import lab_breadth
             B = lab_breadth.breadth_series(AS)
