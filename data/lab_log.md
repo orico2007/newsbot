@@ -145,3 +145,20 @@ Rules: champion trades (A+E+F, SPY>200d, hold 7, stop 4 ATR) filtered by sector-
 
 Verdict: "peers 3d<0 & peers 20d>0" (a short dip inside an intact sector uptrend) is the cleanest champion refinement so far: PF 1.94 vs 1.40, Sharpe 1.58, maxDD 3.5% vs 6.2%, L12 PF 2.18, and it beats the champion in every year including 2023 (1.84 vs 1.39); 2022 still fails (0.16), so the SPY>200d gate stays. Caveat: total return is flat (36.7% vs 36.8%) because only 359 trades fill the slots, so it is a quality-over-quantity filter (capital sits idle ~half the time), and it was found by intersecting features after seeing run 7. WATCH-LIST (not a full PROMOTION CANDIDATE since return does not beat the champion); added to challenger.py as a "lab:" variant so the weekly job tracks it. Idle capital could be used by a second sleeve, but the gap sleeve does not fill that role: the gap-recover sleeve fails 2023 (0.82-0.89) even with the peer filter, with drawdown 9-11%; the sector filter does not rescue it. Combined champion+gap runs return 70-91% but at ~10% drawdown and 2023 PF ~1.0, i.e. leverage-like, not an edge. Live rules NOT changed.
 Follow-up: the sector-ETF cross-check (to rule out a today's-survivors universe artifact in peer averages); use the strict form as a sizing tier (larger positions when peers 3d<0 & 20d>0) rather than a filter, so idle capital is used.
+
+## 2026-11-06 (run 9) - sector-ETF cross-check of the peer-weakness filter (own idea; follow-up of runs 7-8, rules out a survivor-universe artifact)
+Source: none. Rules: champion trades (A+E+F, SPY>200d, hold 7, stop 4 ATR) filtered by the 3d / 20d return of the stock's sector ETF (market.SECTOR_OF; XLK/XLF/XLE/XLV/XLY/XLP/XLI/XLB/XLU/XLC/XLRE/SMH/XBI/ITA bars from the cache) instead of the average of cached peer stocks. Same simulator (10% x 12, 4/day). Script: lab_sector4.py. 7 variants (cumulative ~30 sector-feature variants across runs 7-9; discount applies; no thresholds tuned this run, the 0% cuts are the ones from runs 7-8).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| CHAMPION | 749 | 66.0 | 1.40 | 36.8 | 6.2 | 1.05 | 171 / 1.50 | 1.82/.14/1.39/1.57/1.24/1.45 |
+| ETF 3d<0 | 634 | 66.6 | 1.46 | 36.2 | 6.1 | 1.11 | 150 / 1.55 | 1.63/.16/1.43/1.90/1.24/1.50 |
+| ETF 3d<0 & ETF 20d>0 | 382 | 69.4 | 1.64 | 27.0 | 3.4 | 1.18 | 83 / 1.72 | 1.61/.08/2.08/2.00/1.44/1.60 |
+| peers 3d<0 & 20d>0 (run 8 ref) | 359 | 68.5 | 1.94 | 36.7 | 3.5 | 1.58 | 81 / 2.18 | 2.23/.16/1.84/2.27/1.87/1.93 |
+| ETF AND peers (both) | 286 | 69.2 | 1.82 | 24.5 | 3.3 | 1.32 | 70 / 1.94 | 1.41/.16/2.56/1.74/3.14/1.62 |
+| ETF 3d<0 but peers 3d>=0 (disagree) | 70 | 65.7 | 0.87 | -1.3 | 3.5 | -0.24 | 19 / 1.11 | thin |
+| ETF 3d>=0 (sector up) | 153 | 62.7 | 1.17 | 2.9 | 2.7 | 0.33 | 28 / 1.17 | 2.16/0/.98/1.08/1.31/1.07 |
+| ETF 3d>=0 & 20d>0 (control) | 120 | 63.3 | 1.21 | 3.0 | 2.3 | 0.41 | 22 / 1.15 | thin |
+
+Verdict: the sector-dip effect is REAL, not a peer-average artifact: with independent ETF data, entries when the sector is down 3d inside a 20d uptrend have PF 1.64 vs 1.40 (every year but 2021/2022 better than champion, 2023 2.08, L12 1.72, maxDD 3.4%), and the control (sector flat/up) is clearly worse (PF 1.17-1.21, near-zero return). It is weaker than the peer version (PF 1.94) and, like it, return does not beat the champion (27% vs 36.8%, fewer trades), so the ETF form is NOT added to challenger.py; the run-8 watch-list variant stays as is. Entries where the stock's sector is rising are the weak ones: the edge is concentrated in sector pullbacks. Useful for the daily-improvement task: if the sector rule is ever adopted, the live bot can use the sector ETF 3d return (cheaper than peer averages) as a fallback, but the peer form tested better. Live rules NOT changed.
+Follow-up: a sector-pullback rank or size tier (priority for sector-dip signals rather than a hard filter) is already covered by run 7's rank form; remaining untested seed ideas: sector momentum rotation (long top ETFs), pairs/relative value, post-earnings drift (needs earnings dates).
