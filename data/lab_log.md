@@ -320,3 +320,21 @@ Source: none fetched (classic Gatev/Goetzmann/Rouwenhorst distance-pairs idea, a
 
 Verdict: NOT a promotion candidate. Peer-relative weakness alone is a weak edge (PF 1.18-1.35, 2023 about 1.0) well below the live setup (PF 1.88). Every combination lowers PF (1.88 -> 1.38-1.69), Sharpe (1.85 -> 1.44-1.74) and raises drawdown (5.9 -> 6.7-10.6); the extra return is only more capital deployed. The best idea, z<-2 with RSI2<10 and breadth>=10%, is a nice small sleeve on its own (PF 1.78, maxDD 2.0) but it is mostly the same oversold stocks the live rules already catch, 2025 PF is 0.77-1.17, and 2022 is a loss. It adds nothing the sector-peer ranking in the live bot does not already capture. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; true PEAD needs earnings data; seasonality by month/weekday within the live setup; ETF cross-asset filters (bonds/VIX proxies) for the gate.
+
+## 2026-11-07 (run 18) - intraday vs overnight decomposition of the recent decline, on the NEW live setup (web idea: Quantpedia)
+Source: https://quantpedia.com/short-term-return-reversals-and-intraday-transactions/ (fetched; abstract-level only: intraday returns reverse the following week, overnight returns do not; no explicit trading rule, costs or performance given, so the rules below are my translation; unverified). Script lab_intraday.py.
+Rules: on the live setup's trades (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank), compute over the 3 (or 5) sessions ending on the signal day: intraday = sum of ln(close/open), overnight = sum of ln(open/prior close). Use as a filter or as the ranking key. Same simulator (10% x 12, 4/day). Data through 2026-10-29. 8 variants incl. reference (multiple-comparison discount; no year selection since nothing passed).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| intraday3 < overnight3 | 453 | 68.4 | 1.75 | 38.0 | 4.7 | 1.36 | 3.23 | 1.29/.16/1.20/2.36/1.64/3.31 |
+| intraday3 < -2% | 401 | 68.8 | 2.16 | 51.2 | 4.4 | 1.76 | 4.15 | 1.63/.06/1.26/3.17/1.91/4.15 |
+| overnight3 > -1% | 349 | 68.8 | 1.50 | 17.5 | 4.3 | 0.97 | 4.64 | 1.16/.06/1.63/1.54/1.71/4.00 |
+| intraday5 < 0 and ovn5 > intraday5 | 443 | 68.4 | 1.73 | 35.9 | 4.5 | 1.43 | 2.92 | 1.46/.16/1.07/2.52/1.71/2.66 |
+| rank by most-negative intraday3 | 604 | 67.5 | 1.73 | 49.9 | 6.4 | 1.48 | 2.55 | 1.78/.13/1.11/2.37/1.55/2.40 |
+| rank by intraday3 - overnight3 | 603 | 67.0 | 1.71 | 49.0 | 6.8 | 1.45 | 2.58 | 1.78/.13/1.17/2.14/1.63/2.40 |
+| EXCLUDE intraday3 < overnight3 (opposite) | 217 | 72.4 | 1.90 | 17.6 | 4.1 | 1.39 | 1.40 | 5.31/0/1.38/2.57/1.66/1.52 |
+
+Verdict: NOT a promotion candidate. The paper's direction is only weakly supported: the best filter (intraday 3-day return < -2%) lifts PF 1.88 -> 2.16 and last-12-month PF 2.65 -> 4.15, but cuts trades by a third and return 59.6% -> 51.2%, and loses to live in 2021 and 2023 (1.63 vs 1.89, 1.26 vs 1.42). Pure decomposition rules (intraday < overnight) reduce PF, return and Sharpe, and the opposite subset has PF 1.90 too, so the intraday/overnight split is not a clean separator here; the gain from "intraday < -2%" is mostly just a deeper-drop filter (it is correlated with the existing RSI2/3-day-drop rules). Ranking by intraday weakness is worse than the peer-weakness rank already live (PF 1.71-1.73 vs 1.88). Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; month/weekday seasonality within the live setup; ETF cross-asset (bond/VIX proxy) filters; true PEAD needs earnings data.
