@@ -38,3 +38,16 @@ Ori told Claude to put the improvements live without waiting for the 3 consecuti
 | **filter + rank (now live)** | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
 
 Live changes: mr scan now (1) skips entries unless >= 10% of the ~125-stock universe has RSI2 < 10 (rules.yaml swing.mr.breadth_min), (2) ranks candidates weakest-sector-peers-first (3-day mean return of same-sector stocks), then rule rank. 2022 is still weak (PF 0.13); the SPY>200d gate stays. Caveats: dozens of variants were tried across lab runs, the universe is today's survivors, filter+rank was one extra combination tested. Watch live: trade count will drop (~20%), expect fewer but better entries. challenger.py's CHAMPION row still describes the OLD setup; the daily task should update the baseline to the new live setup (filter+rank) before judging future variants.
+
+## 2026-11-07 (UTC, Saturday) - round: weekday-of-signal seasonality inside the LIVE setup (breadth>=10% + weakest-peer rank)
+Checked: stock sessions 11-05/11-06 all success or cancelled-by-concurrency (no errors); 11-06 session run 66 started 13:42 UTC, before the 14:30 UTC open. Report 2026-11-06: 0 errors, equity $99,159, 6 open longs, 2 entries (V, AMZN via chart-pattern swing). Scorecard still has only 3 closed (crypto) trades, no closed stock trades, so live win/PF cannot be compared with the backtest yet. Tests: 208 passed. challengers.md still only has 2 weekly runs; no variant has 3 consecutive wins. Note: challenger.py CHAMPION row still describes the OLD setup (pre-breadth/rank); baseline below is the new live setup.
+Tested (lab_dow.py, 11 rows, same simulator, data through 2026-10-29; multiple-comparison discount applies):
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| skip Monday signals | 548 | 70.4 | 2.02 | 59.8 | 5.7 | 3.52 | 2.07/.06/1.36/2.23/2.15/3.67 |
+| skip Tuesday | 494 | 70.0 | 1.99 | 51.1 | 4.2 | 2.60 | worse return |
+| skip Wed / Thu / Fri | | | 1.65 / 1.83 / 1.62 | 34.5 / 45.8 / 35.0 | | | worse |
+Weekday-only PFs: Mon 1.45, Tue 1.44, Wed 2.16, Thu 1.41, Fri 2.00. Monday PF by year 3.0/1.4/2.3/1.5/0.9/0.7: strong 2021-24, weak 2025-26 - a regime drift, not a stable calendar effect. Wed/Fri 2024 and 2026 PFs are driven by tiny loss counts (16.8, 9.4).
+Result: no stable weekday effect. Skip-Monday lifts PF slightly but total return is flat (59.8 vs 59.6), 2023 is worse, and the Monday weakness appears only in the sealed/late years (the selection signal is post-hoc), so it fails the promotion bar. Not added to challenger.py.
+Decision: no change to live rules. Open follow-ups: sleeve sizing at 5%; ETF cross-asset filters (bond/VIX proxy) for the gate; true PEAD needs earnings data.
