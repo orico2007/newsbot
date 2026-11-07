@@ -355,3 +355,21 @@ Source: none (own idea; TLT/HYG are not in the bars cache, so the cross-asset pr
 
 Verdict: NOT a promotion candidate. Skipping panic (VIXY spikes) only lowers PF and return, so the live bot should keep buying fear. Splitting by VIXY state is unstable: "VIXY above SMA" has PF 2.06 but halves return and 2023 is 1.00; "below SMA" has the best L12 (3.19) but 2024 PF 1.03. IWM>SPY risk-on looks attractive (PF 2.57, L12 5.18) but it cuts trades to 217 and return by 54%, and its edge flips sign by year (2021 PF 0.80 vs 3.13 for the opposite half; 2024-26 the reverse), a regime drift not a stable filter, and the fear-spike subset is tiny (n=76, 2021 PF 23.8 from a handful of trades). None beats live on return, and both subsets together re-add up to the live book, so they only say where the live edge was earned in each era. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; month-of-year seasonality within the live setup; true PEAD needs earnings data; bond ETFs (TLT/HYG) would need adding to the bars cache.
+
+## 2026-11-07 (run 20) - Connors "Double 7" (7-day closing low, exit at 7-day closing high) as a stock sleeve (web idea)
+Source: https://strategyquant.com/blog/larry-connors-double-7-strategy-tested-on-spy-and-8-other-markets/ , https://quantifiedstrategies.substack.com/p/larry-connors-double-seven-trading-bad , https://therighttrader.com/learn/trading-strategies/double-sevens-strategy (search results only, not fetched; marketed/index-level backtests, treated as unverified). Script lab_double7.py.
+Rules: long when close is the lowest close of the last n days (n=7 main; 5 and 10 as robustness), close > SMA200 (variant: SMA50>SMA200 too), SPY>200d gate, ATR/price < 6%, 3-day cooldown, enter at close (+0.05% slip), stop 4 ATR, exit when close >= 7-day closing high (max hold 15) or prior-high exit with hold 7. Same simulator (10% x 12, 4/day), 8 variants counted (5 base + 3 breadth/combination rows).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (breadth+rank) ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| D7 n7 >SMA200, exit 7d high, hold 15 | 1678 | 66.2 | 1.14 | 44.2 | 22.3 | 0.52 | 371 / 1.29 | 1.07/.29/1.36/1.13/1.20/1.31 |
+| D7 n7 >SMA200, prev-high exit, hold 7 | 2719 | 64.6 | 1.07 | 21.5 | 20.6 | 0.32 | 638 / 1.16 | 1.02/.35/1.01/1.18/1.11/1.26 |
+| D7 n7, SMA50>200, exit 7d high | 1659 | 67.0 | 1.15 | 47.6 | 21.6 | 0.56 | 366 / 1.36 | 1.08/.26/1.25/1.21/1.19/1.39 |
+| D7 n5, SMA50>200, prev-high exit | 2882 | 63.8 | 1.10 | 37.2 | 24.6 | 0.43 | 675 / 1.42 | 1.03/.41/.98/1.10/1.12/1.50 |
+| D7 n10, SMA50>200, prev-high exit | 2287 | 62.6 | 1.08 | 21.8 | 19.8 | 0.35 | 553 / 1.26 | 1.00/.24/1.24/1.13/1.12/1.25 |
+| D7 n7 + breadth>=10% | 1123 | 64.8 | 1.10 | 21.3 | 19.1 | 0.32 | 295 / 1.61 | 1.06/.21/1.03/1.27/.95/1.74 |
+| LIVE + D7 n7 (breadth), 12 slots | 1131 | 64.9 | 1.12 | 24.9 | 19.1 | 0.36 | 297 / 1.62 | 1.07/.21/1.03/1.31/.96/1.75 |
+
+Verdict: NOT a promotion candidate. A plain n-day closing low is a much weaker trigger than RSI2/IBS: PF 1.07-1.15 on 1,600-2,900 trades, drawdown 20-25% (3-4x live), 2022 0.2-0.4, and several non-2022 years at 1.0. Adding the breadth filter does not rescue it (PF 1.10). The "combined" rows are dominated by Double-7 signals crowding out the live trades from the same 12 slots (equal-score sleeve, no priority for live), so they show a worse-than-live result; a priority-aware combination was not worth running since the sleeve alone is this weak and the live setup stays unchanged. Consistent with run 4 (10-day-low variants PF 1.26 and below). Not added to challenger.py.
+Follow-ups still untested: month-of-year seasonality inside the live setup; sleeve sizing at 5%; bond ETFs (TLT/HYG) need adding to the bars cache; true PEAD needs earnings data.
