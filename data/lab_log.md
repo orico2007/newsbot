@@ -284,3 +284,20 @@ Rules: "earnings-like day" = open gap vs prior close >= X% AND volume >= 3x 20d 
 | gap-down<=-5% recover, h7 | 70 | 61.4 | 0.92 | -1.1 | 4.9 | -0.16 | 8 / 2.68 | 1.31/.98/1.70/.59/1.12/1.15 |
 
 Verdict: NOT a promotion candidate. Only ~60-115 signals in 5.8 years (this universe has few big earnings gaps that pass the filters), so every row is a tiny sample (2021 PF 8-10 comes from a handful of trades). Continuation after a volume-confirmed gap-up has a lower win rate (54-58%) than the live reversion (69%), 2025 PF is 0.1-0.3 in every gap-up variant, and combining with live lowers PF (1.88 -> 1.76-1.79) and Sharpe (1.85 -> 1.55-1.65) while raising drawdown (5.9 -> 8.5-9.8%); the higher combined return is again just more capital deployed. The gap-down reversal is flat (PF 0.92). A true PEAD test needs earnings dates and surprise data, which the sandbox cannot fetch. Not added to challenger.py. Follow-ups: pairs/relative value (long-only spread z-score vs most-correlated peer); sleeve sizing at 5%; extend the universe if the bars cache grows.
+
+## 2026-11-07 (run 16) - SPY-gate alternatives now that the breadth filter is live (own idea)
+Source: none (own idea; follow-up of runs 12-13, asks whether breadth>=10% makes the SPY>200d gate redundant or replaceable). Script lab_gate.py. Rules: NEW live setup (A+E+F, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank), only the market gate changed. Same simulator (10% x 12, 4/day). Data through 2026-10-29. 8 variants incl. reference (multiple-comparison discount; nothing passed).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE SPY>200d (ref) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| no SPY gate | 697 | 68.3 | 1.73 | 61.2 | 6.4 | 1.64 | 2.65 | 1.89/.68/1.59/2.19/1.86/2.68 |
+| not-bear regime | 639 | 67.8 | 1.76 | 56.1 | 5.9 | 1.58 | 2.65 | 1.89/.35/1.44/2.19/1.86/2.68 |
+| SPY>50d | 487 | 69.6 | 2.00 | 49.4 | 4.8 | 1.68 | 3.14 | 1.73/.49/1.73/2.10/2.22/3.19 |
+| SPY drawdown from 252d high > -10% | 620 | 68.1 | 1.76 | 55.8 | 5.9 | 1.77 | 2.65 | 1.89/.51/1.23/2.19/1.86/2.68 |
+| SPY drawdown > -15% | 652 | 68.1 | 1.78 | 60.1 | 5.9 | 1.79 | 2.65 | 1.89/.67/1.39/2.19/1.86/2.68 |
+| SPY>200d OR breadth>=25% | 676 | 68.8 | 1.80 | 64.4 | 5.9 | 1.75 | 2.63 | 1.89/.84/1.51/2.19/1.92/2.64 |
+| SPY>200d AND 200d slope up | 581 | 68.5 | 1.82 | 54.4 | 5.9 | 1.82 | 2.65 | 1.84/.13/1.18/2.19/1.90/2.68 |
+
+Verdict: NOT a promotion candidate; the SPY>200d gate stays. Every looser gate improves 2022 (PF 0.13 -> 0.35-0.84, still below 1) but lowers overall PF and Sharpe versus the live setup, and 2021-2026 other years are unchanged by construction. The best (OR breadth>=25%) adds +4.8 pts of return for -0.08 PF and -0.10 Sharpe and still loses money in 2022, so it is a trade-off, not an improvement. SPY>50d has the highest PF (2.00) and L12 PF (3.14) but fewer trades, lower return (49.4%) and 2021 worse, so it fails the "beats on return" test. The 2022 bear year is not rescued by any gate here; insurance is not free. Not added to challenger.py.
+Follow-ups still untested: pairs/relative value (long-only spread z-score vs most-correlated peer); sleeve sizing at 5%; true PEAD needs earnings data.
