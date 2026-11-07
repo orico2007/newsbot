@@ -301,3 +301,22 @@ Source: none (own idea; follow-up of runs 12-13, asks whether breadth>=10% makes
 
 Verdict: NOT a promotion candidate; the SPY>200d gate stays. Every looser gate improves 2022 (PF 0.13 -> 0.35-0.84, still below 1) but lowers overall PF and Sharpe versus the live setup, and 2021-2026 other years are unchanged by construction. The best (OR breadth>=25%) adds +4.8 pts of return for -0.08 PF and -0.10 Sharpe and still loses money in 2022, so it is a trade-off, not an improvement. SPY>50d has the highest PF (2.00) and L12 PF (3.14) but fewer trades, lower return (49.4%) and 2021 worse, so it fails the "beats on return" test. The 2022 bear year is not rescued by any gate here; insurance is not free. Not added to challenger.py.
 Follow-ups still untested: pairs/relative value (long-only spread z-score vs most-correlated peer); sleeve sizing at 5%; true PEAD needs earnings data.
+
+## 2026-11-07 (run 17) - long-only pairs / relative-value reversion vs most-correlated peer (own idea; pairs was the open follow-up from runs 13-16)
+Source: none fetched (classic Gatev/Goetzmann/Rouwenhorst distance-pairs idea, adapted; treated as an unverified hypothesis). Script lab_pairs.py. Rules: each stock gets one partner per calendar year = the universe stock with the highest daily-return correlation over the 252 sessions BEFORE that year (corr > 0.5, no lookahead). Spread = log(price / partner price); z = (today - mean) / sd over the prior 60 days. Long the laggard when z <= threshold, stock > own 200d, ATR/price < 9%, SPY>200d gate, 5-day cooldown, exit close > prior high, hold 7, stop 4 ATR; rank by -z. Same simulator (10% x 12, 4/day). Data through 2026-10-29. 5 variants x (standalone, +live, breadth>=10% standalone) (multiple-comparison discount; nothing passed so no year selection). The sleeve has no 2021 trades because partners need a full prior year.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (breadth+rank) ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| z<-2, h7 | 1022 | 65.4 | 1.21 | 25.8 | 6.3 | 0.92 | 283 / 1.33 | -/.43/1.02/1.37/1.36/1.31 |
+|   + LIVE | 1486 | 66.6 | 1.38 | 78.4 | 8.1 | 1.44 | 379 / 1.57 | 1.89/.32/1.13/1.48/1.63/1.54 |
+| z<-2.5, h7 | 512 | 64.5 | 1.26 | 14.9 | 4.7 | 0.78 | 147 / 1.22 | -/.45/.99/1.77/1.27/1.22 |
+| z<-2 & RSI2<10, h7 | 320 | 66.9 | 1.47 | 17.3 | 3.6 | 1.17 | 98 / 1.48 | -/.09/1.97/2.03/.77/1.64 |
+|   + LIVE | 838 | 68.4 | 1.69 | 73.1 | 6.7 | 1.74 | 209 / 1.90 | 1.89/.11/1.61/2.13/1.61/1.92 |
+| z<-2 & RSI2<10, breadth>=10% alone | 215 | 66.5 | 1.78 | 16.5 | 2.0 | 1.49 | 67 / 1.38 | -/.22/2.67/2.66/1.17/1.39 |
+| z<-1.5 & RSI2<10, h7 | 528 | 63.1 | 1.35 | 23.0 | 5.7 | 0.98 | 152 / 1.54 | -/.16/1.61/1.60/1.08/1.57 |
+|   + LIVE | 979 | 66.5 | 1.58 | 73.1 | 7.7 | 1.59 | 248 / 1.65 | 1.89/.14/1.82/1.84/1.43/1.66 |
+| z<-2, h5 | 1098 | 64.1 | 1.18 | 23.9 | 9.0 | 0.88 | 304 / 1.31 | -/.33/.97/1.46/1.28/1.31 |
+
+Verdict: NOT a promotion candidate. Peer-relative weakness alone is a weak edge (PF 1.18-1.35, 2023 about 1.0) well below the live setup (PF 1.88). Every combination lowers PF (1.88 -> 1.38-1.69), Sharpe (1.85 -> 1.44-1.74) and raises drawdown (5.9 -> 6.7-10.6); the extra return is only more capital deployed. The best idea, z<-2 with RSI2<10 and breadth>=10%, is a nice small sleeve on its own (PF 1.78, maxDD 2.0) but it is mostly the same oversold stocks the live rules already catch, 2025 PF is 0.77-1.17, and 2022 is a loss. It adds nothing the sector-peer ranking in the live bot does not already capture. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; true PEAD needs earnings data; seasonality by month/weekday within the live setup; ETF cross-asset filters (bonds/VIX proxies) for the gate.
