@@ -389,3 +389,21 @@ Per-month PF (n / all / 2021-23 / 2024-26): Jan 200/1.76/0.07/3.65, Feb 87/1.08/
 
 Verdict: NOT a promotion candidate. Month buckets are 60-200 trades each and flip sign between eras: Jan is 0.07 in 2021-23 but 3.65 in 2024-26, Aug 0.60 then 3.80, May 0.57 then 5.00, Feb 2.25 then 0.73. The walk-forward pick (Jan, Sep, May) therefore fails out of sample for two of its three months (Jan and May are strongly positive in 2024-26); its PF 2.31 is mostly the removal of the 2022 bear trades (Jan/Sep/May 2022 happened to hold all of them) and total return does not rise (59.3 vs 59.6). "Skip Sep" is the only one with a persistent hint (PF 0.74 overall, 2024-26 PF 1.71, still the weakest month), improves PF 1.88 to 2.08 and return 61.0 vs 59.6, but return gain is within noise, 2024 is slightly lower (2.15 vs 2.19), and it is one post-hoc cut out of 12 months, so it fails the discipline. No stable calendar effect inside the live setup, consistent with run 18 (weekdays). Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; re-check Sep in 2027 as out-of-sample evidence accrues.
+
+## 2026-11-07 (run 22) - limit-order pullback entry and next-open entry on the LIVE setup (web idea: Connors-style "buy on limit below the close")
+Source: https://strategyquant.com/blog/larry-connors-double-7-strategy-tested-on-spy-and-8-other-markets/ and general Connors/Quantified Strategies write-ups on limit entries (search results from run 20, not fetched; marketed backtests, unverified). Script lab_limit.py.
+Rules: LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank). Instead of filling at the signal close, (a) buy at the NEXT open, or (b) place a buy limit at signal close - k*ATR for the next session only (fills at min(open, limit) if the low reaches it, else no trade), k = 0.25/0.5/1.0/1.5. Stop 4 ATR below the fill, exit when close > prior high, max hold counted from the signal day. Same simulator (10% x 12, 4/day), 0.05% slippage, data through 2026-10-29. 5 variants counted.
+
+| Variant | Fill rate | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref (signal close) | - | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| next-open entry | 100% | 635 | 67.7 | 1.55 | 44.2 | 7.0 | 141 / 1.89 | 1.92/.19/1.12/1.91/1.28/1.93 |
+| limit close-0.25 ATR | 54% | 374 | 66.6 | 1.89 | 34.5 | 5.5 | 88 / 3.61 | 2.42/.29/.90/2.30/1.68/3.37 |
+| limit close-0.5 ATR | 38% | 271 | 67.2 | 2.08 | 28.7 | 3.3 | 62 / 3.61 | 2.52/.22/1.29/2.82/1.88/2.93 |
+| limit close-1.0 ATR | 14% | 117 | 67.5 | 2.32 | 13.4 | 2.0 | 28 / 2.72 | 1.32/.21/1.25/22.8/3.65/2.60 |
+| limit close-1.5 ATR | 6% | 51 | 74.5 | 2.83 | 6.9 | 0.7 | 7 / 1.54 | 1.36/.71/4.46/48.8/18.1/1.39 |
+
+(Raw fills of the 1437 pre-slot signals: next-open 1437, 0.25 ATR 781 (54%), 0.5 ATR 542 (38%), 1.0 ATR 208 (14%), 1.5 ATR 86 (6%).)
+
+Verdict: NOT a promotion candidate. Limit entries raise per-trade quality a little (PF 1.89-2.32) because a fill requires a further drop, i.e. they are just a deeper-dip filter, but they miss most signals so return collapses (59.6% -> 34.5% at 0.25 ATR, 13% at 1.0 ATR) and 2023 gets worse (0.90-1.29 vs 1.42). Deep-limit rows rest on tiny samples (2024 PF 22-49 from a handful of trades). The more useful finding is the opposite direction: entering at the NEXT OPEN instead of the signal close costs about 0.33 PF and 15 points of return (1.88 -> 1.55, 59.6% -> 44.2%, 2025 1.92 -> 1.28), so the live edge depends on getting filled near the signal-day close; execution at the open the next day (or a late-day order before the close) is not equivalent. Whoever runs live should keep entries as close to the signal-day closing price as possible. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; check how the live bot's real fills compare with signal-day closes (slippage audit) once enough paper fills exist.
