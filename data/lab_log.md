@@ -338,3 +338,20 @@ Rules: on the live setup's trades (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>
 
 Verdict: NOT a promotion candidate. The paper's direction is only weakly supported: the best filter (intraday 3-day return < -2%) lifts PF 1.88 -> 2.16 and last-12-month PF 2.65 -> 4.15, but cuts trades by a third and return 59.6% -> 51.2%, and loses to live in 2021 and 2023 (1.63 vs 1.89, 1.26 vs 1.42). Pure decomposition rules (intraday < overnight) reduce PF, return and Sharpe, and the opposite subset has PF 1.90 too, so the intraday/overnight split is not a clean separator here; the gain from "intraday < -2%" is mostly just a deeper-drop filter (it is correlated with the existing RSI2/3-day-drop rules). Ranking by intraday weakness is worse than the peer-weakness rank already live (PF 1.71-1.73 vs 1.88). Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; month/weekday seasonality within the live setup; ETF cross-asset (bond/VIX proxy) filters; true PEAD needs earnings data.
+
+## 2026-11-07 (run 19) - VIXY volatility-regime and IWM/SPY risk-appetite filters on the LIVE setup (own idea; cross-asset follow-up of runs 16-18)
+Source: none (own idea; TLT/HYG are not in the bars cache, so the cross-asset proxies are VIXY and IWM vs SPY). Script lab_vixy.py. Rules: LIVE setup (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank) filtered by signal-day state: VIXY close vs its 20d SMA (VIXY decays from futures roll, so only relative measures are used), VIXY 5d change, IWM/SPY 20d relative return. Same simulator (10% x 12, 4/day). Data through 2026-10-29. 8 rows incl. reference (multiple-comparison discount; nothing passed so no year selection). Subset rows drop signals on days lacking VIXY history.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| VIXY > 20d SMA +10% (fear spike) | 76 | 77.6 | 3.90 | 12.6 | 1.1 | 3.46 | 20 / 1.86 | 23.8/-/9.5/4.2/2.9/1.4 |
+| skip VIXY > SMA +25% (panic) | 591 | 68.5 | 1.82 | 54.4 | 5.9 | 1.75 | 136 / 2.65 | 1.57/.13/1.42/2.16/1.92/2.68 |
+| VIXY 5d change < +15% | 571 | 68.0 | 1.77 | 49.2 | 6.3 | 1.59 | 132 / 2.65 | 1.45/.13/1.42/2.06/2.07/2.55 |
+| VIXY above 20d SMA | 268 | 66.4 | 2.06 | 29.0 | 3.8 | 1.72 | 52 / 1.99 | 3.15/0/1.00/3.65/1.47/2.29 |
+| VIXY below 20d SMA | 363 | 69.7 | 1.55 | 20.3 | 5.4 | 0.99 | 88 / 3.19 | 1.20/.21/1.67/1.03/1.91/2.89 |
+| IWM 20d RS vs SPY > 0 | 217 | 74.2 | 2.57 | 27.6 | 3.0 | 1.86 | 48 / 5.18 | 0.80/-/1.31/8.53/3.96/4.77 |
+| IWM 20d RS vs SPY < 0 | 407 | 65.4 | 1.47 | 21.4 | 7.5 | 1.03 | 89 / 1.97 | 3.13/.13/1.30/1.29/1.19/2.10 |
+
+Verdict: NOT a promotion candidate. Skipping panic (VIXY spikes) only lowers PF and return, so the live bot should keep buying fear. Splitting by VIXY state is unstable: "VIXY above SMA" has PF 2.06 but halves return and 2023 is 1.00; "below SMA" has the best L12 (3.19) but 2024 PF 1.03. IWM>SPY risk-on looks attractive (PF 2.57, L12 5.18) but it cuts trades to 217 and return by 54%, and its edge flips sign by year (2021 PF 0.80 vs 3.13 for the opposite half; 2024-26 the reverse), a regime drift not a stable filter, and the fear-spike subset is tiny (n=76, 2021 PF 23.8 from a handful of trades). None beats live on return, and both subsets together re-add up to the live book, so they only say where the live edge was earned in each era. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; month-of-year seasonality within the live setup; true PEAD needs earnings data; bond ETFs (TLT/HYG) would need adding to the bars cache.
