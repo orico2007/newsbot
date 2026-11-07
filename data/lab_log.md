@@ -373,3 +373,19 @@ Rules: long when close is the lowest close of the last n days (n=7 main; 5 and 1
 
 Verdict: NOT a promotion candidate. A plain n-day closing low is a much weaker trigger than RSI2/IBS: PF 1.07-1.15 on 1,600-2,900 trades, drawdown 20-25% (3-4x live), 2022 0.2-0.4, and several non-2022 years at 1.0. Adding the breadth filter does not rescue it (PF 1.10). The "combined" rows are dominated by Double-7 signals crowding out the live trades from the same 12 slots (equal-score sleeve, no priority for live), so they show a worse-than-live result; a priority-aware combination was not worth running since the sleeve alone is this weak and the live setup stays unchanged. Consistent with run 4 (10-day-low variants PF 1.26 and below). Not added to challenger.py.
 Follow-ups still untested: month-of-year seasonality inside the live setup; sleeve sizing at 5%; bond ETFs (TLT/HYG) need adding to the bars cache; true PEAD needs earnings data.
+
+## 2026-11-07 (run 21) - month-of-year seasonality inside the LIVE setup (own idea; open follow-up from runs 18-20)
+Source: none (own idea). Script lab_moy.py. Rules: LIVE setup (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank), trades bucketed by signal month; then skip-month variants incl. a walk-forward pick (3 worst months chosen on 2021-23 only, judged on 2024-26). Same simulator (10% x 12, 4/day), data through 2026-10-29. About 16 comparisons (12 month buckets + 4 skip rows): heavy multiple-comparison discount.
+
+Per-month PF (n / all / 2021-23 / 2024-26): Jan 200/1.76/0.07/3.65, Feb 87/1.08/2.25/0.73, Mar 61/1.16/-/1.10, Apr 93/3.74/5.09/2.78, May 68/1.50/0.57/5.00, Jun 152/2.20/1.30/4.78, Jul 88/7.55/(few losses)/4.80, Aug 121/1.13/0.60/3.80, Sep 183/0.74/0.33/1.71, Oct 131/3.23/-/2.91, Nov 100/2.78/2.32/3.49, Dec 153/2.43/-/1.48.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| skip Sep | 527 | 71.2 | 2.08 | 61.0 | 5.2 | 2.02 | 117 / 2.68 | 2.72/.13/1.89/2.15/2.14/2.72 |
+| skip Sep+Oct | 470 | 72.3 | 2.03 | 50.3 | 5.2 | 1.89 | 107 / 2.69 | 2.62/.13/1.79/2.36/1.85/2.74 |
+| skip Jan+Feb | 515 | 69.1 | 1.97 | 53.9 | 5.9 | 2.07 | 122 / 2.61 | no 2022 trades; 1.89/-/1.29/1.88/2.56/2.63 |
+| skip worst3 on 2021-23 (Jan, Sep, May) | 438 | 71.9 | 2.31 | 59.3 | 5.5 | 2.27 | 103 / 2.72 | 2.68/-/2.19/2.11/2.06/2.79 |
+
+Verdict: NOT a promotion candidate. Month buckets are 60-200 trades each and flip sign between eras: Jan is 0.07 in 2021-23 but 3.65 in 2024-26, Aug 0.60 then 3.80, May 0.57 then 5.00, Feb 2.25 then 0.73. The walk-forward pick (Jan, Sep, May) therefore fails out of sample for two of its three months (Jan and May are strongly positive in 2024-26); its PF 2.31 is mostly the removal of the 2022 bear trades (Jan/Sep/May 2022 happened to hold all of them) and total return does not rise (59.3 vs 59.6). "Skip Sep" is the only one with a persistent hint (PF 0.74 overall, 2024-26 PF 1.71, still the weakest month), improves PF 1.88 to 2.08 and return 61.0 vs 59.6, but return gain is within noise, 2024 is slightly lower (2.15 vs 2.19), and it is one post-hoc cut out of 12 months, so it fails the discipline. No stable calendar effect inside the live setup, consistent with run 18 (weekdays). Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; re-check Sep in 2027 as out-of-sample evidence accrues.
