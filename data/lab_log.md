@@ -407,3 +407,18 @@ Rules: LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-
 
 Verdict: NOT a promotion candidate. Limit entries raise per-trade quality a little (PF 1.89-2.32) because a fill requires a further drop, i.e. they are just a deeper-dip filter, but they miss most signals so return collapses (59.6% -> 34.5% at 0.25 ATR, 13% at 1.0 ATR) and 2023 gets worse (0.90-1.29 vs 1.42). Deep-limit rows rest on tiny samples (2024 PF 22-49 from a handful of trades). The more useful finding is the opposite direction: entering at the NEXT OPEN instead of the signal close costs about 0.33 PF and 15 points of return (1.88 -> 1.55, 59.6% -> 44.2%, 2025 1.92 -> 1.28), so the live edge depends on getting filled near the signal-day close; execution at the open the next day (or a late-day order before the close) is not equivalent. Whoever runs live should keep entries as close to the signal-day closing price as possible. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; check how the live bot's real fills compare with signal-day closes (slippage audit) once enough paper fills exist.
+
+## 2026-11-07 (run 23) - same-symbol re-entry memory on the LIVE setup (own idea: skip/favour a signal if the stock's previous signal-trade lost recently)
+Source: none (own idea). Script lab_reentry.py. Rules: LIVE setup (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank); history = the unfiltered live signal-trade list; a signal is skipped/kept depending on the same stock's previous trade that exited within N days. Same simulator (10% x 12, 4/day), data through 2026-10-29. 5 variants counted.
+
+| Variant | Signals kept | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 1437 | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| skip if prev trade lost <=20d | 1425 | 599 | 69.1 | 1.90 | 60.3 | 5.9 | 136 / 2.64 | 1.87/.16/1.42/2.21/1.92/2.67 |
+| skip if prev trade lost <=60d | 1395 | 593 | 69.0 | 1.87 | 57.9 | 5.7 | 135 / 2.61 | 1.77/.16/1.41/2.21/1.89/2.63 |
+| skip any re-entry <=20d | 1326 | 561 | 69.7 | 1.87 | 54.1 | 5.6 | 125 / 2.52 | 1.83/.19/1.48/2.19/1.99/2.38 |
+| only re-entry after loss <=20d | 12 | 6 | - | - | 0.1 | - | too few | - |
+| only re-entry after win <=20d | 99 | 56 | 57.1 | 1.47 | 2.8 | 2.5 | 13 / 5.48 | tiny samples |
+
+Verdict: NOT a promotion candidate. Re-entries within 20 days are rare (about 1% of signals after a loss, 8% after any trade), so the filter changes almost nothing (PF 1.87-1.90, return within +-1 point, which is noise). The signal generator's own cooldown already limits repeat entries. Re-entries after a win are weaker (PF 1.47 on 56 trades, small sample), so no hint that a stock "in play" is better or worse. Stock-level path dependence is not an edge here. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; next run should be a WEB-sourced idea (e.g. an out-of-sample re-check of Sep weakness, or Quantpedia ideas not yet covered such as short-term reversal with an overnight-gap component).
