@@ -438,3 +438,18 @@ Source: https://www.cxoadvisory.com/technical-trading/proximity-to-52-week-high-
 
 Verdict: NOT a promotion candidate. The published idea (reversal strongest near the 52w high) is not supported: near-high entries are WEAKER (PF 1.53 within 10%), and the better side is the opposite, entries more than 10% below the high (PF 2.92, win 75%), but that is 155 trades, return 29.9% vs 59.6% (capital idle), 2021 is a few-trade outlier, and it is the reverse of the source's claim, i.e. found post hoc. Ranking by proximity is reshuffling noise (PF 1.77-1.89). Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; a size-up tier (not filter) for entries >10% below high.
+
+## 2026-11-08 (run 25) - exit-rule variants on the LIVE setup (web idea: Connors RSI(2) literature exits)
+Sources (search results only, not fetched, unverified): https://tradingmarkets.com/?p=1581420 , https://therighttrader.com/learn/trading-strategies/rsi-2-strategy , https://backtrex.com/en/backtests/connors-rsi-2-nasdaq-100 . Script lab_exit.py. Rules: LIVE entries (A+E+F, SPY>200d, stop 4 ATR, breadth>=10%, weakest-peer rank), only the exit changed. Same simulator (10% x 12, 4/day), data through 2026-10-29. 6 rows counted (5 alternatives).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (close > prior high, hold 7) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| exit RSI2>70, hold 7 | 584 | 65.2 | 1.52 | 44.0 | 8.1 | 1.61 | 1.60/.11/1.01/2.36/1.66/1.61 |
+| exit RSI2>70, hold 10 | 573 | 68.1 | 1.57 | 47.4 | 8.0 | 1.64 | 1.83/.10/1.16/2.52/1.34/1.70 |
+| exit close > MA10, hold 12 | 545 | 65.5 | 1.38 | 36.6 | 13.2 | 1.65 | 1.54/.10/1.21/1.93/1.22/1.49 |
+| exit close > MA5, hold 7 | 597 | 67.5 | 1.71 | 50.8 | 7.6 | 2.08 | 2.00/.10/1.06/2.30/2.02/2.10 |
+| no signal exit, time stop 7 | 561 | 52.2 | 1.30 | 32.7 | 15.3 | 1.41 | 1.25/.03/.84/1.97/1.66/1.30 |
+
+Verdict: NOT a promotion candidate. Every alternative is worse than the live "close above prior day's high" exit on PF, return, drawdown and last 12 months. The prior-high exit takes profit quickly at the first bounce; waiting for RSI2>70 or MA crossings gives back gains (win % and drawdown worsen). Pure time stop is clearly worst (PF 1.30, DD 15%), so the signal exit carries real value. Live exit stays. Only 2024 is better under RSI2 exits, a single year. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; size-up tier for entries >10% below 252d high; profit-target / trailing-stop exits.
