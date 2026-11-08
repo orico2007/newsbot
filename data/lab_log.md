@@ -484,3 +484,19 @@ Sources (search results only, not fetched, unverified): https://www.pulse.bot/st
 
 Verdict: NOT a promotion candidate. The Connors claim (deeper below the lower band is better) fails: %B<0 entries are clearly worse (PF 1.51, win 61%, 2023 PF 0.75); the more extreme the oversold reading, the weaker, consistent with run 24 where far-from-high looked better only in count-limited slices. Requiring a large 5-day drop (>=4 average moves) lifts PF to 2.16 and last-12m to 5.4 but cuts return from 59.6% to 31.8% by idling capital, 2023 falls to 1.15, and the threshold was picked after seeing the quantiles; as a ranking it does nothing (PF 1.83). Same lesson as runs 24/26: quality-filtering the signals trades return for PF, no free gain. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; profit-target / trailing-stop exits.
+
+## 2026-11-08 (run 28) - profit-target, breakeven and trailing-stop exits on the LIVE setup (own idea; open follow-up from run 25)
+Script lab_target.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank), exit "close > prior high" kept; added: profit target at entry+k*ATR (intraday high fills at target, gap-up at open), stop to breakeven after a close >= entry+1 ATR, trailing stop from highest close. Same simulator (10% x 12, 4/day), data through 2026-10-29. 6 variants counted (discount winners).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| target 1.0 ATR | 609 | 70.9 | 1.78 | 49.0 | 5.9 | 1.84 | 2.37 | 1.74/.26/1.25/2.41/1.68/2.39 |
+| target 1.5 ATR | 606 | 70.0 | 1.93 | 61.9 | 5.9 | 2.07 | 2.65 | 1.88/.26/1.47/2.48/1.80/2.66 |
+| target 2.5 ATR | 604 | 69.0 | 1.89 | 61.2 | 5.9 | 1.91 | 2.75 | 1.88/.13/1.47/2.17/1.95/2.75 |
+| breakeven after +1 ATR close | 604 | 68.5 | 1.88 | 59.0 | 5.9 | 1.86 | 2.65 | 1.84/.13/1.42/2.25/1.92/2.68 |
+| trail 2 ATR | 619 | 67.7 | 1.62 | 46.7 | 6.4 | 1.41 | 1.78 | 1.88/.14/1.27/2.23/1.35/1.88 |
+| trail 3 ATR | 607 | 68.9 | 1.79 | 55.8 | 5.9 | 1.65 | 2.51 | 1.92/.12/1.38/1.97/1.84/2.63 |
+
+Verdict: NOT a promotion candidate. Breakeven stops change nothing; trailing stops and a tight 1 ATR target cut winners and are worse. Target 1.5 ATR is +0.05 PF / +2 pts return and better than live in only 3 of 5 non-2022 years (2025 worse, 2021/2026 flat): within noise of 6 comparisons, not worth live complexity. The prior-high exit already captures the bounce. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG cross-asset filter (not in bars cache?); true PEAD needs earnings data.
