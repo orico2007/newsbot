@@ -515,3 +515,19 @@ Split: 2021-23 Sharpe 0.80 -> 0.85-0.99, 2024-26 2.78 -> 2.90-2.96; 2022 gets wo
 
 Verdict: NOT a promotion candidate. The return gain (+14 to +21 pts) comes with a proportional rise in drawdown (5.9 -> 6.5-7.7); Sharpe is flat (1.85 -> 1.87-1.95), i.e. this is leverage, not edge. High-breadth trades are only slightly better than low-breadth ones (PF per year mixed: 2024 worse, 2022 worse). Same lesson as runs 10 and 26: sizing tiers on signal quality do not add risk-adjusted value. Not added to challenger.py. If Ori simply wants more return, raising base size is the equivalent lever.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG (not in bars cache); true PEAD needs earnings data.
+
+## 2026-11-08 (run 30) - residual (SPY-beta-adjusted) 5-day reversal conditioning of the LIVE setup (web idea: Blitz/Huij/Lansdorp/Verbeek "short-term residual reversal")
+Sources (search results only, not fetched, unverified): https://www.robeco.com/en-za/insights/2011/11/short-term-residual-reversal , https://econpapers.repec.org/RePEc:eee:finmar:v:16:y:2013:i:3:p:477-504 . Script lab_resid.py. Rules: LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank); residual = 5d stock return minus beta*5d SPY return, beta from 60d daily returns; filter by quartile/median of the residual (quantiles from all 1437 pre-slot signals) or re-rank by it. Same simulator (10% x 12, 4/day), data through 2026-10-29. 6 variants counted (discount winners).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| resid below median | 350 | 70.3 | 1.92 | 35.6 | 5.7 | 97 / 2.64 | 1.69/.13/1.53/2.38/1.50/2.67 |
+| resid above median | 343 | 66.5 | 1.51 | 17.1 | 5.3 | 51 / 2.77 | .85/.11/1.01/2.69/2.85/2.35 |
+| bottom quartile | 192 | 75.0 | 2.60 | 30.0 | 2.2 | 67 / 2.82 | 5.18/.25/1.85/2.54/2.08/2.93 |
+| top quartile | 181 | 66.3 | 2.17 | 16.8 | 2.1 | 25 / 3.40 | 1.96/.25/1.59/2.97/2.87/2.48 |
+| rank most-negative resid first | 604 | 68.4 | 1.80 | 54.2 | 5.9 | 137 / 2.72 | 1.73/.15/1.27/2.00/1.98/2.59 |
+| rank least-negative resid first | 607 | 67.9 | 1.79 | 53.9 | 6.5 | 136 / 2.61 | 1.77/.13/1.24/2.50/1.45/2.73 |
+
+Verdict: NOT a promotion candidate. The residual-reversal claim is not confirmed as an add-on: both extreme quartiles beat the middle (non-monotonic, i.e. noise), the bottom quartile's PF 2.6 is driven by 2021 (5.18) and halves return (30% vs 59.6%) by idling capital, and ranking by residual in either direction is worse than the live weakest-peer ranking (PF 1.80 / 1.79 vs 1.88). Same lesson as runs 24/26/27: quality-filtering trades return for PF; the live ranking already captures the relative-weakness effect. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG (not in bars cache); true PEAD needs earnings data.
