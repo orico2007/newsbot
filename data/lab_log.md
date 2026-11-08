@@ -466,3 +466,21 @@ Script lab_proxsize.py. Post-hoc scaling of the 604 taken live-setup trades (bre
 
 Split: 2021-23 return 9.0 -> 12.2 (1.5x), Sharpe 0.80 -> 0.91; 2024-26 46.5 -> 59.2, Sharpe flat 2.78. Unlike the SPY-dip size tier (run 10), the gain shows in the early period and in every year, but it is modest in Sharpe, costs ~1pt drawdown, the threshold is post hoc, and untested for capital limits (far entries cluster in washouts). Not promoted: needs per-trade sizing in the live bot and the 3-consecutive-weekly-run rule is not met (not tracked in challenger.py).
 Follow-up: if it persists, add per-trade size multiplier support to the portfolio simulator and challenger.py, and test with real capital limits.
+
+## 2026-11-08 (run 27) - Bollinger %B and 5-day-drop-size conditioning of the LIVE setup (web idea: Connors %B strategy)
+Sources (search results only, not fetched, unverified): https://www.pulse.bot/stock-trading/news/larry-connors-b-strategy-a-simple-mean-reversion-edge-explained-643c3403-0b1c-4b94-a5e5-f387424c1505/ , https://www.pulse.bot/stock-trading/news/backtested-bollinger-bands-trading-strategy-dc419590-b797-4f6c-b961-21c073e81ab4/ . Script lab_pctb.py. Rules: LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank); filter or rank by %B(20,2) on the signal close, or by the 5-day close decline measured in units of the 14d mean absolute daily close change. Same simulator (10% x 12, 4/day), data through 2026-10-29. 8 variants counted (discount winners).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| %B<0 | 145 | 60.7 | 1.51 | 8.3 | 2.5 | 32 / 1.50 | 2.11/0/.75/2.82/1.47/1.37 |
+| %B<0.1 | 252 | 66.7 | 1.68 | 17.3 | 3.2 | 51 / 1.81 | 1.85/0/1.11/2.15/2.95/1.44 |
+| %B>=0.1 | 438 | 69.9 | 1.79 | 37.2 | 5.2 | 97 / 3.60 | 1.13/.19/1.26/2.26/1.66/4.17 |
+| 5d drop >=4 | 307 | 73.3 | 2.16 | 31.8 | 4.6 | 61 / 5.37 | 2.13/.30/1.15/2.65/2.03/5.12 |
+| 5d drop >=6 | 53 | 73.6 | 2.29 | 4.8 | 0.8 | 7 / 2.32 | tiny samples |
+| 5d drop <6 | 588 | 69.0 | 1.89 | 58.7 | 6.1 | 135 / 2.63 | same as ref |
+| rank biggest 5d drop first | 607 | 68.9 | 1.83 | 56.3 | 5.9 | 138 / 2.73 | 1.64/.13/1.41/2.31/1.81/2.62 |
+| rank lowest %B first | 603 | 68.2 | 1.79 | 53.2 | 6.9 | 136 / 2.56 | 1.94/.13/1.21/2.20/1.77/2.49 |
+
+Verdict: NOT a promotion candidate. The Connors claim (deeper below the lower band is better) fails: %B<0 entries are clearly worse (PF 1.51, win 61%, 2023 PF 0.75); the more extreme the oversold reading, the weaker, consistent with run 24 where far-from-high looked better only in count-limited slices. Requiring a large 5-day drop (>=4 average moves) lifts PF to 2.16 and last-12m to 5.4 but cuts return from 59.6% to 31.8% by idling capital, 2023 falls to 1.15, and the threshold was picked after seeing the quantiles; as a ranking it does nothing (PF 1.83). Same lesson as runs 24/26: quality-filtering the signals trades return for PF, no free gain. Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; profit-target / trailing-stop exits.
