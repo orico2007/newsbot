@@ -422,3 +422,19 @@ Source: none (own idea). Script lab_reentry.py. Rules: LIVE setup (A+E+F, SPY>20
 
 Verdict: NOT a promotion candidate. Re-entries within 20 days are rare (about 1% of signals after a loss, 8% after any trade), so the filter changes almost nothing (PF 1.87-1.90, return within +-1 point, which is noise). The signal generator's own cooldown already limits repeat entries. Re-entries after a win are weaker (PF 1.47 on 56 trades, small sample), so no hint that a stock "in play" is better or worse. Stock-level path dependence is not an edge here. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG need adding to the bars cache; true PEAD needs earnings data; next run should be a WEB-sourced idea (e.g. an out-of-sample re-check of Sep weakness, or Quantpedia ideas not yet covered such as short-term reversal with an overnight-gap component).
+
+## 2026-11-08 (run 24) - 52-week-high proximity conditioning of the LIVE setup (web idea: George-Hwang anchoring / short-term reversal by distance from 52w high)
+Source: https://www.cxoadvisory.com/technical-trading/proximity-to-52-week-high-and-short-term-momentum-reversal/ (search result only, not fetched; academic claim treated as unverified hypothesis). Script lab_prox.py. Rules: LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank); filter or rank by close / max(close, prior 252d). Same simulator (10% x 12, 4/day), data through 2026-10-29. 9 variants counted (heavy multiple-comparison discount). Signals lacking 252d history dropped for non-ref rows (1348 of 1437 kept).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| within 10% of high | 462 | 67.3 | 1.53 | 23.6 | 3.9 | 2.54 | 1.19/.13/1.33/1.87/1.74/2.23 |
+| within 20% of high | 550 | 68.5 | 1.80 | 47.4 | 6.2 | 2.44 | 1.95/.13/1.36/2.24/1.69/2.54 |
+| >10% below high | 155 | 74.8 | 2.92 | 29.9 | 3.0 | 3.55 | 2023 1.25 / 2024 2.85 / 2025 2.5 / 2026 4.33 |
+| >20% below high | 32 | 71.9 | 2.59 | 6.0 | 2.1 | tiny | tiny samples |
+| rank nearest-high (tiebreak / replace) | 569 / 567 | 68.9 / 68.3 | 1.89 / 1.89 | 56.3 / 57.1 | 5.9 / 6.3 | 2.65 / 2.74 | replace: 2023 1.17 |
+| rank farthest (tiebreak / replace) | 569 / 575 | 68.9 / 68.5 | 1.89 / 1.77 | 56.3 / 47.6 | 5.9 | 2.65 / 2.71 | replace worse |
+
+Verdict: NOT a promotion candidate. The published idea (reversal strongest near the 52w high) is not supported: near-high entries are WEAKER (PF 1.53 within 10%), and the better side is the opposite, entries more than 10% below the high (PF 2.92, win 75%), but that is 155 trades, return 29.9% vs 59.6% (capital idle), 2021 is a few-trade outlier, and it is the reverse of the source's claim, i.e. found post hoc. Ranking by proximity is reshuffling noise (PF 1.77-1.89). Not added to challenger.py.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; a size-up tier (not filter) for entries >10% below high.
