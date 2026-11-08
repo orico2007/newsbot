@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-01T11:12:03.738689+00:00",
- "holdout_from": "2025-06-10",
+ "updated": "2026-11-08T11:12:50.467298+00:00",
+ "holdout_from": "2025-06-17",
  "patterns": {
   "avwap_reclaim:long": {
    "train": {
@@ -29,22 +29,22 @@
   },
   "base_breakout:long": {
    "train": {
-    "alpha": 0.674,
-    "n": 198,
-    "win": 62.1,
-    "avgR": 0.12,
-    "avg_pct": 0.873,
-    "pf": 1.42,
-    "pf_pct": 1.51
+    "alpha": 0.554,
+    "n": 208,
+    "win": 62.0,
+    "avgR": 0.117,
+    "avg_pct": 0.844,
+    "pf": 1.41,
+    "pf_pct": 1.49
    },
    "test": {
-    "alpha": -0.3,
-    "n": 110,
-    "win": 52.7,
-    "avgR": 0.037,
-    "avg_pct": -0.008,
-    "pf": 1.1,
-    "pf_pct": 1.0
+    "alpha": -0.186,
+    "n": 101,
+    "win": 51.5,
+    "avgR": 0.03,
+    "avg_pct": -0.06,
+    "pf": 1.08,
+    "pf_pct": 0.98
    },
    "regimes": [
     "bull",
@@ -55,22 +55,22 @@
   },
   "breakout_retest:long": {
    "train": {
-    "alpha": 0.342,
+    "alpha": 0.328,
     "n": 93,
     "win": 57.0,
-    "avgR": 0.231,
-    "avg_pct": 0.932,
+    "avgR": 0.228,
+    "avg_pct": 0.92,
     "pf": 1.6,
-    "pf_pct": 1.52
+    "pf_pct": 1.51
    },
    "test": {
-    "alpha": 1.13,
+    "alpha": 1.376,
     "n": 35,
     "win": 65.7,
-    "avgR": 0.329,
-    "avg_pct": 1.692,
-    "pf": 1.92,
-    "pf_pct": 2.04
+    "avgR": 0.367,
+    "avg_pct": 1.908,
+    "pf": 2.02,
+    "pf_pct": 2.18
    },
    "regimes": [
     "bull",
@@ -80,21 +80,21 @@
   },
   "channel_bounce:long": {
    "train": {
-    "alpha": -0.011,
-    "n": 82,
-    "win": 50.0,
-    "avgR": 0.09,
-    "avg_pct": 0.204,
-    "pf": 1.19,
-    "pf_pct": 1.13
+    "alpha": 0.151,
+    "n": 80,
+    "win": 52.5,
+    "avgR": 0.151,
+    "avg_pct": 0.394,
+    "pf": 1.33,
+    "pf_pct": 1.28
    },
    "test": {
-    "alpha": -0.735,
-    "n": 35,
-    "win": 48.6,
-    "avgR": 0.192,
-    "avg_pct": 0.083,
-    "pf": 1.4,
+    "alpha": -0.768,
+    "n": 33,
+    "win": 48.5,
+    "avgR": 0.199,
+    "avg_pct": 0.091,
+    "pf": 1.42,
     "pf_pct": 1.05
    },
    "regimes": [
@@ -103,24 +103,24 @@
    ],
    "mult": 1.0
   },
-  "donchian20:long": {
+  "donchian55:long": {
    "train": {
-    "alpha": 0.461,
-    "n": 286,
-    "win": 60.1,
-    "avgR": 0.152,
-    "avg_pct": 1.085,
-    "pf": 1.64,
-    "pf_pct": 1.68
+    "alpha": 0.498,
+    "n": 214,
+    "win": 62.1,
+    "avgR": 0.17,
+    "avg_pct": 1.197,
+    "pf": 1.75,
+    "pf_pct": 1.81
    },
    "test": {
-    "alpha": -0.581,
-    "n": 161,
-    "win": 50.3,
-    "avgR": 0.042,
-    "avg_pct": -0.111,
-    "pf": 1.12,
-    "pf_pct": 0.96
+    "alpha": -0.473,
+    "n": 111,
+    "win": 50.5,
+    "avgR": 0.038,
+    "avg_pct": -0.114,
+    "pf": 1.11,
+    "pf_pct": 0.95
    },
    "regimes": [
     "bull",
@@ -129,50 +129,24 @@
    ],
    "mult": 0.75
   },
-  "donchian55:long": {
-   "train": {
-    "alpha": 0.539,
-    "n": 204,
-    "win": 61.3,
-    "avgR": 0.162,
-    "avg_pct": 1.154,
-    "pf": 1.71,
-    "pf_pct": 1.78
-   },
-   "test": {
-    "alpha": -0.42,
-    "n": 121,
-    "win": 52.9,
-    "avgR": 0.072,
-    "avg_pct": 0.126,
-    "pf": 1.22,
-    "pf_pct": 1.05
-   },
-   "regimes": [
-    "bull",
-    "bear",
-    "neutral"
-   ],
-   "mult": 1.0
-  },
   "down_trendline_break:long": {
    "train": {
-    "alpha": 1.292,
-    "n": 58,
-    "win": 62.1,
-    "avgR": 0.234,
-    "avg_pct": 1.627,
-    "pf": 1.88,
-    "pf_pct": 2.02
+    "alpha": 1.382,
+    "n": 60,
+    "win": 63.3,
+    "avgR": 0.249,
+    "avg_pct": 1.762,
+    "pf": 1.97,
+    "pf_pct": 2.15
    },
    "test": {
-    "alpha": 0.487,
-    "n": 24,
-    "win": 58.3,
-    "avgR": 0.267,
-    "avg_pct": 0.337,
-    "pf": 1.71,
-    "pf_pct": 1.11
+    "alpha": 0.168,
+    "n": 22,
+    "win": 54.5,
+    "avgR": 0.23,
+    "avg_pct": -0.15,
+    "pf": 1.56,
+    "pf_pct": 0.96
    },
    "regimes": [
     "bull",
@@ -192,13 +166,13 @@
     "pf_pct": 2.6
    },
    "test": {
-    "alpha": 2.007,
-    "n": 12,
-    "win": 58.3,
-    "avgR": 0.271,
-    "avg_pct": 1.772,
-    "pf": 2.57,
-    "pf_pct": 3.11
+    "alpha": 1.922,
+    "n": 15,
+    "win": 66.7,
+    "avgR": 0.361,
+    "avg_pct": 2.179,
+    "pf": 3.61,
+    "pf_pct": 4.24
    },
    "regimes": [
     "bull",
@@ -208,22 +182,22 @@
   },
   "keltner_thrust:long": {
    "train": {
-    "alpha": -0.03,
+    "alpha": -0.2,
     "n": 58,
-    "win": 62.1,
-    "avgR": 0.208,
-    "avg_pct": 0.928,
-    "pf": 1.78,
-    "pf_pct": 1.65
+    "win": 60.3,
+    "avgR": 0.182,
+    "avg_pct": 0.764,
+    "pf": 1.64,
+    "pf_pct": 1.49
    },
    "test": {
-    "alpha": -0.846,
+    "alpha": -0.547,
     "n": 29,
-    "win": 55.2,
-    "avgR": 0.157,
-    "avg_pct": -0.077,
-    "pf": 1.34,
-    "pf_pct": 0.97
+    "win": 58.6,
+    "avgR": 0.199,
+    "avg_pct": 0.197,
+    "pf": 1.47,
+    "pf_pct": 1.08
    },
    "regimes": [
     "bull",
@@ -233,22 +207,22 @@
   },
   "momentum_burst:short": {
    "train": {
-    "alpha": 0.096,
+    "alpha": 0.058,
     "n": 112,
     "win": 42.9,
-    "avgR": 0.082,
-    "avg_pct": 0.117,
+    "avgR": 0.081,
+    "avg_pct": 0.085,
     "pf": 1.16,
-    "pf_pct": 1.05
+    "pf_pct": 1.04
    },
    "test": {
-    "alpha": 0.229,
-    "n": 84,
-    "win": 44.0,
-    "avgR": 0.143,
-    "avg_pct": 0.5,
-    "pf": 1.26,
-    "pf_pct": 1.19
+    "alpha": 0.309,
+    "n": 83,
+    "win": 44.6,
+    "avgR": 0.158,
+    "avg_pct": 0.59,
+    "pf": 1.3,
+    "pf_pct": 1.23
    },
    "regimes": [
     "bull",
@@ -268,13 +242,13 @@
     "pf_pct": 1.25
    },
    "test": {
-    "alpha": 0.57,
-    "n": 67,
-    "win": 44.8,
-    "avgR": 0.121,
-    "avg_pct": 0.547,
-    "pf": 1.23,
-    "pf_pct": 1.27
+    "alpha": 0.569,
+    "n": 68,
+    "win": 44.1,
+    "avgR": 0.114,
+    "avg_pct": 0.521,
+    "pf": 1.22,
+    "pf_pct": 1.26
    },
    "regimes": [
     "bull",
@@ -285,13 +259,13 @@
   },
   "pullback_reversal_day:long": {
    "train": {
-    "alpha": 0.775,
-    "n": 59,
-    "win": 55.9,
-    "avgR": 0.167,
-    "avg_pct": 1.089,
-    "pf": 1.47,
-    "pf_pct": 1.63
+    "alpha": 0.717,
+    "n": 58,
+    "win": 55.2,
+    "avgR": 0.146,
+    "avg_pct": 1.036,
+    "pf": 1.41,
+    "pf_pct": 1.6
    },
    "test": {
     "alpha": 1.369,
@@ -311,20 +285,20 @@
   },
   "stoch_overbought_cross:short": {
    "train": {
-    "alpha": 0.68,
-    "n": 176,
-    "win": 46.0,
-    "avgR": 0.136,
-    "avg_pct": 1.22,
-    "pf": 1.27,
-    "pf_pct": 1.52
+    "alpha": 0.764,
+    "n": 173,
+    "win": 46.8,
+    "avgR": 0.156,
+    "avg_pct": 1.338,
+    "pf": 1.32,
+    "pf_pct": 1.58
    },
    "test": {
-    "alpha": 0.408,
-    "n": 95,
-    "win": 44.2,
+    "alpha": 0.445,
+    "n": 96,
+    "win": 44.8,
     "avgR": 0.029,
-    "avg_pct": 0.028,
+    "avg_pct": 0.032,
     "pf": 1.05,
     "pf_pct": 1.01
    },
@@ -334,90 +308,39 @@
    ],
    "mult": 0.75
   },
-  "three_line_strike_bull:long": {
-   "train": {
-    "alpha": 0.495,
-    "n": 41,
-    "win": 48.8,
-    "avgR": 0.064,
-    "avg_pct": 1.042,
-    "pf": 1.15,
-    "pf_pct": 1.71
-   },
-   "test": {
-    "alpha": -0.005,
-    "n": 16,
-    "win": 43.8,
-    "avgR": 0.116,
-    "avg_pct": -0.083,
-    "pf": 1.26,
-    "pf_pct": 0.96
-   },
-   "regimes": [
-    "bull",
-    "neutral"
-   ],
-   "mult": 1.0
-  },
   "tight_closes_breakout:long": {
    "train": {
-    "alpha": -0.287,
-    "n": 187,
-    "win": 54.5,
-    "avgR": 0.087,
-    "avg_pct": 0.262,
-    "pf": 1.22,
-    "pf_pct": 1.15
+    "alpha": -0.364,
+    "n": 188,
+    "win": 53.2,
+    "avgR": 0.067,
+    "avg_pct": 0.179,
+    "pf": 1.17,
+    "pf_pct": 1.1
    },
    "test": {
-    "alpha": 0.335,
-    "n": 111,
-    "win": 48.6,
-    "avgR": 0.158,
-    "avg_pct": 0.557,
-    "pf": 1.39,
-    "pf_pct": 1.31
+    "alpha": 0.412,
+    "n": 107,
+    "win": 49.5,
+    "avgR": 0.168,
+    "avg_pct": 0.628,
+    "pf": 1.43,
+    "pf_pct": 1.37
    },
    "regimes": [
     "bull"
    ],
    "mult": 1.0
   },
-  "fib_pullback:long": {
-   "train": {
-    "alpha": 0.649,
-    "n": 48,
-    "win": 60.4,
-    "avgR": 0.246,
-    "avg_pct": 1.182,
-    "pf": 1.72,
-    "pf_pct": 1.73
-   },
-   "test": {
-    "alpha": 0.015,
-    "n": 38,
-    "win": 52.6,
-    "avgR": 0.032,
-    "avg_pct": 0.185,
-    "pf": 1.07,
-    "pf_pct": 1.09
-   },
-   "regimes": [
-    "bull",
-    "bear",
-    "neutral"
-   ],
-   "mult": 0.75
-  },
   "level_bounce:long": {
    "train": {
-    "alpha": 0.824,
-    "n": 78,
-    "win": 52.6,
-    "avgR": 0.263,
-    "avg_pct": 0.535,
-    "pf": 1.67,
-    "pf_pct": 1.32
+    "alpha": 0.751,
+    "n": 77,
+    "win": 51.9,
+    "avgR": 0.247,
+    "avg_pct": 0.461,
+    "pf": 1.62,
+    "pf_pct": 1.27
    },
    "test": {
     "alpha": 0.949,
@@ -432,6 +355,30 @@
     "bull",
     "bear",
     "neutral"
+   ],
+   "mult": 0.75
+  },
+  "stoch_oversold:long": {
+   "train": {
+    "alpha": 1.61,
+    "n": 24,
+    "win": 62.5,
+    "avgR": 0.782,
+    "avg_pct": 1.737,
+    "pf": 3.09,
+    "pf_pct": 2.1
+   },
+   "test": {
+    "alpha": 0.38,
+    "n": 14,
+    "win": 42.9,
+    "avgR": 0.043,
+    "avg_pct": 0.327,
+    "pf": 1.07,
+    "pf_pct": 1.14
+   },
+   "regimes": [
+    "bull"
    ],
    "mult": 0.75
   }
