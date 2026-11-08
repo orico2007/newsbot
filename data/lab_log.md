@@ -500,3 +500,18 @@ Script lab_target.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth
 
 Verdict: NOT a promotion candidate. Breakeven stops change nothing; trailing stops and a tight 1 ATR target cut winners and are worse. Target 1.5 ATR is +0.05 PF / +2 pts return and better than live in only 3 of 5 non-2022 years (2025 worse, 2021/2026 flat): within noise of 6 comparisons, not worth live complexity. The prior-high exit already captures the bounce. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG cross-asset filter (not in bars cache?); true PEAD needs earnings data.
+
+## 2026-11-08 (run 29) - breadth-washout SIZE tier on the LIVE setup (own idea; follow-up listed in runs 13/26)
+Source: none (own idea; web run 28-style searches already covered breadth). Script lab_breadthsize.py. Post-hoc scaling of the 604 taken LIVE trades (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank); the position weight is 10% x multiplier by the share of the universe with RSI2<10 on the signal day (quartiles of taken trades: 14% / 21% / 30%). Data through 2026-10-29. 5 variants counted (discount winners; scaling is not re-run through the slot simulator, so exposure caps are ignored).
+
+| Variant | Ret % | MaxDD | Sharpe | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|
+| flat (LIVE ref) | 59.6 | 5.9 | 1.85 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| 1.5x if breadth>=20% | 80.5 | 7.7 | 1.87 | 2.24/.10/1.43/2.03/2.06/2.71 |
+| 1.5x if breadth>=30% | 73.5 | 6.5 | 1.95 | 2.26/.10/1.55/2.23/1.93/2.65 |
+| 1.5x >=20%, 0.75x <15% | 75.2 | 7.2 | 1.87 | 2.35/.09/1.47/1.97/2.11/2.66 |
+| 0.5x if breadth 10-15% | 50.3 | 5.1 | 1.88 | 2.06/.12/1.52/2.03/2.05/2.55 |
+Split: 2021-23 Sharpe 0.80 -> 0.85-0.99, 2024-26 2.78 -> 2.90-2.96; 2022 gets worse (-3.3% -> -5.0%, 11 of its 14 trades are high-breadth).
+
+Verdict: NOT a promotion candidate. The return gain (+14 to +21 pts) comes with a proportional rise in drawdown (5.9 -> 6.5-7.7); Sharpe is flat (1.85 -> 1.87-1.95), i.e. this is leverage, not edge. High-breadth trades are only slightly better than low-breadth ones (PF per year mixed: 2024 worse, 2022 worse). Same lesson as runs 10 and 26: sizing tiers on signal quality do not add risk-adjusted value. Not added to challenger.py. If Ori simply wants more return, raising base size is the equivalent lever.
+Follow-ups still untested: sleeve sizing at 5%; TLT/HYG (not in bars cache); true PEAD needs earnings data.
