@@ -546,3 +546,19 @@ Source: none. Script lab_sleeve5.py. LIVE setup (A+E+F, SPY>200d, hold 7, stop 4
 
 Verdict: WATCH-LIST, supports run 13's PROMOTION CANDIDATE with a risk-matched size. At w=0.5-0.75 the sleeve adds +11 to +17 pts return and Sharpe 1.85 -> 1.91-1.97 with max drawdown unchanged at 5.9 (w=1.0 raises it to 6.8), lifts L12 PF 2.65 -> 2.79-2.85, never hurts 2021/2024/2025, and the gain shows in both the early selection period and the confirmation period. It does not beat live on PF (1.81-1.83 vs 1.88) and the 2022 rescue shrinks as w falls (PF 1.11 -> .96), so it is a diversifier, not an edge upgrade. Caveats unchanged from run 11/13: survivor universe flatters "above 200d in a bear market", only ~2 bear episodes, sleeve n small in the last year (21 trades). A live implementation would need the SPY<200d branch in mr.py (not done here; belongs to the daily improvement round). Not added as a new challenger row (run-13 row already tracks it).
 Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
+
+## 2026-11-08 (run 32) - market-state timing of the LIVE setup: SPY direction on the signal day and breadth deepening vs easing (own idea; search-only web seed: Connors/Quantified Strategies pullback pages, snippets not fetched, unverified: https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy)
+Script lab_turn.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank), filtered by SPY 1-day / 3-day return on the signal day or by the day-over-day change in the RSI2<10 breadth share. Same simulator (10% x 12, 4/day), data through 2026-10-29. 6 variants counted (discount winners).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| SPY up on signal day | 200 | 69.5 | 1.74 | 13.1 | 3.0 | 1.07 | 45 / 3.97 | 1.34/.0/.98/1.71/1.23/4.52 |
+| SPY down on signal day | 460 | 67.8 | 1.78 | 40.6 | 5.3 | 1.46 | 99 / 2.27 | 1.95/.14/1.51/2.2/1.87/2.11 |
+| breadth easing (today<yesterday) | 165 | 68.5 | 1.44 | 7.9 | 3.4 | 0.72 | 41 / 2.56 | .72/1.47/1.2/1.25/1.63/3.41 |
+| breadth deepening (today>=yesterday) | 503 | 69.0 | 1.96 | 51.5 | 4.6 | 1.72 | 107 / 2.56 | 1.99/.04/1.36/3.07/2.03/2.37 |
+| SPY 3d return < -2% | 97 | 71.1 | 2.37 | 11.6 | 2.8 | 1.36 | 8 / 8.53 | 16.0/.06/.63/3.85/1.67/- |
+| SPY 3d return >= -2% | 531 | 68.2 | 1.73 | 42.1 | 5.5 | 1.54 | 128 / 2.49 | 1.59/.16/1.4/1.98/1.68/2.4 |
+
+Verdict: NOT a promotion candidate. Every filter lowers return and Sharpe versus live because it just idles capital (the live setup is already the best-selected subset). Breadth deepening has PF 1.96 vs 1.88 but 51.5% return vs 59.6% and is worse in 2023/2026; its complement (easing) is weak (PF 1.44), but this is consistent with simply "more washout = better" already captured by the breadth>=10% filter (run 12). SPY 3d < -2% looks great (PF 2.37) but is 97 trades with 2021 PF 16 and 2023 PF 0.63, i.e. a hand-full of episodes. SPY direction on the signal day carries no usable signal. Not added to challenger.py.
+Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
