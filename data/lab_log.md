@@ -531,3 +531,18 @@ Sources (search results only, not fetched, unverified): https://www.robeco.com/e
 
 Verdict: NOT a promotion candidate. The residual-reversal claim is not confirmed as an add-on: both extreme quartiles beat the middle (non-monotonic, i.e. noise), the bottom quartile's PF 2.6 is driven by 2021 (5.18) and halves return (30% vs 59.6%) by idling capital, and ranking by residual in either direction is worse than the live weakest-peer ranking (PF 1.80 / 1.79 vs 1.88). Same lesson as runs 24/26/27: quality-filtering trades return for PF; the live ranking already captures the relative-weakness effect. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG (not in bars cache); true PEAD needs earnings data.
+
+## 2026-11-08 (run 31) - risk-matched SIZE of the bear-regime sleeve on the LIVE setup (own idea; follow-up listed in runs 13/25-30)
+Source: none. Script lab_sleeve5.py. LIVE setup (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank) plus the run-11/13 bear sleeve (SPY<200d, stock>own 200d, RSI2<5, breadth>=10%, prior-high exit), sleeve pnl scaled by weight w post-hoc (slots still one per trade; PF is computed on the scaled pnl so it is approximate). Same simulator (10% x 12, 4/day), data through 2026-10-29. 3 weights tried (sleeve rules and breadth threshold reused from run 13, nothing new tuned).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| + sleeve w=1.0 (10%) | 813 | 69.1 | 1.80 | 82.5 | 6.8 | 1.96 | 152 / 2.91 | 1.89/1.11/1.50/2.19/1.92/3.01 |
+| + sleeve w=0.75 | 813 | 69.1 | 1.81 | 76.5 | 5.9 | 1.97 | 152 / 2.85 | 1.89/1.05/1.48/2.19/1.92/2.93 |
+| + sleeve w=0.5 (5%) | 813 | 69.1 | 1.83 | 70.7 | 5.9 | 1.91 | 152 / 2.79 | 1.89/.96/1.46/2.19/1.92/2.85 |
+| split 2021-23: LIVE -> +sleeve .5 | 221 -> 399 | 64.7 -> 66.7 | 1.38 -> 1.38 | 9.0 -> 13.3 | 5.9 -> 5.9 | 0.80 -> 0.93 | - | 2022 .13 -> .96 |
+| split 2024-26: LIVE -> +sleeve .5 | 383 -> 414 | 71.5 | 2.25 -> 2.29 | 46.5 -> 50.7 | 5.2 -> 5.2 | 2.78 -> 3.06 | 152 / 2.79 | same |
+
+Verdict: WATCH-LIST, supports run 13's PROMOTION CANDIDATE with a risk-matched size. At w=0.5-0.75 the sleeve adds +11 to +17 pts return and Sharpe 1.85 -> 1.91-1.97 with max drawdown unchanged at 5.9 (w=1.0 raises it to 6.8), lifts L12 PF 2.65 -> 2.79-2.85, never hurts 2021/2024/2025, and the gain shows in both the early selection period and the confirmation period. It does not beat live on PF (1.81-1.83 vs 1.88) and the 2022 rescue shrinks as w falls (PF 1.11 -> .96), so it is a diversifier, not an edge upgrade. Caveats unchanged from run 11/13: survivor universe flatters "above 200d in a bear market", only ~2 bear episodes, sleeve n small in the last year (21 trades). A live implementation would need the SPY<200d branch in mr.py (not done here; belongs to the daily improvement round). Not added as a new challenger row (run-13 row already tracks it).
+Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
