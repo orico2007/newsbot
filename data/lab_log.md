@@ -453,3 +453,16 @@ Sources (search results only, not fetched, unverified): https://tradingmarkets.c
 
 Verdict: NOT a promotion candidate. Every alternative is worse than the live "close above prior day's high" exit on PF, return, drawdown and last 12 months. The prior-high exit takes profit quickly at the first bounce; waiting for RSI2>70 or MA crossings gives back gains (win % and drawdown worsen). Pure time stop is clearly worst (PF 1.30, DD 15%), so the signal exit carries real value. Live exit stays. Only 2024 is better under RSI2 exits, a single year. Not added to challenger.py.
 Follow-ups still untested: sleeve sizing at 5%; TLT/HYG in bars cache; true PEAD needs earnings data; size-up tier for entries >10% below 252d high; profit-target / trailing-stop exits.
+
+## 2026-11-08 (run 26) - size-up tier for LIVE entries >10% below their 252d high (follow-up of run 24)
+Script lab_proxsize.py. Post-hoc scaling of the 604 taken live-setup trades (breadth>=10%, weakest-peer rank, SPY>200d); 569 have 252d history, 126 are >10% below high. Data through 2026-10-29. 3 sizing variants counted, but the 10% threshold came from run 24 on the same sample (post hoc).
+
+| Variant | Ret % | MaxDD | Sharpe | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|
+| flat 10% (live) | 59.6 | 5.9 | 1.85 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| 1.5x if far | 78.6 | 7.0 | 1.92 | 2.13/.13/1.44/2.29/1.99/2.81 |
+| 1.5x far, 0.75x else | 68.3 | 6.1 | 1.92 | 2.37/.13/1.45/2.37/2.05/2.90 |
+| 1.3x far | 70.8 | 6.6 | 1.90 | 2.03/.13/1.43/2.25/1.97/2.76 |
+
+Split: 2021-23 return 9.0 -> 12.2 (1.5x), Sharpe 0.80 -> 0.91; 2024-26 46.5 -> 59.2, Sharpe flat 2.78. Unlike the SPY-dip size tier (run 10), the gain shows in the early period and in every year, but it is modest in Sharpe, costs ~1pt drawdown, the threshold is post hoc, and untested for capital limits (far entries cluster in washouts). Not promoted: needs per-trade sizing in the live bot and the 3-consecutive-weekly-run rule is not met (not tracked in challenger.py).
+Follow-up: if it persists, add per-trade size multiplier support to the portfolio simulator and challenger.py, and test with real capital limits.
