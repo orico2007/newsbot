@@ -25,7 +25,8 @@ def ruleset(**kw):
 
 DEF_PORT = dict(size_pct=10, max_pos=12, per_day=4)
 VARIANTS = [   # name, rules, portfolio kwargs
-    ("CHAMPION (live): A+E+F, SPY>200d, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT),
+    ("CHAMPION (live): A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT, "live"),
+    ("previous champion: A+E+F, SPY>200d, no breadth filter, no sector rank", ruleset(), DEF_PORT),
     ("gate: strict bull regime", ruleset(gate="bullreg"), DEF_PORT),
     ("gate: none (always on)", ruleset(gate="none"), DEF_PORT),
     ("hold 5 days", ruleset(hold=5), DEF_PORT),
@@ -78,6 +79,11 @@ def run():
         if len(v) > 3 and v[3] == "bear_sleeve":
             import lab_bear
             T0 = T0 + lab_bear.bear_long(AS, ctx)
+        elif len(v) > 3 and v[3] == "live":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            ok = lambda t: B.get(t["t"][:10], (0, 0))[0] >= 0.10
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t for t in T0 if ok(t)]
         elif len(v) > 3 and v[3] == "live_bear10":
             import lab_breadth, lab_bear, lab_sector
             B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
