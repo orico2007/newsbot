@@ -7,3 +7,12 @@ def test_post_peers_filter_and_rank():
     r = challenger.post(T, "peers_rank", F)
     assert [t["sym"] for t in r] == ["A", "B"] and r[0]["score"] == 2.0 and r[1]["score"] == -1.0
     assert challenger.post(T, "other", F) is T
+
+
+def test_vol60():
+    import challenger
+    c = [100.0] * 62
+    assert challenger.vol60({"c": c}, 61) == 0
+    assert challenger.vol60({"c": c}, 10) is None
+    c2 = [100.0 * (1.02 if j % 2 else 1.0) for j in range(62)]
+    assert challenger.vol60({"c": c2}, 61) > 1

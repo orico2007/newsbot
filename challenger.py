@@ -58,7 +58,15 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: only if >=10% of universe RSI2<10 (breadth washout)", ruleset(), DEF_PORT, "breadth10"),
     # lab run 13: NEW LIVE setup (breadth>=10% + weakest-peer rank) plus bear-regime long sleeve filtered by the same breadth>=10%
     ("lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)", ruleset(), DEF_PORT, "live_bear10"),
+    # lab run 8: PROMOTION CANDIDATE - live setup restricted to stocks whose 60d daily-return stdev >= 1.75% (see data/lab_log.md)
+    ("lab: live setup + only stocks with 60d daily vol >= 1.75%", ruleset(), DEF_PORT, "live_vol175"),
 ]
+
+def vol60(A, i):
+    """Std-dev (in %) of the last 60 daily close-to-close returns ending at index i, or None."""
+    if i is None or i < 61: return None
+    r = [A["c"][j] / A["c"][j - 1] - 1 for j in range(i - 59, i + 1)]; m = sum(r) / 60
+    return (sum((x - m) ** 2 for x in r) / 59) ** 0.5 * 100
 
 def post(T, kind, F):
     """Optional post-processing of a trade list using sector-peer features (lab_sector.feats)."""
@@ -84,6 +92,15 @@ def run():
             B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
             ok = lambda t: B.get(t["t"][:10], (0, 0))[0] >= 0.10
             T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t for t in T0 if ok(t)]
+        elif len(v) > 3 and v[3] == "live_vol175":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                return v_ is not None and v_ >= 1.75
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
         elif len(v) > 3 and v[3] == "live_bear10":
             import lab_breadth, lab_bear, lab_sector
             B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
