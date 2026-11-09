@@ -562,3 +562,20 @@ Script lab_turn.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=
 
 Verdict: NOT a promotion candidate. Every filter lowers return and Sharpe versus live because it just idles capital (the live setup is already the best-selected subset). Breadth deepening has PF 1.96 vs 1.88 but 51.5% return vs 59.6% and is worse in 2023/2026; its complement (easing) is weak (PF 1.44), but this is consistent with simply "more washout = better" already captured by the breadth>=10% filter (run 12). SPY 3d < -2% looks great (PF 2.37) but is 97 trades with 2021 PF 16 and 2023 PF 0.63, i.e. a hand-full of episodes. SPY direction on the signal day carries no usable signal. Not added to challenger.py.
 Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
+
+## 2026-11-09 (run 33) - volatility-expansion conditioning of the LIVE setup: 5d/50d range ratio and signal-day range vs ATR (own idea; one web search for "ATR ratio filter on RSI2 mean reversion" returned only TradingView script pages, nothing fetched or usable)
+Script lab_volx.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=10%, weakest-peer rank) filtered by (a) mean high-low range of the last 5 days divided by the 50-day mean range, (b) signal-day range in ATRs. Same simulator (10% x 12, 4/day), data through 2026-10-29. 8 rows counted (discount winners).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| 5d/50d range >= 1.2 | 154 | 68.2 | 2.24 | 18.6 | 4.3 | 1.64 | 42 / 3.23 | 7.32/.99/1.19/2.31/1.21/4.27 |
+| 5d/50d range < 1.2 | 503 | 69.2 | 1.79 | 40.6 | 4.6 | 1.71 | 104 / 2.68 | 1.46/.05/1.47/2.05/2.60/2.47 |
+| 5d/50d range >= 1.0 | 341 | 69.8 | 2.17 | 41.0 | 4.8 | 1.82 | 77 / 3.63 | 4.21/.22/.95/2.49/1.80/4.03 |
+| 5d/50d range < 1.0 (contraction) | 346 | 67.3 | 1.45 | 15.7 | 5.2 | 0.91 | 72 / 2.18 | .73/.06/1.61/2.00/2.15/2.03 |
+| signal-day range >= 1.5 ATR | 128 | 64.1 | 1.96 | 13.4 | 2.2 | 1.21 | 21 / 5.77 | 1.42/0/2.93/2.69/1.55/6.04 |
+| signal-day range < 1.5 ATR | 538 | 69.7 | 1.76 | 43.8 | 6.0 | 1.58 | 125 / 2.49 | 1.67/.21/1.43/1.92/1.71/2.56 |
+| signal-day range < 1.0 ATR | 344 | 70.3 | 1.84 | 25.7 | 2.9 | 1.79 | 82 / 2.72 | 1.86/.05/1.66/1.71/1.54/3.27 |
+
+Verdict: NOT a promotion candidate. Entries after volatility expansion (5d range >= 1.0x the 50d range) have a higher PF (2.17 vs 1.88) and contraction entries are clearly worse (PF 1.45, 2021 0.73), which fits the capitulation story seen in runs 5/6/12. But the filter cuts return 59.6 -> 41.0%, Sharpe is flat (1.82 vs 1.85), and 2023 PF falls to 0.95, so it fails the beat-on-return and year tests; the stricter >=1.2 cut has a 2021 PF of 7.3 on a handful of trades. Signal-day range gives nothing usable. Like runs 29-32, it idles capital without adding edge. Not added to challenger.py.
+Follow-ups still untested: TLT/HYG filters (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
