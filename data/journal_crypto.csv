@@ -531,3 +531,12 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-08T09:21:49.299023+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
 2026-11-08T16:46:50.365210+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
 2026-11-08T17:47:36.025537+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-08T21:40:01.730177+00:00,LINK/USD,,20.3,ibs_reversion,blocked,BTC regime down
+2026-11-08T21:56:05.738908+00:00,BTC/USD,,,crypto,EXIT,stop 74527.309802 price=73918.691 entry=80160.5
+2026-11-09T00:40:34.131154+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T02:40:54.451726+00:00,ETH/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-09T02:40:54.451726+00:00,SOL/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T02:40:54.451726+00:00,AVAX/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T02:40:54.451726+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T02:40:54.451726+00:00,LTC/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T03:14:01.088092+00:00,BTC/USD,Elizabeth Warren Says Democrats Have ‘a Lot of Different Tools’ to Pressure Trump Over Iran War — Here’s What Crypto Bettors Expect,2,news,scored,neutral macro

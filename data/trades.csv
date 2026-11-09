@@ -2,3 +2,4 @@ closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pc
 2026-11-04T03:12:25.894353+00:00,BCH/USD,crypto,trend_pullback,long,290.442,266.163,-8.359,-1.01,4,,stop 266.31175
 2026-11-04T15:03:12.049658+00:00,BTC/USD,crypto,cum_rsi2,long,77191.5,79447.6,2.923,0.51,5,,target 79405.53
 2026-11-05T23:14:48.887970+00:00,DOGE/USD,crypto,spring_reversal,long,0.07601,0.07093596,-6.675,-1.04,6,,stop 0.071149
+2026-11-08T21:56:05.738908+00:00,BTC/USD,crypto,news,long,80160.5,73918.691,-7.787,-1.11,4,,stop 74527.309802
