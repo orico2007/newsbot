@@ -60,6 +60,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)", ruleset(), DEF_PORT, "live_bear10"),
     # lab run 8: PROMOTION CANDIDATE - live setup restricted to stocks whose 60d daily-return stdev >= 1.75% (see data/lab_log.md)
     ("lab: live setup + only stocks with 60d daily vol >= 1.75%", ruleset(), DEF_PORT, "live_vol175"),
+    # lab run 9: same vol>=1.75% filter with larger positions (15% x 8, 4/day): ret ~103% vs 60%, mdd 6.4% vs 5.9%
+    ("lab: live setup + vol60>=1.75%, size 15% x 8", ruleset(), dict(size_pct=15, max_pos=8, per_day=4), "live_vol175"),
 ]
 
 def vol60(A, i):
