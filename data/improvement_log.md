@@ -56,3 +56,18 @@ Decision: no change to live rules. Open follow-ups: sleeve sizing at 5%; ETF cro
 Checked: stock sessions through 11-06 success/cancelled-by-concurrency, no errors; 11-06 session started 13:42 UTC (before 14:30 open); run 83 in progress at check time. Report 2026-11-06: 0 errors, equity $99,159, 6 open longs. Scorecard still has only 3 closed crypto trades, none for stocks, so live win/PF can't be compared with the backtest yet. Tests: 208 passed. challengers.md has 2 weekly runs; no variant has 3 consecutive wins.
 Tested (lab_proxsize.py, details in data/lab_log.md run 26): 1.5x size on entries >10% below the 252d high lifts return 59.6 -> 78.6%, Sharpe 1.85 -> 1.92, maxDD 5.9 -> 7.0, PF better or equal in every year, including the early period (2021-23 return 9.0 -> 12.2). Threshold is post hoc from run 24, modest risk-adjusted gain.
 Decision: no change to live rules; not added to challenger.py (needs per-trade sizing support). Follow-up: add sizing support to the simulator and track.
+
+## 2026-11-09 (UTC, Monday) - round: position-count / per-day cap / size grid on the NEW live setup (lab_portcap.py)
+Checked: stock sessions through 11-08 success/cancelled-by-concurrency, no errors; last Friday session (run 66) started 13:42 UTC, before the 14:30 UTC open; no 11-09 session yet at check time (04:24 UTC). Report 2026-11-06: 0 errors. Scorecard has only 3 closed crypto trades, no closed stock trades, so live win/PF cannot be compared with the backtest (win ~66-69%, PF ~1.4-1.9) yet. Tests: 208 passed. challengers.md still has only a couple of weekly runs; no variant has 3 consecutive wins. Note: shorts in bear regimes were already tested in lab run 11 (not proven), so not repeated.
+Tested (11 grid cells, same simulator, data through 2026-10-29; multiple-comparison discount applies). Live = 10% x 12 pos, 4/day: n=604, PF 1.88, ret 59.6%, DD 5.9, Sharpe 1.85.
+| Variant | PF | Ret % | MaxDD | Sharpe |
+|---|---|---|---|---|
+| 2/day | 1.88 | 45.8 | 5.8 | 1.66 |
+| 3/day | 1.94 | 59.9 | 5.9 | 1.89 |
+| 6/day | 1.92 | 65.0 | 5.9 | 1.92 |
+| 8 positions | 1.81 | 52.5 | 6.3 | 1.66 |
+| 16 positions (4/day) | identical to live (cap never binds) | | | |
+| 20 pos, 6/day | 1.92 | 65.2 | 5.9 | 1.92 |
+| size 7 / 8 / 12 / 15% | return scales ~linearly with size (38.8 / 45.4 / 75.1 / 87.8%), DD 4.2 / 4.8 / 7.1 / 9.3, Sharpe/PF unchanged | | | |
+Result: no free lunch. Sizing only trades return for drawdown at constant Sharpe; position cap above 12 never binds; per-day cap 6 adds ~+5pt return / +0.07 Sharpe, but PF is lower in 2021 and 2023 (1.77/1.40 vs 1.89/1.42), so it fails the "all but one non-2022 year better" bar and is within noise. Not added to challenger.py.
+Decision: no change to live rules.
