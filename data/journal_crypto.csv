@@ -547,3 +547,31 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-09T07:35:54.159829+00:00,LINK/USD,,23.0,rsi2_reversion,blocked,BTC regime down
 2026-11-09T09:36:38.586504+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
 2026-11-09T09:36:38.586504+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T15:06:56.708585+00:00,BTC/USD,MSTR Drops 3% Despite Strategy’s Biggest Bitcoin Buy in 6 Weeks,3,news,scored,bearish other
+2026-11-09T15:06:56.708585+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T15:06:56.708585+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T15:06:56.708585+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T16:07:28.770238+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T16:07:28.770238+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T16:07:28.770238+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T16:07:28.770238+00:00,DOGE/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T17:07:55.023246+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T17:07:55.023246+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T17:07:55.023246+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T17:29:06.538760+00:00,BTC/USD,Nvidia Stock—Is the Huang Controversy a Long-Term Risk?,5,news,scored,bearish legal
+2026-11-09T18:04:23.544761+00:00,BTC/USD,Nasdaq 100 Jumps 3% as Chips Rebound; Nvidia Lags Most Since DeepSeek: Stock Market Today,1,news,scored,neutral macro
+2026-11-09T18:08:28.964630+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T18:08:28.964630+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T18:08:28.964630+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-09T18:08:28.964630+00:00,AVAX/USD,,31.9,seven_day_low_confirm,blocked,BTC regime down
+2026-11-09T18:08:28.964630+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T19:08:54.762350+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T19:08:54.762350+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T19:08:54.762350+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-09T19:08:54.762350+00:00,AVAX/USD,,31.9,seven_day_low_confirm,blocked,BTC regime down
+2026-11-09T19:08:54.762350+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
+2026-11-09T20:09:19.391759+00:00,AVAX/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T20:09:19.391759+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
+2026-11-09T20:09:19.391759+00:00,AVAX/USD,,34.1,rsi_oversold_uptrend,blocked,BTC regime down
+2026-11-09T20:09:19.391759+00:00,AVAX/USD,,31.9,seven_day_low_confirm,blocked,BTC regime down
+2026-11-09T20:09:19.391759+00:00,LINK/USD,,25.8,spring_reversal,blocked,BTC regime down
