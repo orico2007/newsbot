@@ -31,7 +31,7 @@ def spy_3d():
     return {spy[i]["t"][:10]: (spy[i]["c"] / spy[i-3]["c"] - 1) * 100 for i in range(3, len(spy))}
 
 def dip_size(hi=1.5, lo=0.5, thr=-1.0):
-    """Trade post-processor: scale each trade's size by hi when SPY 3d change < thr, else lo (lab run 6, 2026-11-10)."""
+    """Trade post-processor: scale each trade's size by hi when SPY 3d change < thr, else lo (lab run 19)."""
     def f(trades):
         F = spy_3d(); out = []
         for t in trades:
@@ -63,8 +63,25 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("A+E+F, 15 positions, 5/day", ruleset(), dict(size_pct=8, max_pos=15, per_day=5)),
     ("size 8% x 10, 3/day", ruleset(), dict(size_pct=8, max_pos=10, per_day=3)),
     ("size 12% x 10, 4/day", ruleset(), dict(size_pct=12, max_pos=10, per_day=4)),
-    ("LAB run6: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.5, 0.5)),
-    ("LAB run6: size 1.25x if SPY 3d<-1% else 0.75x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.25, 0.75)),
+    # lab run 7 (sector-peer weakness; see data/lab_log.md). Post-processors act on the champion's trade list.
+    ("lab: only if sector peers 3d < 0%", ruleset(), DEF_PORT, "peers_lt0"),
+    ("lab: rank by weakest sector peers first", ruleset(), DEF_PORT, "peers_rank"),
+    ("lab: sector peers 3d < 0% and peers 20d > 0%", ruleset(), DEF_PORT, "peers_lt0_up20"),
+    # lab run 10: champion + monthly ETF sector-momentum rotation sleeve (top 3 of 14 sector ETFs by 12-1m return, hold 21d), 18 slots shared
+    ("lab: champion + sector-ETF rotation sleeve (top3 12-1m, monthly)", ruleset(), dict(size_pct=10, max_pos=18, per_day=6), "rot_sleeve"),
+    # lab run 11: champion + bear-regime long sleeve (SPY<200d, stock>own 200d, rsi2<5, prevhl exit hold 7 stop 4 ATR), same 12 slots
+    ("lab: champion + bear-regime long sleeve (SPY<200d, stock>200d, rsi2<5)", ruleset(), DEF_PORT, "bear_sleeve"),
+    # lab run 12: only enter when >=10% of the universe has RSI2<10 on the signal day (market-wide washout, not an idiosyncratic dip)
+    ("lab: only if >=10% of universe RSI2<10 (breadth washout)", ruleset(), DEF_PORT, "breadth10"),
+    # lab run 13: NEW LIVE setup (breadth>=10% + weakest-peer rank) plus bear-regime long sleeve filtered by the same breadth>=10%
+    ("lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)", ruleset(), DEF_PORT, "live_bear10"),
+    # lab run 8: PROMOTION CANDIDATE - live setup restricted to stocks whose 60d daily-return stdev >= 1.75% (see data/lab_log.md)
+    ("lab: live setup + only stocks with 60d daily vol >= 1.75%", ruleset(), DEF_PORT, "live_vol175"),
+    # lab run 9: same vol>=1.75% filter with larger positions (15% x 8, 4/day): ret ~103% vs 60%, mdd 6.4% vs 5.9%
+    # lab run 19: dip-scaled sizing on the previous-champion trade list (conditional promotion candidate; PF is size-weighted)
+    ("LAB run19: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.5, 0.5)),
+    ("LAB run19: size 1.25x if SPY 3d<-1% else 0.75x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.25, 0.75)),
+    ("lab: live setup + vol60>=1.75%, size 15% x 8", ruleset(), dict(size_pct=15, max_pos=8, per_day=4), "live_vol175"),
 ]
 
 def vol60(A, i):
@@ -86,10 +103,46 @@ def run():
     spy = lab.load_bars()["SPY"]; last = spy[-1]["t"][:10]
     cut = (datetime.date.fromisoformat(last) - datetime.timedelta(days=365)).isoformat()
     rows = []
-    for name, rules, kw, *post in VARIANTS:
-        tr = PT.gen(AS, ctx, rules)
-        if post: tr = post[0](tr)
-        P = lab.portfolio(tr, **kw)
+    F = None
+    for v in VARIANTS:
+        name, rules, kw = v[:3]; T0 = PT.gen(AS, ctx, rules)
+        if len(v) > 3 and v[3] == "bear_sleeve":
+            import lab_bear
+            T0 = T0 + lab_bear.bear_long(AS, ctx)
+        elif len(v) > 3 and v[3] == "live":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            ok = lambda t: B.get(t["t"][:10], (0, 0))[0] >= 0.10
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t for t in T0 if ok(t)]
+        elif len(v) > 3 and v[3] == "live_vol175":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                return v_ is not None and v_ >= 1.75
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
+        elif len(v) > 3 and v[3] == "live_bear10":
+            import lab_breadth, lab_bear, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            ok = lambda t: B.get(t["t"][:10], (0, 0))[0] >= 0.10
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 + lab_bear.bear_long(AS, ctx) if ok(t)]
+        elif len(v) > 3 and v[3] == "breadth10":
+            import lab_breadth
+            B = lab_breadth.breadth_series(AS)
+            T0 = [t for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10]
+        elif len(v) > 3 and v[3] == "rot_sleeve":
+            import lab_rotation
+            T0 = T0 + lab_rotation.rotation(lab.load_bars(), list(market.SECTORS), 252, 21, 3, False, ctx=ctx)
+        elif len(v) > 3 and callable(v[3]):
+            T0 = v[3](T0)
+        elif len(v) > 3:
+            if F is None:
+                import lab_sector; F = lab_sector.feats(AS)
+            T0 = post(T0, v[3], F)
+        P = lab.portfolio(T0, **kw)
         T = P["trades"]; l12 = research.stat([t for t in T if t["t"] >= cut])
         ys = {y: research.stat([t for t in T if t["t"][:4] == y])["pf_pct"] for y in sorted({t["t"][:4] for t in T})}
         rows.append(dict(name=name, n=P["n"], win=P["win"], pf=P["pf_pct"], ret=P["ret_pct"], mdd=P["mdd"], sharpe=P["sharpe"],
