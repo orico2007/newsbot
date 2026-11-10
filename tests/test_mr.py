@@ -29,6 +29,14 @@ def test_rules_enabled_and_long_only():
     assert R["swing"]["mr"]["enabled"] and R["swing"]["mr"]["hold_days"] == 7
 
 from test_v3_engine import mk3  # noqa: F401
+import pytest
+
+@pytest.fixture(autouse=True)
+def _calm_stocks_allowed():
+    """The synthetic fixtures are calm stocks; the volatility filter has its own tests below."""
+    old = R["swing"]["mr"].get("vol_min", 0); R["swing"]["mr"]["vol_min"] = 0
+    yield
+    R["swing"]["mr"]["vol_min"] = old
 
 def _setup(b, e):
     d = uptrend_pullback(); b.bar_data[("AAA", "1Day")] = d; b.snap["AAA"] = (d[-1]["c"], d[-2]["c"], 2e8)
@@ -150,3 +158,23 @@ def test_weakest_sector_ranked_first(mk3, monkeypatch):
     monkeypatch.setattr(bot.mr, "detect", lambda daily, stop=4.0: Signal("mr_A", "long", "swing", daily[-1]["c"], daily[-1]["c"] * 0.9, daily[-1]["c"] * 1.2) if daily[-1]["c"] and (daily is b.bar_data[(X, "1Day")] or daily is b.bar_data[(Y, "1Day")]) else None)
     assert e._mr_scan(NOW) == 1
     assert b.orders[0][0] == X                          # X's sector fell, Y's sector rose: weakest sector first
+
+
+def test_vol60_measures_daily_return_stdev():
+    assert mr.vol60(uptrend_pullback()) < 1.0
+    c = [100.0]
+    for i in range(80): c.append(c[-1] * (1.03 if i % 2 else 0.97))
+    assert 2.5 < mr.vol60([bar(x) for x in c]) < 3.5
+    assert mr.vol60([bar(10)] * 30) is None
+
+def test_volatility_filter_blocks_calm_stock_and_allows_volatile(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "neutral"; e.mkt.spy_above200 = True
+    e.r["swing"]["mr"]["vol_min"] = 1.75
+    assert e._mr_scan(NOW) == 0 and not b.orders       # calm synthetic stock, 60d vol < 1.75%
+    e.r["swing"]["mr"]["vol_min"] = 0.1
+    assert e._mr_scan(NOW) == 1 and b.orders[0][2] == "buy"
+
+def test_live_rules_have_volatility_filter():
+    import yaml, pathlib
+    live = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / "rules.yaml").read_text())["swing"]["mr"]
+    assert live["vol_min"] == 1.75

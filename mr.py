@@ -45,3 +45,12 @@ def detect(daily, stop_atr=4.0):
 def exit_now(daily):
     """True when the last (today's, near-final) close is above the prior day's high"""
     return len(daily) >= 2 and daily[-1]["c"] > daily[-2]["h"]
+
+
+def vol60(daily):
+    """Standard deviation (in %) of the last 60 daily returns, up to and including the signal day. None if too little history."""
+    c = [b["c"] for b in daily]
+    if len(c) < 61: return None
+    r = [c[j] / c[j - 1] - 1 for j in range(len(c) - 60, len(c))]
+    m = sum(r) / 60
+    return (sum((x - m) ** 2 for x in r) / 59) ** 0.5 * 100

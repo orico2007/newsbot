@@ -401,6 +401,11 @@ class Engine:
                 veto, bonus, nwhy = self._mr_news(now, sym, cfg)
                 if veto:
                     self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: {nwhy}"); continue
+                vmin = cfg.get("vol_min", 0)
+                if vmin:
+                    v = mr.vol60(bars[sym])
+                    if v is None or v < vmin:
+                        self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: calm stock (60d volatility {v if v is None else round(v, 2)}% < {vmin}%) - weak edge"); continue
                 p3 = peer3(sym)
                 extra = f"market {breadth * 100:.0f}% oversold; sector 3d {p3:+.1f}%" if p3 != 99.0 else f"market {breadth * 100:.0f}% oversold"
                 cands.append((p3, -(mr.RULES[sig.name]["rank"] + bonus), sym, sig, f"{why}; {extra}" + (f"; {nwhy}" if nwhy else ""), bars[sym]))
