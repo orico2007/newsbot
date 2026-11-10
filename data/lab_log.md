@@ -344,3 +344,20 @@ Source: none. Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-pee
 Verdict: NOT a promotion candidate. On the vol-filtered live set the dip-sizing edge mostly disappears: Sharpe is flat or lower (2.12-2.25 vs 2.28), the return gain comes only from added exposure (and drawdown 4.3 -> 5.4% for the 1.5x/1x version), and 2023 is slightly worse in every variant. The vol filter already concentrates trades in high-volatility, often post-dip conditions, so run 19's sizing signal is largely the same information. The calm-day shrink control scores similarly, confirming it is a generic exposure effect. Also a reminder that the run-19 variants in challenger.py are on the OLD champion list; they are tracking only. Not added as a live-setup variant.
 
 Repo hygiene note: the original run-6 commit (7c81e67) was made from a stale clone and overwrote lab_log.md runs 7-18 and the live variants in challenger.py; this session restored them from 549127a and re-added the dip-sizing material as run 19. Future lab sessions must `git pull --rebase` BEFORE editing and never `git checkout <old commit> -- data/lab_log.md`.
+
+## 2026-11-10 (run 21) - pullback depth in ATR units, distance under SMA10, relative strength vs SPY as conditioners of the LIVE vol60>=1.75% setup (web-inspired, no fetch)
+Source: general Connors/Alvarez-style claim that deeper pullbacks revert harder, and residual-reversal / relative-strength literature (Quantpedia short-term reversal pages already cited in runs 14/19); unverified, search-level knowledge only. Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) filtered by signal-day features: 3-day drop in ATR units, close's distance under SMA10 in ATR, 20d/60d return relative to SPY. Script: lab_depth.py. 8 variants tried (multiple-comparison discount; thresholds picked a priori, not tuned, 2026 not used to select).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE (vol175) ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| 3d drop >= 1.5 ATR | 183 | 73.8 | 3.15 | 38.4 | 2.3 | 59 / 3.11 | 4.71/.26/1.49/6.8/2.08/3.12 |
+| 3d drop >= 2.5 ATR | 38 | 68.4 | 2.46 | 5.5 | 1.9 | 12 / 3.10 | thin |
+| 3d drop < 2.5 ATR | 286 | 74.5 | 2.61 | 50.0 | 4.7 | 93 / 3.41 | 2.17/.75/1.53/4.37/2.01/3.61 |
+| close >= 2 ATR under SMA10 | 61 | 80.3 | 3.80 | 12.7 | 2.1 | 25 / 3.89 | 10.5/-/5.62/-/2.16/3.18 |
+| close < 2 ATR under SMA10 | 275 | 73.1 | 2.62 | 46.5 | 4.4 | 87 / 3.11 | 2.12/.75/1.49/4.46/2.12/3.31 |
+| RS 60d vs SPY > 0 | 263 | 74.1 | 2.78 | 52.3 | 4.2 | 85 / 3.46 | 2.4/.87/1.59/4.42/2.71/3.35 |
+| RS 60d vs SPY <= 0 | 56 | 71.4 | 3.18 | 6.5 | 0.6 | 16 / 2.92 | thin |
+| RS 20d vs SPY < -5% | 70 | 67.1 | 1.77 | 6.3 | 2.1 | 18 / 1.52 | 0.89/-/.99/4.0/9.85/1.59 |
+
+Verdict: NOT a promotion candidate. Deeper pullbacks only slightly raise PF while shrinking return (38% vs 61% for >=1.5 ATR) and 2022 collapses (0.26); the >=2 ATR-under-SMA10 subset has the best PF (3.8, 80% win) but just 61 trades / 12.7% return, so it is a sample-shrinking filter whose gain over 308 trades is within noise after 8 comparisons. Relative strength vs SPY is irrelevant (PF 2.78 vs 2.83) and weak 20d RS is worse. Confirms earlier runs: the vol60 filter already captures most of the selectable edge; further conditioning mostly removes trades. No change to challenger.py. Next: true PEAD with earnings dates, exposure cap for the 15% x 8 sizing candidate, pairs within sector.
