@@ -583,3 +583,6 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-10T05:11:48.768629+00:00,LTC/USD,,35.8,spring_reversal,blocked,BTC regime down
 2026-11-10T05:11:48.768629+00:00,LTC/USD,,34.1,hammer_support,blocked,BTC regime down
 2026-11-10T05:11:48.768629+00:00,LTC/USD,,25.8,level_bounce,blocked,BTC regime down
+2026-11-10T17:10:02.785394+00:00,BTC/USD,"A 50-Basis-Point Fed Hike Was Unthinkable – After CPI, Economists Can't Rule It Out",6,news,scored,bearish macro
+2026-11-10T17:55:14.202653+00:00,BTC/USD,"Bitcoin Drops Below $73,000: A ‘Break From Precedent,’ Peter Schiff Warns",4,news,scored,bearish macro
+2026-11-10T18:50:31.444377+00:00,BTC/USD,"Can Bitcoin Hold $70,000 Ahead of 'Nearly Inevitable' December Rate Hike?",4,news,scored,neutral macro
