@@ -71,3 +71,8 @@ Tested (11 grid cells, same simulator, data through 2026-10-29; multiple-compari
 | size 7 / 8 / 12 / 15% | return scales ~linearly with size (38.8 / 45.4 / 75.1 / 87.8%), DD 4.2 / 4.8 / 7.1 / 9.3, Sharpe/PF unchanged | | | |
 Result: no free lunch. Sizing only trades return for drawdown at constant Sharpe; position cap above 12 never binds; per-day cap 6 adds ~+5pt return / +0.07 Sharpe, but PF is lower in 2021 and 2023 (1.77/1.40 vs 1.89/1.42), so it fails the "all but one non-2022 year better" bar and is within noise. Not added to challenger.py.
 Decision: no change to live rules.
+
+## 2026-11-10 (UTC, Tuesday) - round: down-close streak length filter on the live setup (lab_streak.py)
+Checked: stock sessions through run 100 (11-10) success, no errors (run 98 in progress). Note: the 11-09 stock session (run 87) started 15:06 UTC, i.e. ~36 min AFTER the 14:30 UTC open (GitHub cron delay; earlier runs that day were overnight); report 2026-11-09 shows 0 errors, equity $99,269, 6 open longs, 0 entries. Scorecard still has only 4 closed crypto trades and no closed stock trades, so live win/PF can't be compared with the backtest yet. Tests: 209 passed. challengers.md has 2 weekly runs; no variant has 3 consecutive wins.
+Tested (4 variants): streak>=3 down closes: n=487, win 71.0, PF 2.03, Sharpe 2.0 but return 50.6% vs 59.6% live; streak>=2 PF 1.79, ret 51.7; streak<=2 PF 1.27, ret 6.3. Fails the total-return bar; not promoted.
+Decision: no change to live rules. Possible follow-up: size 1.25x on streak>=3 rather than filtering.
