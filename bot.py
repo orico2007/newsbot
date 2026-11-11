@@ -596,7 +596,11 @@ class Engine:
                     self.b.protect(sym, qty - chunk, closing, new, m["take"])
                 except Exception as e:
                     self._j(now, sym, strategy=m["strategy"], side=m["side"], action="error", detail=f"order failed: partial TP {e}")
-                    done.append(i); break
+                    try: self.b.protect(sym, qty, closing, m.get("stop") or m["stop0"], m["take"])        # the failed attempt may have cancelled the bracket: never leave the position naked
+                    except Exception as e2: self._j(now, sym, strategy=m["strategy"], side=m["side"], action="error", detail=f"re-protect failed: {e2}")
+                    m["tp_fail"] = m.get("tp_fail", 0) + 1
+                    if m["tp_fail"] >= 3: done.append(i)                                                  # retry on the next session, give up after 3 failures
+                    break
                 usd = ((price - entry) if long else (entry - price)) * chunk
                 m.setdefault("partials", []).append((chunk, price)); m["qty"] = qty - chunk; m["stop"] = round(new, 2); done.append(i)
                 alerts.send(f"TAKE PROFIT {i + 1} {sym} {m['side']}: sold {chunk} @ {price:.2f} ({usd:+,.2f} USD)\nstop -> {new:.2f}, {qty - chunk} left", "NewsBot")

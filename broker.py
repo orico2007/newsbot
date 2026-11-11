@@ -65,17 +65,29 @@ class AlpacaBroker:
             if o.get("status") in OPEN_STATES:
                 requests.delete(f"{self.t}/v2/orders/{o['id']}", headers=self.h, timeout=15)
 
+    def release_shares(self, symbol, wait=20):
+        """Cancel every open order on the symbol and wait until Alpaca really frees the shares (bracket legs hold them and can take
+        several seconds to cancel; closing too early gives 403 'available: 0')."""
+        end = time.time() + wait
+        while True:
+            self.cancel_open_orders(symbol)
+            time.sleep(1.5)
+            try:
+                orders = self._get(self.t, "/v2/orders", status="open", symbols=symbol, limit=50, nested="true")
+            except Exception:
+                orders = []
+            if not orders or time.time() >= end: return not orders
+            time.sleep(1.0)
+
     def close_position(self, symbol):
-        self.cancel_open_orders(symbol)
-        time.sleep(1.5)
+        self.release_shares(symbol)
         r = requests.delete(f"{self.t}/v2/positions/{symbol}", headers=self.h, timeout=15)
         if not r.ok:
             raise RuntimeError(f"close failed {r.status_code}: {r.text[:200]}")
 
     def partial_close(self, symbol, qty):
         """סוגר חלק מהפוזיציה (מימוש רווח חלקי). קודם מבטל את רגלי ה-bracket שתופסים את המניות"""
-        self.cancel_open_orders(symbol)
-        time.sleep(1.5)
+        self.release_shares(symbol)
         r = requests.delete(f"{self.t}/v2/positions/{symbol}", headers=self.h, params={"qty": str(int(qty))}, timeout=15)
         if not r.ok:
             raise RuntimeError(f"partial close failed {r.status_code}: {r.text[:200]}")

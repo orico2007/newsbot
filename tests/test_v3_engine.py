@@ -208,3 +208,14 @@ def test_research_not_enforced_by_default(mk3):
     b, e = mk3(); _flag_setup(b); _write_research(validated=OTHER5, filters={"long": [{"f": "rvol", "op": "<=", "v": 0.0001}], "short": []})
     e.swing_pass(NOW, 10)
     assert b.orders                                                # enforce=false: ה-research לא חוסם
+
+def test_failed_partial_close_reprotects_full_position_and_retries(mk3):
+    b, e = mk3()
+    e.state["meta"]["AAA"] = _meta(); b._pos = _pos(105.5, 90)
+    b.bar_data[("AAA", "1Day")] = _bars_with_low(102.0)
+    def boom(symbol, qty): raise RuntimeError("partial close failed 403: available 0")
+    b.partial_close = boom
+    e.scale_out(NOW, b._pos)
+    sym, qty, side, stop, take = b.protected[-1]
+    assert qty == 90 and side == "sell" and take == 115                  # bracket restored for the whole position
+    assert e.state["meta"]["AAA"]["tp_fail"] == 1 and not e.state["meta"]["AAA"]["tp_done"]   # will retry next session
