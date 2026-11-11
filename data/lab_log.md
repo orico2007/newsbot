@@ -361,3 +361,16 @@ Source: general Connors/Alvarez-style claim that deeper pullbacks revert harder,
 | RS 20d vs SPY < -5% | 70 | 67.1 | 1.77 | 6.3 | 2.1 | 18 / 1.52 | 0.89/-/.99/4.0/9.85/1.59 |
 
 Verdict: NOT a promotion candidate. Deeper pullbacks only slightly raise PF while shrinking return (38% vs 61% for >=1.5 ATR) and 2022 collapses (0.26); the >=2 ATR-under-SMA10 subset has the best PF (3.8, 80% win) but just 61 trades / 12.7% return, so it is a sample-shrinking filter whose gain over 308 trades is within noise after 8 comparisons. Relative strength vs SPY is irrelevant (PF 2.78 vs 2.83) and weak 20d RS is worse. Confirms earlier runs: the vol60 filter already captures most of the selectable edge; further conditioning mostly removes trades. No change to challenger.py. Next: true PEAD with earnings dates, exposure cap for the 15% x 8 sizing candidate, pairs within sector.
+
+## 2026-11-11 (run 22) - scaling in (half at signal close, add next close only if lower) on the LIVE vol60>=1.75% setup (web hint, own rules)
+Source: https://quantifiedstrategies.substack.com/p/market-timing-scaling-in-and-the (fetched; gives NO exact rules or numbers, only the claim that scaling in raises average profit per trade but lowers total return because less capital works; a general RSI2/pullback search also returned only marketing-grade pages, unverified). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); leg 1 = 50% at signal close, leg 2 at next close, same exit price and stop as the live trade (emulated from the live trade's exit; trades exiting on day 1 get leg 1 only). PF/return are size-weighted. Script: lab_scalein.py. 4 variants tried (multiple-comparison discount; 2026 not used to select).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| 50% + 50% next close if lower close | 308 | 74.4 | 3.00 | 39.9 | 3.3 | 2.37 | 100 / 4.02 | 2.38/2.01/1.43/4.92/2.76/4.18 |
+| 50% + 50% next close always (control) | 308 | 74.4 | 2.93 | 50.1 | 3.4 | 2.25 | 100 / 3.74 | 2.28/1.99/1.69/4.65/2.49/3.74 |
+| 50% + 75% next close if lower | 308 | 74.4 | 3.02 | 46.9 | 3.8 | 2.33 | 100 / 4.13 | 2.36/4.14/1.37/4.91/2.78/4.36 |
+| full size only on next close, only if lower | 137 | 55.5 | 2.88 | 22.0 | 2.4 | 1.97 | 52 / 4.55 | thin |
+
+Verdict: NOT a promotion candidate. The source's claim reproduces qualitatively (lower return, because less capital is deployed; per-dollar efficiency slightly up), but the improvement in Sharpe is 2.28 -> 2.37, inside noise after 4 comparisons, and the 2022 PF jump (0.87 -> 2.0) comes from a handful of trades. The "always add" control gets most of the PF gain, so the "only if lower" condition adds little. Scaling in would also add a second order per trade (more execution complexity) for no clear edge; net return per unit of average capital is not better than the live 1x entry. No change to challenger.py. Next ideas: sector-concentration cap on simultaneous positions, VIX/term-structure proxy via ETFs, true PEAD with earnings dates.
