@@ -1,14 +1,14 @@
 {
  "stats": {
   "ALL": {
-   "n": 4,
-   "win_rate": 25.0,
-   "avg_pnl_pct": -4.974,
+   "n": 5,
+   "win_rate": 20.0,
+   "avg_pnl_pct": -4.389,
    "avg_win": 2.92,
-   "avg_loss": -7.61,
-   "profit_factor": 0.13,
-   "avg_R": -0.66,
-   "avg_slippage_pct": null
+   "avg_loss": -6.22,
+   "profit_factor": 0.12,
+   "avg_R": -0.57,
+   "avg_slippage_pct": -0.023
   },
   "strategy": {
    "crypto": {
@@ -20,6 +20,16 @@
     "profit_factor": 0.13,
     "avg_R": -0.66,
     "avg_slippage_pct": null
+   },
+   "swing": {
+    "n": 1,
+    "win_rate": 0.0,
+    "avg_pnl_pct": -2.048,
+    "avg_win": 0,
+    "avg_loss": -2.05,
+    "profit_factor": 0.0,
+    "avg_R": -0.19,
+    "avg_slippage_pct": -0.023
    }
   },
   "pattern": {
@@ -62,6 +72,16 @@
     "profit_factor": 0.0,
     "avg_R": -1.11,
     "avg_slippage_pct": null
+   },
+   "mr_E": {
+    "n": 1,
+    "win_rate": 0.0,
+    "avg_pnl_pct": -2.048,
+    "avg_win": 0,
+    "avg_loss": -2.05,
+    "profit_factor": 0.0,
+    "avg_R": -0.19,
+    "avg_slippage_pct": -0.023
    }
   }
  },
