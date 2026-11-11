@@ -420,3 +420,17 @@ Sources: https://quantifiedstrategies.substack.com/p/rsi-and-adx-trading-strateg
 
 Finding: the web claim is the OPPOSITE of what the data show here. Pullbacks inside a well-established trend (high ADX) revert better than those in low-ADX chop: ADX<20 has PF 1.47 (and 0.62/0.49 in 2021/2023), ADX>=25 has PF 3.66 and beats the live PF in 2021, 2022, 2023, 2026 and L12, ties 2024 (4.69 vs 4.74) and loses 2025 (1.65 vs 2.51). The same direction holds without the vol filter (PF 1.88 -> 2.25), so it is not just volatility in disguise. The efficiency ratio (choppy last 10 days, ER<0.5) is also a mild improvement (PF 3.22, L12 4.94) but keeps 84% of trades and is not a clear gain in return (56.6 vs 60.6).
 Verdict: NOT a promotion candidate as a hard filter: ADX>=25 raises PF 2.83 -> 3.66 but cuts return 60.6 -> 45.6 (fewer trades fill fewer slots) and loses 2025; PF-only gains from trade-removal filters are exactly what the log already treats as weak. The low-ADX bucket (ADX<20, 72 trades, 4% return) is consistently poor and is the useful hint. Not added to challenger.py. Next: test "skip ADX<20" (removes only the weak tail) and ADX>=25 as a 15% size tier vs 10% (two-tier sizing), then VIX/term-structure ETF proxy and true PEAD. Next run should be an own-idea run.
+
+## 2026-11-11 (run 26) - ADX tail-skip, ADX-tiered sizing and ADX ranking on the LIVE vol60>=1.75% setup (own idea; follow-up to run 25; lab_adxtier.py)
+Source: none (own follow-up). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); signal-day ADX(14, Wilder) decides skip / size multiplier / rank. Tier sizing emulated by scaling each trade's pnl_pct (PF and return are size-weighted; exposure is higher than 10% x 12, so return is not free). 5 variants (multiple-comparison discount; 2026 not used to select).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| skip ADX<20 | 249 | 75.5 | 3.24 | 53.8 | 3.2 | 2.39 | 84 / 3.33 | 12.4/1.89/1.94/4.79/1.78/3.79 |
+| ADX>=25 at 1.5x, else 1x | 308 | 74.4 | 3.01 | 92.3 | 5.6 | 2.28 | 100 / 3.47 | 3.18/1.06/1.79/4.58/2.35/3.64 |
+| ADX>=25 1.5x, 20-25 1x, <20 0.5x | 308 | 74.4 | 3.18 | 87.9 | 5.0 | 2.29 | 100 / 3.44 | 5.06/1.36/1.92/4.56/2.13/3.79 |
+| skip <20 + ADX>=25 at 1.5x | 249 | 75.5 | 3.32 | 83.7 | 4.5 | 2.32 | 84 / 3.46 | 14.8/1.89/2.08/4.62/1.74/3.96 |
+| rank by highest ADX first | 307 | 73.3 | 2.80 | 59.5 | 4.3 | 2.26 | 100 / 3.33 | 2.41/.87/1.45/5.43/2.22/3.37 |
+
+Verdict: NOT a promotion candidate. Skipping ADX<20 lifts PF 2.83 -> 3.24 and trims drawdown 4.3 -> 3.2, but return falls (53.8 vs 60.6), L12 PF is flat (3.33 vs 3.37) and 2025 is worse (1.78 vs 2.51); the 2021 PF of 12 rests on very few losers. Tiered sizing raises return only by taking more exposure (max DD 4.3 -> 5.0-5.6) with Sharpe unchanged (2.28-2.32), i.e. leverage, not edge. Ranking by ADX does nothing. ADX conditioning is therefore a weak-tail trim worth about +0.1 Sharpe, inside noise after 5 + 10 comparisons across runs 25-26. Not added to challenger.py. Next run should be a WEB run: pairs/relative value or overnight-vs-intraday drift; own ideas still open: VIX/term-structure ETF proxy, true PEAD with earnings dates.
