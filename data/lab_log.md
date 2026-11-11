@@ -374,3 +374,18 @@ Source: https://quantifiedstrategies.substack.com/p/market-timing-scaling-in-and
 | full size only on next close, only if lower | 137 | 55.5 | 2.88 | 22.0 | 2.4 | 1.97 | 52 / 4.55 | thin |
 
 Verdict: NOT a promotion candidate. The source's claim reproduces qualitatively (lower return, because less capital is deployed; per-dollar efficiency slightly up), but the improvement in Sharpe is 2.28 -> 2.37, inside noise after 4 comparisons, and the 2022 PF jump (0.87 -> 2.0) comes from a handful of trades. The "always add" control gets most of the PF gain, so the "only if lower" condition adds little. Scaling in would also add a second order per trade (more execution complexity) for no clear edge; net return per unit of average capital is not better than the live 1x entry. No change to challenger.py. Next ideas: sector-concentration cap on simultaneous positions, VIX/term-structure proxy via ETFs, true PEAD with earnings dates.
+
+## 2026-11-11 (run 23) - sector-concentration cap (max simultaneous positions per sector) on the LIVE vol60>=1.75% setup (own idea, from run 22 follow-up list)
+Source: none (own idea). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); only the simulator's per-sector open-position cap varies (sector = ETF bucket in market.SECTOR_OF). Script: lab_seccap.py. 5 variants (multiple-comparison discount; 2026 not used to select). Live rules.yaml already has sector_cap: 2.
+
+| Cap | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| none | 336 | 73.5 | 2.72 | 65.8 | 5.8 | 2.26 | 106 / 3.65 | 2.58/.87/1.54/4.68/1.98/3.70 |
+| 1 | 240 | 71.7 | 2.44 | 35.5 | 3.9 | 1.89 | 75 / 2.34 | 1.76/.12/1.38/7.06/2.62/1.95 |
+| 2 (LIVE) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| 3 | 328 | 74.1 | 2.75 | 63.6 | 5.0 | 2.26 | 106 / 3.54 | 2.58/.87/1.61/4.83/1.97/3.55 |
+| 4 | 333 | 73.3 | 2.68 | 64.2 | 5.8 | 2.21 | 106 / 3.65 | 2.58/.87/1.47/4.59/1.98/3.70 |
+
+Sector mix of the filtered signals is heavily SMH (166) and XLK (132) of 566 candidate trades, as expected from a high-volatility filter.
+
+Verdict: NOT a promotion candidate; live cap 2 is already the best on PF and Sharpe. Cap 1 clearly hurts (return 35%, 2022 PF 0.12); caps 3-4 and none add ~3-5 return points but raise drawdown (4.3 -> 5.0-5.8%) and lower PF in 2023/2025. Differences between 2, 3 and none are within noise. No change to challenger.py or live rules. Next ideas: VIX/term-structure proxy via ETFs, true PEAD with earnings dates, web research on pairs/relative value (next run should be a WEB run).
