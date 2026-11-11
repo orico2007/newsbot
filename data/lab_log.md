@@ -434,3 +434,19 @@ Source: none (own follow-up). Rules: live trade list (A+E+F, SPY>200d, breadth>=
 | rank by highest ADX first | 307 | 73.3 | 2.80 | 59.5 | 4.3 | 2.26 | 100 / 3.33 | 2.41/.87/1.45/5.43/2.22/3.37 |
 
 Verdict: NOT a promotion candidate. Skipping ADX<20 lifts PF 2.83 -> 3.24 and trims drawdown 4.3 -> 3.2, but return falls (53.8 vs 60.6), L12 PF is flat (3.33 vs 3.37) and 2025 is worse (1.78 vs 2.51); the 2021 PF of 12 rests on very few losers. Tiered sizing raises return only by taking more exposure (max DD 4.3 -> 5.0-5.6) with Sharpe unchanged (2.28-2.32), i.e. leverage, not edge. Ranking by ADX does nothing. ADX conditioning is therefore a weak-tail trim worth about +0.1 Sharpe, inside noise after 5 + 10 comparisons across runs 25-26. Not added to challenger.py. Next run should be a WEB run: pairs/relative value or overnight-vs-intraday drift; own ideas still open: VIX/term-structure ETF proxy, true PEAD with earnings dates.
+
+## 2026-11-11 (run 27) - SPY regime conditioners (drawdown from 252d high, 20d realized vol, SPY vs SMA50/SMA200) on the LIVE vol60>=1.75% setup (own idea; a web search for RSI2 exit/ETF-sleeve write-ups only returned marketing-grade listings such as https://backtest.substack.com/p/the-2-period-rsi-a-simple-system , not fetched; exit rules and pairs were already tested in earlier runs)
+Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) filtered by SPY features on the signal day. Script: lab_spyreg.py. 8 variants (multiple-comparison discount; 2026 not used to select).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| SPY within 3% of 252d high | 230 | 76.1 | 2.94 | 43.8 | 3.4 | 2.27 | 84 / 3.65 | 1.97/.87/1.13/5.71/3.92/3.09 |
+| SPY >=3% below 252d high | 84 | 67.9 | 2.29 | 11.6 | 2.4 | 1.74 | 18 / 2.95 | thin |
+| SPY 20d vol < 15% | 270 | 75.2 | 2.94 | 54.9 | 4.3 | 2.50 | 91 / 3.28 | 1.96/-/1.52/5.63/2.94/3.28 |
+| SPY 20d vol >= 15% | 38 | 68.4 | 2.14 | 3.8 | 1.8 | 1.66 | 9 / 6.32 | thin |
+| SPY > SMA50 | 236 | 76.3 | 3.20 | 48.3 | 2.9 | 2.15 | 72 / 4.06 | 1.93/0/2.24/5.71/3.29/3.84 |
+| SPY < SMA50 (still >200d) | 86 | 65.1 | 1.85 | 8.9 | 2.7 | 1.49 | 33 / 2.54 | thin, 2023 0.29 |
+| SPY within 5% of SMA200 | 45 | 71.1 | 2.04 | 4.3 | 1.2 | 1.08 | 10 / 1.37 | thin |
+
+Verdict: NOT a promotion candidate. Every SPY-regime split removes trades and return (best: SPY>SMA50 PF 3.20 but return 48 vs 61 and 2022 PF 0.0; low-SPY-vol Sharpe 2.50 vs 2.28 but return 55 vs 61). Trades taken when SPY is weaker (below SMA50, in a 3%+ drawdown) are somewhat worse (PF 1.9-2.3) yet still profitable, so skipping them gives up about 10-12 return points for a small PF gain: the same trade-removal pattern as runs 21, 25, 26. The live breadth + SPY>200d gates already capture the regime information. No change to challenger.py. Next: true PEAD with earnings dates (earnings.py), or a high-vol-only sleeve on non-universe symbols (needs new data, so not testable here).
