@@ -403,3 +403,20 @@ Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 | hold 12 | 306 | 75.8 | 2.87 | 61.3 | 5.0 | 2.25 | 3.68 | similar |
 
 Verdict: NOT a promotion candidate. Stops beyond 4 ATR almost never trigger on this set (plateau), 3 ATR is worse. Hold 10 gives PF 2.91 / return 62.0 but 2023 and 2025 PF are lower (1.55 vs 1.62, 2.00 vs 2.51), max DD rises 4.3 -> 5.0, and Sharpe is flat: fails the all-but-one-year bar and is within noise. Live parameters (stop 4, hold 7) sit on a plateau. Not added to challenger.py. Next: VIX/term-structure ETF proxy, true PEAD with earnings dates.
+
+## 2026-11-11 (run 25) - trend strength (ADX14, Kaufman efficiency ratio) as conditioner of the LIVE vol60>=1.75% setup (web idea)
+Sources: https://quantifiedstrategies.substack.com/p/rsi-and-adx-trading-strategies-backtest , https://algotr.substack.com/p/stop-trading-in-chop-start-using (search listing only, not fetched; the common web claim is that mean reversion works best in low-ADX "chop" and trend-following in high ADX; unverified). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); keep only signals whose signal-day ADX(14, Wilder) or 10d efficiency ratio (|c-c10| / sum |dc|) falls in a bucket. ADX quartiles of live signals: 22 / 28 / 35. Script: lab_adx.py. 6 variants + 4 repeats without the vol filter (multiple-comparison discount; 2026 not used to select).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ADX<20 | 72 | 68.1 | 1.47 | 4.3 | 3.3 | 0.72 | 17 / 3.84 | .62/0/.49/5.36/2.52/2.08 |
+| ADX 20-30 | 146 | 72.6 | 2.65 | 22.0 | 2.4 | 2.44 | 49 / 2.71 | 7.86/-/1.54/4.71/2.11/2.51 |
+| ADX>=25 | 192 | 75.0 | 3.66 | 45.6 | 2.5 | 2.27 | 64 / 3.81 | 27.7/1.89/2.67/4.69/1.65/4.45 |
+| ADX>=30 | 126 | 75.4 | 3.89 | 29.1 | 1.8 | 1.92 | 41 / 4.03 | 22.8/1.89/2.99/4.75/1.49/6.92 |
+| ER10<0.5 | 259 | 75.3 | 3.22 | 56.6 | 3.6 | 2.27 | 83 / 4.94 | 1.61/.75/2.01/6.96/2.13/5.82 |
+| ER10>=0.5 | 82 | 73.2 | 1.92 | 7.6 | 1.8 | 1.38 | 26 / 1.04 | -/-/1.54/1.58/2.19/.69 |
+| (no vol filter) ADX>=25 | 384 | 71.4 | 2.25 | 46.0 | 3.5 | 2.00 | 83 / 3.38 | 3.28/.19/1.77/2.22/1.78/3.58 |
+
+Finding: the web claim is the OPPOSITE of what the data show here. Pullbacks inside a well-established trend (high ADX) revert better than those in low-ADX chop: ADX<20 has PF 1.47 (and 0.62/0.49 in 2021/2023), ADX>=25 has PF 3.66 and beats the live PF in 2021, 2022, 2023, 2026 and L12, ties 2024 (4.69 vs 4.74) and loses 2025 (1.65 vs 2.51). The same direction holds without the vol filter (PF 1.88 -> 2.25), so it is not just volatility in disguise. The efficiency ratio (choppy last 10 days, ER<0.5) is also a mild improvement (PF 3.22, L12 4.94) but keeps 84% of trades and is not a clear gain in return (56.6 vs 60.6).
+Verdict: NOT a promotion candidate as a hard filter: ADX>=25 raises PF 2.83 -> 3.66 but cuts return 60.6 -> 45.6 (fewer trades fill fewer slots) and loses 2025; PF-only gains from trade-removal filters are exactly what the log already treats as weak. The low-ADX bucket (ADX<20, 72 trades, 4% return) is consistently poor and is the useful hint. Not added to challenger.py. Next: test "skip ADX<20" (removes only the weak tail) and ADX>=25 as a 15% size tier vs 10% (two-tier sizing), then VIX/term-structure ETF proxy and true PEAD. Next run should be an own-idea run.
