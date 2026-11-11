@@ -450,3 +450,19 @@ Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 | SPY within 5% of SMA200 | 45 | 71.1 | 2.04 | 4.3 | 1.2 | 1.08 | 10 / 1.37 | thin |
 
 Verdict: NOT a promotion candidate. Every SPY-regime split removes trades and return (best: SPY>SMA50 PF 3.20 but return 48 vs 61 and 2022 PF 0.0; low-SPY-vol Sharpe 2.50 vs 2.28 but return 55 vs 61). Trades taken when SPY is weaker (below SMA50, in a 3%+ drawdown) are somewhat worse (PF 1.9-2.3) yet still profitable, so skipping them gives up about 10-12 return points for a small PF gain: the same trade-removal pattern as runs 21, 25, 26. The live breadth + SPY>200d gates already capture the regime information. No change to challenger.py. Next: true PEAD with earnings dates (earnings.py), or a high-vol-only sleeve on non-universe symbols (needs new data, so not testable here).
+
+## 2026-11-11 (run 28) - robustness audit of the LIVE vol60>=1.75% filter: random symbol halves, drop-top-contributors, placebo (own idea; lab_robust.py)
+Source: none (overfitting audit; no new strategy). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Checks: (1) 200 random half-splits of the 126-symbol universe, does the vol filter raise per-trade PF inside each half; (2) remove the top 3/5/10 contributing symbols and re-run the portfolio; (3) even/odd symbol halves; (4) placebo: random same-size subsets of the unfiltered raw trades. No parameter selection, so no multiple-comparison discount beyond the earlier runs that chose 1.75%.
+
+| Check | Result |
+|---|---|
+| Random symbol halves (200) | vol filter raises per-trade PF in 200/200; median +1.01, 5th percentile +0.58 |
+| Placebo (638 random of 1437 raw trades), per-trade PF | mean 1.84, 95th pct 2.10, max 2.42 vs live 2.86 |
+| LIVE (all symbols) | n=308, PF 2.83, ret 60.6%, DD 4.3, L12 PF 3.37 |
+| minus top 3 (NVDA, KLAC, CRWD) | n=286, PF 2.23, ret 39.2, DD 4.7, L12 PF 2.96 |
+| minus top 5 | n=271, PF 2.16, ret 35.0, L12 PF 3.14 |
+| minus top 10 | n=248, PF 1.74, ret 20.5, L12 PF 2.40, 2022 PF 0, 2023 PF 0.98 |
+| even-index symbols / odd-index symbols | PF 2.35 / 3.10; ret 21.1 / 35.1; L12 PF 3.00 / 4.15 |
+
+Findings: the vol60 effect is not a lucky-sample artifact: it holds in every random half of the universe and the live per-trade PF (2.86) is far above the placebo maximum (2.42). BUT the dollar return is concentrated: the top 5 symbols (NVDA, KLAC, CRWD, AVGO, AMD) supply about a third of total P&L, and without the top 10 the return falls from 60.6% to 20.5% (PF 1.74, 2023 PF 0.98). Those names are ex-post winners from a hand-picked, hindsight-biased universe (survivorship), so live expectancy is probably closer to the "minus top 5/10" rows than to the headline 60%. The filter still helps there (PF 1.74-2.16 vs ~1.4-1.9 unfiltered).
+Verdict: confirms the vol60>=1.75% rule is real, but advises sizing expectations on the PF 1.7-2.2 / return 20-35% range, not 2.83 / 60%. This weighs against the 15% x 8 sizing candidate (it would amplify concentration in the same few names); a per-symbol exposure view would be worth adding to the daily review. Not added to challenger.py. Next: true PEAD with earnings dates (needs data), VIX/term-structure proxy, or a universe-extension test if more symbols can be cached.
