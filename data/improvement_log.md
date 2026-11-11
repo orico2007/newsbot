@@ -79,3 +79,8 @@ Decision: no change to live rules. Possible follow-up: size 1.25x on streak>=3 r
 
 ## 2026-11-10 (UTC) - PROMOTED to live: volatility filter (vol_min 1.75)
 Source: lab runs 8-12. Live mr signals now require the stock's 60-day daily-return stdev >= 1.75%. Backtest on the live setup: 308 vs 604 trades, win 74.4% vs 69.0%, PF 2.83 vs 1.88, return 60.6% vs 59.6%, max DD 4.3% vs 5.9%, Sharpe 2.28 vs 1.85, PF better in every year (2022: 0.87 vs 0.13), holds in 2021-23 and 2024-26, ATR% measure agrees. Authorized by Ori ("if there is something better so promote"). Expect about half as many trades. Follow-ups: add vol_min to the challenger champion; sizing on the filtered set (15x8); bear sleeve.
+
+## 2026-11-11 (UTC, Wednesday) - round: stop distance / max-hold on the live vol60>=1.75% setup (lab_stopvol.py)
+Checked: stock sessions through run 114 (11-10 evening) success or cancelled-by-concurrency, no errors; no 11-11 session yet at check time (~04:30 UTC, nothing to compare with the 14:30 open). Report 2026-11-10: 0 errors, equity $99,157, 7 open longs, 1 entry (BEAM swing). Scorecard/trades.csv: only 4 closed crypto trades, no closed stock trades, so live win/PF cannot yet be compared with the backtest. Tests: 212 passed. challengers.md has 2 weekly runs; no variant has 3 consecutive wins.
+Tested (6 variants): stop 3/5/6 ATR and hold 5/10/12 vs live (stop 4, hold 7; n=308, PF 2.83, ret 60.6%). Stops >4 are identical (rarely hit), stop 3 worse (PF 2.66); hold 10 PF 2.91 / ret 62.0 but worse in 2023 and 2025 and DD 5.0 vs 4.3; hold 5 clearly worse. Details in data/lab_log.md run 24.
+Decision: no change to live rules; live parameters are on a plateau.

@@ -389,3 +389,17 @@ Source: none (own idea). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, 
 Sector mix of the filtered signals is heavily SMH (166) and XLK (132) of 566 candidate trades, as expected from a high-volatility filter.
 
 Verdict: NOT a promotion candidate; live cap 2 is already the best on PF and Sharpe. Cap 1 clearly hurts (return 35%, 2022 PF 0.12); caps 3-4 and none add ~3-5 return points but raise drawdown (4.3 -> 5.0-5.8%) and lower PF in 2023/2025. Differences between 2, 3 and none are within noise. No change to challenger.py or live rules. Next ideas: VIX/term-structure proxy via ETFs, true PEAD with earnings dates, web research on pairs/relative value (next run should be a WEB run).
+
+## 2026-11-11 (run 24) - stop distance and max-hold re-check on the LIVE vol60>=1.75% setup (own idea; lab_stopvol.py)
+Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, 10% x 12, 4/day); only stop (ATR) or hold varies. 6 variants (multiple-comparison discount; 2026 not used to select).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE stop4 hold7 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| stop 3 | 308 | 74.4 | 2.66 | 57.9 | 4.3 | 2.17 | 3.16 | worse in 4 yrs |
+| stop 5 / 6 | 308 | 74.4 | 2.81 / 2.79 | 60.3 / 60.0 | 4.3 | 2.27 / 2.25 | 3.37 | ~equal |
+| hold 5 | 311 | 70.7 | 2.39 | 50.0 | 5.5 | 1.86 | 2.63 | worse |
+| hold 10 | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 3.86 | 2.75/.87/1.55/5.58/2.00/4.34 |
+| hold 12 | 306 | 75.8 | 2.87 | 61.3 | 5.0 | 2.25 | 3.68 | similar |
+
+Verdict: NOT a promotion candidate. Stops beyond 4 ATR almost never trigger on this set (plateau), 3 ATR is worse. Hold 10 gives PF 2.91 / return 62.0 but 2023 and 2025 PF are lower (1.55 vs 1.62, 2.00 vs 2.51), max DD rises 4.3 -> 5.0, and Sharpe is flat: fails the all-but-one-year bar and is within noise. Live parameters (stop 4, hold 7) sit on a plateau. Not added to challenger.py. Next: VIX/term-structure ETF proxy, true PEAD with earnings dates.
