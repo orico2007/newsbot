@@ -518,3 +518,22 @@ Source: none (own idea, follows run 9/12 hint that vol is a conviction tier rath
 
 Findings: adding the discarded low-vol signals at reduced size never raises return (57-61% vs 60.6%) and always lowers PF (2.2-2.4 vs 2.83), Sharpe (2.0-2.1 vs 2.28) and last-12m PF, and raises drawdown (4.8-5.0 vs 4.3). 2022 reverts from 0.87 to 0.17-0.25, so the low-vol trades are what makes the bear-year loss in the unfiltered setup. The low-vol signals have so little positive expectancy that they displace nothing useful and only add risk. Hard cut at 1.75 remains better than any tier.
 Verdict: NOT a promotion candidate; not added to challenger.py. Confirms runs 8/9/12/28: vol60>=1.75% is a hard filter, not a sizing tier. Next: web run (pairs/relative value, overnight-vs-intraday drift), or true earnings-date test if data appears.
+
+## 2026-11-12 (run 32) - breadth trend (washout deepening vs easing), breadth depth split and SPY signal-day direction on the LIVE vol60>=1.75% setup (web-seeded breadth-thrust/capitulation idea, unverified, rules my own; lab_breadthtrend.py)
+Source: no page fetched; general breadth-thrust/capitulation literature framing (e.g. https://quantpedia.com/ search results), treated as an unverified hypothesis. Same trade list and simulator as the live setup (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 10 split variants + ref (heavy multiple-comparison discount; binary splits, no tuned thresholds). Subset sims are re-run, so subset n values do not sum to 308.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| breadth rising vs yesterday | 249 | 73.9 | 3.06 | 50.0 | 3.7 | 79 / 3.56 | 3.8/.12/1.49/5.03/3.04/3.18 |
+| breadth falling vs yesterday | 94 | 72.3 | 1.85 | 9.1 | 2.8 | 32 / 3.74 | .41/-/1.0/2.63/1.81/6.48 |
+| breadth 3d change > 0 | 272 | 72.8 | 2.65 | 47.9 | 3.5 | 90 / 3.18 | 2.26/.12/1.62/4.06/2.18/3.43 |
+| breadth >= 20% | 187 | 76.5 | 3.45 | 38.0 | 2.4 | 52 / 4.16 | 7.05/.26/1.93/4.35/2.95/4.64 |
+| breadth 10-20% | 150 | 70.7 | 1.91 | 17.3 | 4.4 | 55 / 3.11 | 1.15/1.38/.96/4.48/.56/3.22 |
+| SPY up on signal day | 92 | 67.4 | 1.69 | 7.6 | 3.0 | 31 / 4.04 | .55/0/.58/3.61/.57/4.83 |
+| SPY down on signal day | 242 | 75.2 | 3.04 | 49.3 | 4.2 | 75 / 3.19 | 7.57/1.89/1.56/4.29/2.93/2.97 |
+| SPY 3d < -1% | 155 | 77.4 | 3.84 | 39.1 | 2.5 | 49 / 4.17 | 103.8/-/1.39/8.43/2.33/5.27 |
+| SPY 3d >= -1% | 175 | 71.4 | 2.05 | 18.8 | 2.5 | 57 / 2.89 | 1.54/.75/1.53/3.16/1.38/2.74 |
+
+Findings: the pattern is a dose-response in market stress, consistent with runs 12, 19, 20: deeper washout (breadth >=20%) and a falling SPY (3d < -1%) give PF 3.4-3.8 with lower drawdown, while shallow-stress signals give PF 1.7-2.1. But every restrictive filter cuts return heavily (38-50% vs 60.6%) because cash sits idle, and 2022 gets worse (breadth rising: 0.12 vs 0.87). The new dimension tested, breadth trend (easing vs deepening), is not stable: "deepening" is poor in 2021/2023 but excellent in 2026 (PF 6.5), so it is noise on small n (94). No variant improves return or all non-2022 years vs the live setup.
+Verdict: NOT a promotion candidate; not added to challenger.py. Confirms that stress depth is a risk-adjusted tilt, not a new edge; size tilts were already tested in runs 19/20 without a promotion. Next: web run on pairs/relative value or a real earnings-date test if dated report data becomes available.
