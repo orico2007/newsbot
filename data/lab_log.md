@@ -585,3 +585,20 @@ Source: none (own idea). Same trade list and simulator as live (breadth>=10%, we
 
 Findings: the 5-day split is the interesting one: when defensives are outperforming SPY on the signal day (a risk-off tape), signals have PF 3.9 vs 1.6 when they are not, and the "lag" group has PF <1 in 2023 and 2025. But the filter keeps only 49.7% return vs 61.7% (idle cash), the last-12m PF is about equal (3.76 vs 3.39), 2022 is unchanged, and the 20d version is worse on return and L12. It restates the dose-response in market stress found in runs 12, 19, 20 and 32 (more fear means a better bounce) through a different proxy, so it is not a new independent edge. Skip-the-lag-group as a hard filter does not raise return; as a size tilt it would repeat runs 19/20.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: web run (pairs/relative value, overnight vs intraday drift on the single-stock universe) or true earnings-date test if dated data appears.
+
+## 2026-11-12 (run 36) - liquidity tier (20d dollar volume percentile) as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_dvol.py)
+Source: https://www.dimensional.com/us-en/insights/q-and-a-on-short-run-reversals-with-mamdouh-medhat-and-robert-novy-marx (Medhat & Novy-Marx: short-run reversal is a liquidity-provision premium, claimed stronger in smaller / less liquid / more volatile stocks; unverified hypothesis, other universe). Rules: 20d average dollar volume (close x volume), cross-sectional percentile among the cached universe on the signal day; split the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 7 variants tried (4 splits + 3 follow-ups), so discount lucky winners.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| low liquidity half | 108 | 72.2 | 1.40 | 4.6 | 2.5 | 36 / 1.15 | 2.43/-/.71/2.50/1.16/1.20 |
+| high liquidity half | 218 | 73.4 | 3.45 | 53.2 | 2.7 | 66 / 5.83 | 2.40/.87/2.02/5.84/2.43/5.97 |
+| bottom third | 64 | 64.1 | 1.17 | 1.2 | 1.7 | 18 / 0.88 | 1.59/-/.47/3.02/.29/.93 |
+| top third | 170 | 73.5 | 3.81 | 41.1 | 2.8 | 52 / 8.06 | 83.7/1.60/1.83/5.95/1.81/9.52 |
+| skip bottom third | 256 | 76.2 | 3.38 | 59.5 | 3.4 | 84 / 4.54 | 2.71/.87/2.22/5.44/2.40/5.14 |
+| rank by liquidity pct (high first) | 307 | 73.3 | 2.70 | 57.9 | 4.3 | 100 / 3.53 | 2.41/.87/1.42/5.25/1.87/3.65 |
+| size 1.5x top half / 0.5x low half (post-processor, PF size-weighted, exceeds 10% cap) | 308 | 74.4 | 3.41 | 97.7 | 4.8 | 100 / 4.60 | 2.40/.87/2.02/5.51/2.96/4.70 |
+
+Findings: the paper's direction does NOT hold here. Inside this (large-cap, survivor-biased) universe the LEAST liquid third is the weak spot: PF 1.2 and L12 PF 0.9, with PF <1 in 2023 and weak in 2025/2026, while the top half has PF 3.5 and L12 PF 5.8. Dropping the bottom third raises PF 2.88 -> 3.38 and L12 3.39 -> 4.54, is better in 5/5 non-2022 years (2022 equal), cuts max drawdown 4.3 -> 3.4, but total return is slightly lower (59.5 vs 61.7, 52 fewer trades, idle cash). Ranking by liquidity does not help; the size tilt raises return but is a leverage-like post-processor (15% positions) like run 19, so I do not count it. Caveats: only 64 trades in the bottom third, so the evidence is thin; single-factor split chosen after seeing the half-split (mild snooping); today's survivors.
+Verdict: WATCHLIST / conditional, not a clean PROMOTION CANDIDATE (misses the strict "return higher" bar by 2 points; improves risk-adjusted quality only). Added to challenger.py as "lab run36: ... skip bottom-third 20d dollar volume" (PF 3.29, ret 57.9, L12 PF 4.51 vs the old-champion row in that file) so the weekly job tracks it. Next: confirm on future out-of-sample months before any live change; web run next (industry-adjusted reversal signal, per the same source, or pairs/relative value).

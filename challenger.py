@@ -82,6 +82,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("LAB run19: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.5, 0.5)),
     ("LAB run19: size 1.25x if SPY 3d<-1% else 0.75x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.25, 0.75)),
     ("lab: live setup + vol60>=1.75%, size 15% x 8", ruleset(), dict(size_pct=15, max_pos=8, per_day=4), "live_vol175"),
+    # lab run 36: vol60>=1.75% setup minus the least-liquid third (20d dollar volume percentile < 1/3); see data/lab_log.md
+    ("lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume", ruleset(), DEF_PORT, "live_vol175_dvol"),
 ]
 
 def vol60(A, i):
@@ -121,6 +123,17 @@ def run():
             def hv(t):
                 v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
                 return v_ is not None and v_ >= 1.75
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
+        elif len(v) > 3 and v[3] == "live_vol175_dvol":
+            import lab_breadth, lab_sector, lab_dvol
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            DV = lab_dvol.dv_table(lab.load_bars(), AS)
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                p_ = lab_dvol.dv_pct(DV, t["sym"], t["t"][:10])
+                return v_ is not None and v_ >= 1.75 and p_ is not None and p_ >= 1 / 3
             T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
                   for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
         elif len(v) > 3 and v[3] == "live_bear10":
