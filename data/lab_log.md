@@ -631,3 +631,19 @@ Source: none (own idea). Rules: LIVE trade list (breadth>=10%, weakest-peer rank
 
 Findings: a stock that bounced-or-lost recently is not a worse candidate; every skip variant lowers PF, return and L12 PF (return -3 to -10 points) for at most a 0.5-point drawdown gain. Consistent with run 23: no same-symbol memory effect. Live re-entries are fine as is.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: web run (industry-adjusted reversal or pairs/relative value).
+
+## 2026-11-12 (run 39) - beta-adjusted residual shock z-score (Asymmetric Idiosyncratic Reversal) as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_resz.py)
+Source: https://www.nber.org/papers/w35840 (Asymmetric Reversals: negative idiosyncratic shocks reverse more than positive ones; only the abstract was read, claim unverified, rules are my own). Rules: residual = stock daily return - beta x SPY return (beta from a 120d window ending ~60d before the signal); z3 = sum of the last 3 residuals / (residual stdev over the prior ~60d x sqrt 3). Split/rank the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 6 variants tried, no tuned thresholds (median/tertiles). Subset sims re-run.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| z3 below median (idiosyncratic drop) | 169 | 71.6 | 2.78 | 31.4 | 2.7 | 59 / 3.64 | 4.13/.12/1.21/4.81/1.79/3.54 |
+| z3 above median (market-driven drop) | 173 | 74.6 | 2.70 | 26.5 | 2.8 | 48 / 3.08 | 1.28/-/2.23/3.82/2.32/3.55 |
+| z3 bottom tertile (most idiosyncratic) | 109 | 65.1 | 2.05 | 13.6 | 2.9 | 40 / 2.35 | 2.35/.26/1.59/4.16/1.05/2.15 |
+| z3 top tertile | 123 | 73.2 | 2.39 | 14.9 | 2.1 | 31 / 3.49 | 1.01/-/1.70/3.18/2.88/5.41 |
+| skip top tertile | 217 | 73.7 | 3.01 | 44.3 | 2.9 | 77 / 3.39 | 3.46/.87/1.55/5.53/2.26/3.21 |
+| rank by most negative z3 | 308 | 73.7 | 2.79 | 59.2 | 4.3 | 100 / 3.48 | 2.41/.87/1.38/5.46/2.21/3.58 |
+
+Findings: the literature direction (bigger negative idiosyncratic shock = stronger reversal) does not hold: the most idiosyncratic tertile is the WORST (PF 2.05, win 65%), the two halves have near-equal PF, and the effect is non-monotone and flips by year. Ranking by z3 slightly lowers PF and return. Within vol60>=1.75% candidates the residual size adds no information (consistent with runs 14, 21, 35: stock-specific vs market-wide does not matter once the breadth/peer/vol filters are applied).
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. correlation of the candidate with the held book, or max positions per signal-day cluster) or a true earnings-date test if dated data appears.
