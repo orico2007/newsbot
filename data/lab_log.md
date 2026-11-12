@@ -502,3 +502,19 @@ Source: web search surfaced only generic reversal/"consecutive down days" pages 
 
 Findings: almost every live signal already makes a lower low (96%) so that split is empty. The one informative cut is a close BELOW the prior day's low (92% of signals): excluding the 8-18% that close inside the prior range lifts PF 2.83 -> 3.27, return 60.6 -> 62.1 and cuts max drawdown 4.3 -> 2.4, with PF better in 2021/2023/2024, equal in 2022/2025/2026. But the excluded trades are few (56 / 66) and earn only ~3-4% return in 6 years, and the L12 PF is flat (3.35 vs 3.37), so it fails the "beats on last 12 months" test; it is a trimming of a weak tail, not a new edge. Range expansion and red-body size are not monotonic (body>=2% has 2023 PF 0.96, body<2% has 2022 PF 1.63), i.e. noise.
 Verdict: NOT a promotion candidate; not added to challenger.py. Possible low-priority note for the daily task: "close < prior-day low" is a nearly free drawdown trimmer (DD 4.3 -> 2.4) but needs its own out-of-sample confirmation (not enough trades to trust). Next run: own idea (B) per alternation, e.g. real-earnings-date test if live logs now contain dated reports, or an equal-weight sector-ETF breadth filter.
+
+## 2026-11-12 (run 31) - two-tier vol60 sizing: reduced-size trades for the lower-vol signals the live filter discards (own idea; lab_voltier.py)
+Source: none (own idea, follows run 9/12 hint that vol is a conviction tier rather than a hard cut). Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12, 4/day). vol60>=1.75 signals keep full size; signals with vol60 in [lo,1.75) are added at 0.5x or 0.33x size (pnl scaled; they still use a slot and rank after all full-size signals). 5 variants + 2 refs (small multiple-comparison discount; lo and k not tuned beyond this grid).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol>=1.75 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| no vol filter | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| lo 1.25 at 0.5x | 485 | 69.5 | 2.27 | 57.0 | 5.0 | 130 / 3.07 | 2.19/.17/1.44/3.06/2.23/2.97 |
+| lo 1.0 at 0.5x | 559 | 68.9 | 2.24 | 59.8 | 5.0 | 137 / 3.08 | 2.26/.19/1.44/2.78/2.31/2.98 |
+| lo 0 at 0.5x | 608 | 69.2 | 2.23 | 61.1 | 5.0 | 138 / 3.07 | 2.19/.19/1.36/2.93/2.31/2.98 |
+| lo 1.25 at 0.33x | 485 | 69.5 | 2.41 | 57.1 | 4.8 | 130 / 3.16 | 2.29/.24/1.46/3.39/2.30/3.10 |
+| lo 0 at 0.33x | 608 | 69.2 | 2.39 | 60.2 | 4.8 | 138 / 3.16 | 2.35/.25/1.40/3.32/2.36/3.11 |
+
+Findings: adding the discarded low-vol signals at reduced size never raises return (57-61% vs 60.6%) and always lowers PF (2.2-2.4 vs 2.83), Sharpe (2.0-2.1 vs 2.28) and last-12m PF, and raises drawdown (4.8-5.0 vs 4.3). 2022 reverts from 0.87 to 0.17-0.25, so the low-vol trades are what makes the bear-year loss in the unfiltered setup. The low-vol signals have so little positive expectancy that they displace nothing useful and only add risk. Hard cut at 1.75 remains better than any tier.
+Verdict: NOT a promotion candidate; not added to challenger.py. Confirms runs 8/9/12/28: vol60>=1.75% is a hard filter, not a sizing tier. Next: web run (pairs/relative value, overnight-vs-intraday drift), or true earnings-date test if data appears.
