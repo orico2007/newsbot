@@ -551,3 +551,23 @@ Same trade list/simulator as live (breadth>=10%, weakest-peer rank, vol60>=1.75,
 
 Findings: every early-cut variant is worse on PF, return, drawdown and the last 12 months; the later the cut, the less damage. Positions still under water at day 2-4 recover often enough (the edge sits in the late bounce) that cutting them converts future winners into small losses. Consistent with run 24 (hold 5 worse) and run 28 (trailing/breakeven exits worse).
 Verdict: NOT a promotion candidate; not added to challenger.py. Exit side of the live setup remains on a plateau. Next: pairs/relative value, or a real earnings-date test if dated data appears.
+
+## 2026-11-12 (run 34) - weekly short-term reversal sleeve: buy last-week losers on the last session of the week (web-seeded, own rules; lab_weekly.py)
+Source (unverified hypothesis, search results only, no page fetched): https://www.quantconnect.com/learning/articles/investment-strategy-library/short-term-reversal-strategy-in-stocks , https://quantpedia.com/strategies/momentum-and-reversal-combined-with-volatility-effect-in-stocks . Rules: last session of each ISO week, SPY>200d gate (live gate2), stock above SMA50>SMA200 (except one variant), 5-day return <= -5% (or -8%), vol60>=1.75% (except one variant), ATR/close<=8%; rank by most negative 5d return; enter at close, hold 5 (or 10) sessions, stop 4 ATR; live portfolio simulator (10% x 12, 4/day). 5 variants tried (multiple-comparison discount applies; all lost anyway). LIVE ref here = live trade list without the F-score ranking tweak (PF 2.88 vs logged 2.83, immaterial).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| weekly r5<=-5%, vol60>=1.75, hold5 | 206 | 56.8 | 1.27 | 13.0 | 8.0 | 69 / 1.39 | 1.04/.77/.55/1.70/1.47/1.34 |
+|   + live combined | 429 | 66.9 | 1.77 | 58.2 | 7.7 | 136 / 2.01 | 1.59/.78/1.01/2.23/2.00/1.93 |
+| weekly r5<=-8% | 78 | 47.4 | 0.85 | -4.0 | 6.2 | 30 / 0.84 | .77/-/1.28/.55/1.22/.73 |
+|   + live combined | 348 | 70.1 | 2.04 | 50.9 | 4.3 | 116 / 1.92 | 1.96/.87/1.63/2.80/2.39/1.69 |
+| weekly r5<=-5%, no vol filter | 247 | 57.1 | 1.27 | 14.5 | 9.4 | 77 / 1.48 | 1.09/.54/.48/1.81/1.30/1.44 |
+|   + live combined | 468 | 66.5 | 1.75 | 61.4 | 8.1 | 144 / 2.09 | 1.59/.56/.93/2.34/1.87/2.02 |
+| weekly r5<=-5%, vol60>=1.75, no trend filter | 592 | 51.0 | 1.30 | 42.3 | 14.1 | 178 / 1.45 | 1.48/.08/2.14/.78/1.34/1.78 |
+|   + live combined | 809 | 57.8 | 1.52 | 101.0 | 9.9 | 244 / 1.66 | 2.08/.12/1.98/1.18/1.35/2.01 |
+| weekly r5<=-5%, vol60>=1.75, hold10 | 191 | 50.8 | 1.13 | 8.5 | 18.6 | 63 / 1.54 | .67/.07/.31/1.31/1.40/1.80 |
+|   + live combined | 405 | 65.9 | 1.50 | 44.8 | 9.8 | 127 / 2.05 | 1.16/.07/.79/1.62/2.04/2.06 |
+
+Findings: a fixed weekly calendar entry on last-week losers has almost no edge on daily bars of this universe (PF 0.85-1.30, win 47-57%, 2023 PF 0.31-0.55). Combining it with the live setup always lowers PF (1.5-2.0 vs 2.88), Sharpe and raises drawdown; the only combined line with higher return (no trend filter, 101%) pays for it with 2022 PF 0.12 and drawdown 9.9%. The live edge comes from the event trigger (washout/breadth + multi-day pullback + vol60), not from generic one-week reversal; waiting for a calendar day removes the timing that makes the live trades work.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: true earnings-date PEAD test if dated data appears; otherwise sector-relative momentum rotation as a standalone with a lower-correlation filter, or cross-asset (TLT/GLD/UUP daily) risk filters if those symbols exist in the cache.
