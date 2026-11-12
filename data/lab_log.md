@@ -571,3 +571,17 @@ Source (unverified hypothesis, search results only, no page fetched): https://ww
 
 Findings: a fixed weekly calendar entry on last-week losers has almost no edge on daily bars of this universe (PF 0.85-1.30, win 47-57%, 2023 PF 0.31-0.55). Combining it with the live setup always lowers PF (1.5-2.0 vs 2.88), Sharpe and raises drawdown; the only combined line with higher return (no trend filter, 101%) pays for it with 2022 PF 0.12 and drawdown 9.9%. The live edge comes from the event trigger (washout/breadth + multi-day pullback + vol60), not from generic one-week reversal; waiting for a calendar day removes the timing that makes the live trades work.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: true earnings-date PEAD test if dated data appears; otherwise sector-relative momentum rotation as a standalone with a lower-correlation filter, or cross-asset (TLT/GLD/UUP daily) risk filters if those symbols exist in the cache.
+
+## 2026-11-12 (run 35) - defensive-sector leadership (mean XLP/XLU return minus SPY) as a cross-asset risk-off conditioner of the LIVE vol60>=1.75% setup (own idea from the cross-asset filter seed list; only XLP/XLU/VIXY exist in the cache, no TLT/GLD/UUP; lab_defens.py)
+Source: none (own idea). Same trade list and simulator as live (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). Binary split on sign, no tuned thresholds; 4 variants (mild multiple-comparison discount). Subset sims are re-run, so n values do not sum to 308.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| defensives lead SPY, 5d | 200 | 79.0 | 3.92 | 49.7 | 3.0 | 53 / 3.76 | 8.71/.87/2.30/13.25/2.61/4.18 |
+| defensives lag SPY, 5d | 127 | 65.4 | 1.64 | 9.5 | 2.6 | 52 / 3.09 | 1.15/-/.71/2.08/.71/3.13 |
+| defensives lead SPY, 20d | 98 | 76.5 | 3.51 | 19.9 | 1.8 | 30 / 2.68 | 5.24/.87/4.02/18.47/2.50/2.50 |
+| defensives lag SPY, 20d | 222 | 73.0 | 2.61 | 36.2 | 3.9 | 73 / 3.66 | 1.93/-/1.18/3.98/2.44/4.33 |
+
+Findings: the 5-day split is the interesting one: when defensives are outperforming SPY on the signal day (a risk-off tape), signals have PF 3.9 vs 1.6 when they are not, and the "lag" group has PF <1 in 2023 and 2025. But the filter keeps only 49.7% return vs 61.7% (idle cash), the last-12m PF is about equal (3.76 vs 3.39), 2022 is unchanged, and the 20d version is worse on return and L12. It restates the dose-response in market stress found in runs 12, 19, 20 and 32 (more fear means a better bounce) through a different proxy, so it is not a new independent edge. Skip-the-lag-group as a hard filter does not raise return; as a size tilt it would repeat runs 19/20.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: web run (pairs/relative value, overnight vs intraday drift on the single-stock universe) or true earnings-date test if dated data appears.
