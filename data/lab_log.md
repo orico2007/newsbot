@@ -602,3 +602,19 @@ Source: https://www.dimensional.com/us-en/insights/q-and-a-on-short-run-reversal
 
 Findings: the paper's direction does NOT hold here. Inside this (large-cap, survivor-biased) universe the LEAST liquid third is the weak spot: PF 1.2 and L12 PF 0.9, with PF <1 in 2023 and weak in 2025/2026, while the top half has PF 3.5 and L12 PF 5.8. Dropping the bottom third raises PF 2.88 -> 3.38 and L12 3.39 -> 4.54, is better in 5/5 non-2022 years (2022 equal), cuts max drawdown 4.3 -> 3.4, but total return is slightly lower (59.5 vs 61.7, 52 fewer trades, idle cash). Ranking by liquidity does not help; the size tilt raises return but is a leverage-like post-processor (15% positions) like run 19, so I do not count it. Caveats: only 64 trades in the bottom third, so the evidence is thin; single-factor split chosen after seeing the half-split (mild snooping); today's survivors.
 Verdict: WATCHLIST / conditional, not a clean PROMOTION CANDIDATE (misses the strict "return higher" bar by 2 points; improves risk-adjusted quality only). Added to challenger.py as "lab run36: ... skip bottom-third 20d dollar volume" (PF 3.29, ret 57.9, L12 PF 4.51 vs the old-champion row in that file) so the weekly job tracks it. Next: confirm on future out-of-sample months before any live change; web run next (industry-adjusted reversal signal, per the same source, or pairs/relative value).
+
+## 2026-11-12 (run 37) - overnight vs intraday decomposition of the signal-day drop as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_ovnintra.py)
+Sources: https://quantpedia.com/short-term-return-reversals-and-intraday-transactions/ , https://personal.lse.ac.uk/polk/research/TugOfWar.pdf (Lou-Polk-Skouras: intraday and overnight returns behave differently; unverified, only search snippets read, rules are my own). Rules: on the signal day, overnight = open/prev close - 1, intraday = close/open - 1; split the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day) by which part dominates the drop, by a gap-down cut at -0.5%, and by close vs open. 6 variants tried, no tuned thresholds (mild multiple-comparison discount). Subset sims re-run.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| overnight part dominates | 132 | 72.0 | 2.23 | 16.4 | 3.7 | 36 / 1.92 | 5.66/1.63/.60/6.41/1.30/2.64 |
+| intraday part dominates | 216 | 72.7 | 2.76 | 40.3 | 2.5 | 73 / 4.07 | 2.00/.50/2.33/3.38/2.49/3.58 |
+| gap down < -0.5% | 178 | 73.6 | 2.68 | 29.5 | 4.1 | 53 / 2.55 | 6.46/1.63/1.43/6.17/1.08/3.45 |
+| no gap | 168 | 72.0 | 2.47 | 26.2 | 3.2 | 52 / 4.91 | 1.57/.50/1.42/3.09/3.92/3.58 |
+| closed below open | 277 | 73.6 | 2.80 | 55.0 | 4.2 | 92 / 3.36 | 2.14/.12/1.86/4.89/2.16/3.46 |
+| closed above open | 54 | 74.1 | 2.30 | 5.2 | 1.5 | 15 / 2.46 | -/-/.61/2.55/4.57/1.86 |
+
+Findings: no stable split. Year-by-year PF flips sign of the difference between the overnight and intraday groups (overnight better in 2021/2022/2024, worse in 2023/2025/2026), and the gap/no-gap split does the same, so there is no consistent conditioner; every subset has lower return than the live set (idle cash). The medians (overnight -0.6%, intraday -1.6%) say most of the drop is intraday in this universe, consistent with the dip being bought after weakness building during the session, but the live rules already capture that. Nothing beats the live row on PF, return, L12 and years together.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: pairs/relative-value or a true earnings-date test if dated data appears; own-idea run next (e.g. cooldown after a stopped-out trade in the same symbol).
