@@ -87,3 +87,8 @@ Decision: no change to live rules; live parameters are on a plateau.
 
 ## 2026-11-11 (UTC) - fix: partial take-profit failed on AMZN (403 available 0)
 Cause: the bracket legs still held the shares when the partial close was sent (cancel + fixed 1.5 s wait is not enough). Worse, the failed attempt left the position without its stop/target. Fix: broker.release_shares cancels open orders and polls until Alpaca reports none (up to 20 s) before partial or full close; on any partial-TP failure the bot re-places the original stop/target for the full quantity, retries next session, and gives up after 3 failures.
+
+## 2026-11-12 (UTC, Thursday) - round: no-bounce time stop on the live vol60>=1.75% setup (lab_nobounce.py)
+Checked: stock sessions through run 129 (11-12 01:29) success or cancelled-by-concurrency; the 11-11 session (run 116) started 13:30 UTC, before the 14:30 UTC open. The one failure (run 119, workflow_dispatch) was "runner received a shutdown signal" mid-session (GitHub infra, after NKE/HD entries), not a bot error; the partial-TP fix of 11-11 is in place. Report 2026-11-11: 0 errors. First closed stock trade: XOM mr_E -2.05% (stop); scorecard has 1 swing + 4 crypto closes, so live win/PF vs backtest (win ~74%, PF ~2.8) is still not measurable. Tests: 213 passed. challengers.md has 2 weekly runs; no variant has 3 consecutive wins.
+Tested (4 variants): exit at day 2/3/4 close if below entry (and day 3 below entry-1%). All worse than live: PF 1.83-2.31 vs 2.83, return 33-48% vs 60.6%, last-12m PF 2.0-2.2 vs 3.37; details in data/lab_log.md run 33.
+Decision: no change to live rules; not added to challenger.py.

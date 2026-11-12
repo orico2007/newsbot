@@ -537,3 +537,17 @@ Source: no page fetched; general breadth-thrust/capitulation literature framing 
 
 Findings: the pattern is a dose-response in market stress, consistent with runs 12, 19, 20: deeper washout (breadth >=20%) and a falling SPY (3d < -1%) give PF 3.4-3.8 with lower drawdown, while shallow-stress signals give PF 1.7-2.1. But every restrictive filter cuts return heavily (38-50% vs 60.6%) because cash sits idle, and 2022 gets worse (breadth rising: 0.12 vs 0.87). The new dimension tested, breadth trend (easing vs deepening), is not stable: "deepening" is poor in 2021/2023 but excellent in 2026 (PF 6.5), so it is noise on small n (94). No variant improves return or all non-2022 years vs the live setup.
 Verdict: NOT a promotion candidate; not added to challenger.py. Confirms that stress depth is a risk-adjusted tilt, not a new edge; size tilts were already tested in runs 19/20 without a promotion. Next: web run on pairs/relative value or a real earnings-date test if dated report data becomes available.
+
+## 2026-11-12 (run 33) - no-bounce time stop (exit at day-k close if still below entry) on the LIVE vol60>=1.75% setup (own idea; lab_nobounce.py)
+Same trade list/simulator as live (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day, stop 4 ATR, hold 7, exit close>prior high). 4 variants + ref.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| day 2 close < entry -> exit | 331 | 59.2 | 1.83 | 33.4 | 4.9 | 106 / 1.99 | 2.78/.34/1.27/2.31/1.59/1.96 |
+| day 3 close < entry -> exit | 326 | 65.6 | 2.07 | 42.8 | 4.7 | 102 / 2.17 | 2.21/.69/1.46/3.18/1.64/2.17 |
+| day 4 close < entry -> exit | 314 | 67.8 | 2.31 | 47.6 | 4.5 | 101 / 2.19 | 3.35/.72/1.47/3.58/2.12/2.02 |
+| day 3 close < entry-1% -> exit | 323 | 68.4 | 2.06 | 43.1 | 4.5 | 102 / 2.17 | 2.21/.69/1.54/2.91/1.66/2.18 |
+
+Findings: every early-cut variant is worse on PF, return, drawdown and the last 12 months; the later the cut, the less damage. Positions still under water at day 2-4 recover often enough (the edge sits in the late bounce) that cutting them converts future winners into small losses. Consistent with run 24 (hold 5 worse) and run 28 (trailing/breakeven exits worse).
+Verdict: NOT a promotion candidate; not added to challenger.py. Exit side of the live setup remains on a plateau. Next: pairs/relative value, or a real earnings-date test if dated data appears.
