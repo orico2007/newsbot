@@ -618,3 +618,16 @@ Sources: https://quantpedia.com/short-term-return-reversals-and-intraday-transac
 
 Findings: no stable split. Year-by-year PF flips sign of the difference between the overnight and intraday groups (overnight better in 2021/2022/2024, worse in 2023/2025/2026), and the gap/no-gap split does the same, so there is no consistent conditioner; every subset has lower return than the live set (idle cash). The medians (overnight -0.6%, intraday -1.6%) say most of the drop is intraday in this universe, consistent with the dip being bought after weakness building during the session, but the live rules already capture that. Nothing beats the live row on PF, return, L12 and years together.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: pairs/relative-value or a true earnings-date test if dated data appears; own-idea run next (e.g. cooldown after a stopped-out trade in the same symbol).
+
+## 2026-11-12 (run 38) - same-symbol re-entry memory re-tested on the NEW live vol60>=1.75% setup (own idea; follow-up of run 23's old-baseline test; lab_reentry2.py)
+Source: none (own idea). Rules: LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day); skip a signal if the same symbol's previous signal-trade exited within N days (any, or only if it lost). History = unfiltered live list (path-independent approximation). 3 variants (the "only after loss" variant is degenerate: it keeps 1 signal, since it drops all first entries; discarded).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| skip if prev trade lost <=20d | 307 | 73.3 | 2.75 | 58.5 | 4.3 | 100 / 3.31 | 2.41/.87/1.47/4.63/2.50/3.35 |
+| skip if prev trade lost <=60d | 301 | 73.4 | 2.82 | 58.3 | 3.8 | 99 / 3.27 | 2.71/.87/1.51/4.63/2.47/3.29 |
+| skip any re-entry <=20d | 283 | 73.1 | 2.70 | 51.5 | 3.6 | 92 / 3.19 | 2.27/.87/1.67/4.37/2.57/3.05 |
+
+Findings: a stock that bounced-or-lost recently is not a worse candidate; every skip variant lowers PF, return and L12 PF (return -3 to -10 points) for at most a 0.5-point drawdown gain. Consistent with run 23: no same-symbol memory effect. Live re-entries are fine as is.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: web run (industry-adjusted reversal or pairs/relative value).
