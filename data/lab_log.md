@@ -719,3 +719,23 @@ Source: none (own idea; "trade the equity curve" concept, rules are my own). Rul
 
 Findings: no "hot hand" (the "only after weak/cool stretch" variants are clearly worse), and the cold-streak skip is mildly protective: skipping after a last-10 win rate below 50% removes 17 trades, lifts PF 2.88 -> 3.18, nearly halves max drawdown (4.3 -> 2.4), no year is worse, but it only changes 2023 and 2025, L12 is identical (the gate never fired in the last 12 months) and the effect rests on ~17 trades in 2 years. The 20-trade window does nothing. Important implementation caveat: the gate was computed from the hypothetical LIVE-ref history; live, skipped periods produce no closed trades, so the gate would freeze unless shadow (paper-only) trades of skipped signals are tracked.
 Verdict: NOT a promotion candidate (L12 not improved, tiny sample, needs shadow-trade bookkeeping); not added to challenger.py. Watch-list idea: revisit when more data accumulates. Next: web-research run (VIXY term structure / true PEAD if dated earnings data appears).
+
+## 2026-11-13 (run 45) - stock-specific reversion tendency (trailing lag-1 autocorrelation; the stock's own earlier signal results) as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_stockmem.py)
+Sources: web search for RSI2/gap entry-timing write-ups returned mostly marketing-grade pages; the one fetched, https://www.quantrocket.com/blog/buy-or-sell-down-gaps/ (large down-gaps in stocks keep falling intraday, small gaps in uptrends recover; 2014-2020, 1-min data, no multi-day test), only confirmed that next-open/gap entry timing was already covered by runs 5/7/22, so I switched to a new idea with my own rules (Lo-MacKinlay style autocorrelation; unverified). Rules: (a) lag-1 autocorrelation of daily returns over the trailing 252 sessions on the signal day (negative = mean-reverting stock); (b) mean pnl of the same symbol's earlier closed rule signals (all-universe signal list, closed strictly before the signal date, needs >=3). Split/rank the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 8 variants tried, median/tertile cuts only, no tuning.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (all) | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| LIVE ref (with autocorr) | 290 | 74.5 | 3.02 | 60.0 | 4.3 | 100 / 3.39 | 3.83/.87/1.72/4.70/2.51/3.44 |
+| autocorr < median | 157 | 73.2 | 2.84 | 25.1 | 2.2 | 60 / 3.89 | 2.59/.12/1.64/6.59/2.17/3.76 |
+| autocorr >= median | 154 | 74.0 | 2.75 | 28.5 | 3.2 | 42 / 3.02 | -/-/1.57/4.37/1.56/3.22 |
+| autocorr bottom tertile | 108 | 73.1 | 2.49 | 13.1 | 1.7 | 48 / 2.99 | 2.56/.26/.77/5.92/1.82/2.87 |
+| autocorr top tertile | 99 | 69.7 | 2.42 | 15.8 | 3.7 | 28 / 3.51 | -/-/.86/5.84/1.18/3.34 |
+| rank by lowest autocorr | 291 | 74.2 | 2.96 | 59.0 | 4.3 | 100 / 3.39 | 3.83/.87/1.45/5.85/2.18/3.46 |
+| LIVE ref (with own history) | 245 | 76.3 | 3.70 | 60.5 | 2.6 | 100 / 3.39 | tiny-n 2021 / 0 / 3.36/5.70/2.51/3.44 |
+| own-history mean pnl > 0 | 179 | 74.3 | 3.76 | 42.4 | 2.3 | 68 / 3.55 | 2021 n tiny/0/2.75/7.04/2.43/3.68 |
+| own-history mean pnl <= 0 | 78 | 76.9 | 2.90 | 12.3 | 1.2 | 37 / 2.95 | -/0/2.01/3.38/3.77/2.91 |
+| rank by own-history pnl | 246 | 76.4 | 3.77 | 60.7 | 2.7 | 100 / 3.52 | 2021 n tiny/0/2.99/6.11/2.51/3.63 |
+
+Findings: no stock-level reversion memory. Low-autocorrelation ("mean-reverting") stocks do not beat high-autocorrelation ones (PF 2.84 vs 2.75; tertiles go the wrong way: bottom 2.49 vs top 2.42, win rate 73 vs 70), ranking by autocorrelation leaves PF/return flat. Own-history sign gives PF 3.76 vs 2.90 but the comparison base (with-history subset, PF 3.70) already shows the gain is a sample-selection effect (early 2021 trades drop out because they have no history), so the positive group is no better than its parent; returns fall to 42%. Years with real counts do not agree (2025: 2.43 vs 3.77).
+Verdict: NOT a promotion candidate; not added to challenger.py. Per-stock memory adds nothing beyond vol60>=1.75. Next: own-idea run (e.g. true PEAD if dated earnings data appears; VIXY-based term-structure proxy is limited by the cache).
