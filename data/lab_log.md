@@ -663,3 +663,22 @@ Source: https://www.dimensional.com/us-en/insights/q-and-a-on-short-run-reversal
 
 Findings: direction mildly matches the literature (stocks lagging their sector win 77.7% vs 70.3%, PF 3.1 vs 2.5), but the gain is small, L12 PF is unchanged (3.38 vs 3.37), 2023 and 2025 are worse than live, and the 2021 PF is tiny-sample noise (few losers). Return falls 60.6 -> 37.2 because half the trades are dropped. Ranking by idio instead of peer weakness lowers PF and return. The live peer-weakness rank already captures the sector component.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. correlation of candidate with held book / per-day cluster cap) or earnings-date test if dated data appears.
+
+## 2026-11-13 (run 41) - signal-day cluster size, per-day cap and position cap on the LIVE vol60>=1.75% setup (own idea; follow-up listed in runs 39-40; lab_cluster.py)
+Source: none (own idea). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Cluster = number of base signals on the signal date (84 days with 1, 68 with 2, 26 with 3, then a long tail up to 24). Variants: per_day 1/2/3/6, max_pos 8/16, subsets by cluster size and by 3-signal-day trailing heat (median split). 10 variants tried; discount accordingly.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| per_day 1 | 208 | 70.7 | 2.22 | 25.4 | 3.3 | 66 / 2.63 | 2.79/.87/1.25/3.44/1.51/2.61 |
+| per_day 2 | 281 | 73.3 | 2.67 | 49.8 | 4.2 | 91 / 3.27 | 2.25/.87/1.43/4.20/2.58/3.17 |
+| per_day 3 | 300 | 73.7 | 2.76 | 56.8 | 4.3 | 98 / 3.20 | 2.29/.87/1.63/4.57/2.23/3.44 |
+| per_day 6 | 311 | 74.0 | 2.84 | 61.8 | 4.3 | 100 / 3.39 | 2.41/.87/1.60/4.75/2.51/3.44 |
+| max_pos 8 or 16 | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | identical to LIVE |
+| cluster 1-2 signals only | 160 | 69.4 | 2.31 | 22.4 | 3.6 | 55 / 2.87 | 2.03/.75/.98/3.74/2.14/3.13 |
+| cluster 3+ signals only | 177 | 75.7 | 2.82 | 31.3 | 3.1 | 55 / 3.79 | 2.67/-/2.39/3.97/2.06/3.62 |
+| cluster 5+ signals only | 103 | 82.5 | 4.53 | 25.3 | 1.8 | 38 / 4.98 | 2.26/-/91/10.4/2.92/4.11 |
+| 3-day heat <= median | 156 | 67.3 | 1.84 | 14.7 | 4.6 | 41 / 1.80 | 1.80/.87/.58/7.20/.97/1.94 |
+
+Findings: (1) The position cap never binds on this filtered setup (8, 12 and 16 slots give identical results), so 12 slots is more than needed and nothing is gained by tuning it. (2) The 4/day cap barely matters (6/day adds 3 trades and nothing else; 1-3/day cuts return and PF), so live 4 is fine. (3) Isolated signals (1-2 per day) are clearly weaker (PF 2.3, win 69%) than clustered ones (3+: PF 2.8, win 76%; 5+: PF 4.5, win 82%), the same market-wide washout effect already captured by the breadth>=10% gate and the SPY-dip sizing tests (runs 19-20, 32). Skipping the sparse days would halve return (61.7 -> 31) for a small PF gain and 2023 is worse in the 3+ subset only by sample size, so it is not worth a rule. The 5+ subset PF is inflated by years with almost no losers (2023 PF 91).
+Verdict: NOT a promotion candidate; not added to challenger.py; no live change suggested. Next: web-research run (e.g. VIX proxy via VIXY term structure, true PEAD if dated earnings data appears, or a short-hold overnight sleeve variant).
