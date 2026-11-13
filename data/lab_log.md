@@ -771,3 +771,20 @@ Source: none (own idea; motivated by runs 9/32/35/36 repeatedly noting that rest
 
 Findings: the overlay is just SPY beta added on top. Return rises, but Sharpe falls (1.96 -> 1.24-1.65), drawdown grows 2-6x, and 2022 turns from flat (-0.1%) to -8..-19% (the SPY>200d gate does not avoid the 2022 bear, it lags). The live setup's value is its near-zero market exposure (~uncorrelated, PF 2.9, DD 4.3%); diluting that with index beta contradicts the goal. A user who wants more return should use the already-logged size-up (15% x 8) or run the sleeve next to a separately held index position by choice, not inside the bot.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: web-research run (e.g. sector-level washout / VIXY term-structure proxy, or true PEAD if dated earnings data appears).
+
+## 2026-11-13 (run 48) - overbought-fade SHORT sleeve in bear regimes (Connors-style RSI2 short; web-seeded topic, own rules; lab_short.py)
+Sources: search only (https://www.quantconnect.com/research/15367/short-term-reversal/, https://quantifiedstrategies.substack.com/p/turnaround-tuesday-strategy-backtest; result titles, not fetched; claims unverified). Rules: stock RSI2 > 95 (or 98) at close, stock < SMA200, SPY < SMA200 (or sweep "bear" regime, or no gate, or no stock trend), short at close, stop 4 ATR, fixed hold 5 (or 3) days, 5-day cooldown per symbol; 10% x 12, 4/day; compared alone and added to the LIVE vol60>=1.75% list. 6 variants, no tuning.
+
+| Variant (alone) | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| short r2>95, SPY<200d, stk<200d, hold5 | 288 | 42.7 | 0.92 | -5.9 | 21.5 | 9 / 0.30 | -/1.25/.28/-/.41/.30 |
+| short r2>98, same | 135 | 46.7 | 0.99 | -0.6 | 8.1 | 3 / 0.0 | -/1.06/.38/-/.91/0 |
+| short r2>95, "bear" regime gate | 161 | 37.9 | 0.71 | -11.4 | 19.2 | 9 / 0.30 | -/.95/.05/-/.52/.30 |
+| short r2>95, no market gate | 1140 | 47.2 | 0.89 | -22.3 | 38.2 | 193 / 0.65 | .59/1.51/.74/.79/.88/.57 |
+| short r2>95, SPY<200d, no stock trend | 468 | 44.2 | 0.95 | -4.8 | 26.2 | 29 / 0.47 | -/1.25/.33/-/.70/.47 |
+| short r2>95, hold3 | 325 | 47.1 | 0.90 | -6.3 | 18.0 | 9 / 0.84 | -/1.19/.23/-/.46/.84 |
+
+Combined with LIVE: every variant lowers PF (2.88 -> 1.09-1.89) and raises drawdown (4.3 -> 7.7-16.5%); the least-bad (r2>98) gives 60.7% return / PF 1.89, i.e. nothing gained.
+Findings: shorting overbought stocks in bear regimes has no edge on this universe; win rate 38-47%, PF <=1, only 2022 (the one sustained bear) is above 1 and even that is thin; 2023 and 2025 bear-gate bounces destroy it. Confirms the standing skepticism on shorts (violent bear-market rallies in a survivor universe of large caps).
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. sizing by per-stock realized downside; true PEAD if dated earnings data appears).
