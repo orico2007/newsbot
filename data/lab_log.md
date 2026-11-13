@@ -703,3 +703,19 @@ Sources: https://www.nber.org/papers/w20815.pdf , https://quantpedia.com/strateg
 
 Findings: no seasonal effect inside the live setup. Win rate and PF are flat across halves/tertiles (73-75% win), the top tertile is not better than the bottom, L12 PF flips sign of the difference (top tertile 2.43 vs below-median 4.01), and ranking by seasonal leaves PF unchanged while lowering return. Only ~3.5 years of eligible trades, so power is low, but nothing points the right way.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. gap between signal close and next open as entry-timing check, or true PEAD if dated earnings data appears).
+
+## 2026-11-13 (run 44) - strategy self-timing: skip/favour new entries by the LIVE setup's own last K closed trades (own idea; untested meta-filter; lab_meta.py)
+Source: none (own idea; "trade the equity curve" concept, rules are my own). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). History = trades of the LIVE ref portfolio closed strictly before the signal date (needs K closed trades, otherwise allowed). 6 variants tried, thresholds not tuned beyond the single round value each; mild multiple-comparison discount.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| skip if last10 win%<50 | 291 | 75.3 | 3.18 | 63.6 | 2.4 | 100 / 3.39 | 2.41/.87/2.54/4.70/2.75/3.44 |
+| skip if last10 mean pnl<0 | 274 | 74.8 | 3.12 | 58.8 | 2.4 | 95 / 3.36 | 1.93/.87/2.54/4.70/2.88/3.41 |
+| skip if last20 mean pnl<0 | 275 | 73.5 | 2.88 | 56.9 | 4.9 | 100 / 3.39 | 2.41/.87/1.52/4.67/2.72/3.44 |
+| only if last10 win%<=70 (after weak stretch) | 121 | 70.2 | 2.07 | 13.6 | 2.6 | 38 / 3.86 | 2.66/-/.58/2.58/2.16/3.01 |
+| only if last10 mean pnl<=1% | 125 | 70.4 | 2.19 | 14.5 | 2.6 | 29 / 3.12 | 2.18/-/1.47/4.50/2.41/2.01 |
+| skip if last5 has >=2 stops (pnl<-3%) | 280 | 75.7 | 3.18 | 62.2 | 3.4 | 96 / 3.35 | 2.18/.87/2.19/4.70/2.75->3.50/3.44 |
+
+Findings: no "hot hand" (the "only after weak/cool stretch" variants are clearly worse), and the cold-streak skip is mildly protective: skipping after a last-10 win rate below 50% removes 17 trades, lifts PF 2.88 -> 3.18, nearly halves max drawdown (4.3 -> 2.4), no year is worse, but it only changes 2023 and 2025, L12 is identical (the gate never fired in the last 12 months) and the effect rests on ~17 trades in 2 years. The 20-trade window does nothing. Important implementation caveat: the gate was computed from the hypothetical LIVE-ref history; live, skipped periods produce no closed trades, so the gate would freeze unless shadow (paper-only) trades of skipped signals are tracked.
+Verdict: NOT a promotion candidate (L12 not improved, tiny sample, needs shadow-trade bookkeeping); not added to challenger.py. Watch-list idea: revisit when more data accumulates. Next: web-research run (VIXY term structure / true PEAD if dated earnings data appears).
