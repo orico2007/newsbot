@@ -739,3 +739,20 @@ Sources: web search for RSI2/gap entry-timing write-ups returned mostly marketin
 
 Findings: no stock-level reversion memory. Low-autocorrelation ("mean-reverting") stocks do not beat high-autocorrelation ones (PF 2.84 vs 2.75; tertiles go the wrong way: bottom 2.49 vs top 2.42, win rate 73 vs 70), ranking by autocorrelation leaves PF/return flat. Own-history sign gives PF 3.76 vs 2.90 but the comparison base (with-history subset, PF 3.70) already shows the gain is a sample-selection effect (early 2021 trades drop out because they have no history), so the positive group is no better than its parent; returns fall to 42%. Years with real counts do not agree (2025: 2.43 vs 3.77).
 Verdict: NOT a promotion candidate; not added to challenger.py. Per-stock memory adds nothing beyond vol60>=1.75. Next: own-idea run (e.g. true PEAD if dated earnings data appears; VIXY-based term-structure proxy is limited by the cache).
+
+## 2026-11-13 (run 46) - "4% momentum burst" continuation sleeve: buy big up-days on volume, short hold (web-seeded, own rules; lab_burst.py)
+Sources: https://tikamalma.substack.com/p/4-momentum-burst-detailed-research , https://www.thepatternsite.com/Volume.html (search-result titles only, not fetched; claims unverified). Rules: stock close >= +X% vs prior close, volume > 1.5x 20d avg (variants), close in top 25% of day range, SMA50>200 trend, SPY>200d, ATR%<6%, 5-day cooldown per symbol; enter like other sleeves, stop 4 ATR, fixed hold 3/5/10 days; 10% x 12, 4/day. Compared alone and added to the LIVE vol60>=1.75% trade list. 6 variants tried, none tuned beyond the round values.
+
+| Variant (alone) | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| burst 4%, vol1.5x, hold5 | 504 | 51.4 | 1.13 | 13.1 | 13.2 | 119 / 0.88 | 2.65/.63/1.35/.82/1.06/.90 |
+| burst 4%, vol1.5x, hold3 | 527 | 51.4 | 1.09 | 7.3 | 14.8 | 123 / 0.99 | 2.69/.65/1.07/.74/1.13/1.01 |
+| burst 4%, vol1.5x, hold10 | 449 | 50.1 | 1.20 | 28.0 | 16.3 | 108 / 1.14 | 2.92/.57/1.21/.86/1.18/1.11 |
+| burst 6%, vol1.5x, hold5 | 288 | 50.3 | 1.09 | 5.1 | 9.9 | 69 / 0.87 | 2.02/.15/1.44/.92/1.15/.93 |
+| burst 4%, no vol filter, hold5 | 856 | 51.2 | 1.26 | 60.3 | 22.5 | 223 / 1.58 | 1.70/.66/1.13/1.01/1.03/1.70 |
+| burst 4%, vol2x, close top 10%, hold5 | 170 | 50.0 | 1.12 | 3.9 | 8.5 | 35 / 0.60 | 2.54/.12/1.70/1.18/.92/.68 |
+
+Combined with LIVE (same simulator, 12 slots shared): every variant lowers PF (2.88 -> 1.45-1.80) and raises drawdown (4.3 -> 6-18%); the best combined return is 144% for the no-volume variant but with PF 1.44 and 17.7% drawdown, i.e. it is just more risk taken; 2022 gets much worse in all.
+Findings: no continuation edge after big up-days on daily bars in this universe; win rate ~50%, PF ~1.1, and only 2021 looks good (bull-market beta). The sleeve is not diversifying: it is long-only, regime-gated by the same SPY>200d filter, and takes slots from the high-PF live trades.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. sizing by per-stock realized downside, or true PEAD if dated earnings data appears).
