@@ -756,3 +756,18 @@ Sources: https://tikamalma.substack.com/p/4-momentum-burst-detailed-research , h
 Combined with LIVE (same simulator, 12 slots shared): every variant lowers PF (2.88 -> 1.45-1.80) and raises drawdown (4.3 -> 6-18%); the best combined return is 144% for the no-volume variant but with PF 1.44 and 17.7% drawdown, i.e. it is just more risk taken; 2022 gets much worse in all.
 Findings: no continuation edge after big up-days on daily bars in this universe; win rate ~50%, PF ~1.1, and only 2021 looks good (bull-market beta). The sleeve is not diversifying: it is long-only, regime-gated by the same SPY>200d filter, and takes slots from the high-PF live trades.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. sizing by per-stock realized downside, or true PEAD if dated earnings data appears).
+
+## 2026-11-13 (run 47) - idle-cash overlay: park unused capital of the LIVE setup in SPY (own idea; portfolio-level; lab_cashspy.py)
+Source: none (own idea; motivated by runs 9/32/35/36 repeatedly noting that restrictive filters leave cash idle). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Each day the cash fraction = 1 - 10% x open positions; overlay earns cash fraction x SPY daily return, either only when the prior SPY close > SMA200 or always, at 100% or 50% of cash. Daily series with trade pnl booked on exit date (so MaxDD is realised-only, same basis for all rows). 4 variants tried; no tuning.
+
+| Variant | Ret % | MaxDD | Monthly Sharpe | Last 12m ret % | Return by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|
+| LIVE alone | 61.6 | 4.3 | 1.96 | 21.2 | 5.7/-0.1/4.2/18.1/5.8/17.3 |
+| cash->SPY if SPY>200d, 100% | 127.7 | 19.1 | 1.32 | 25.8 | 18.7/-15.1/13.9/38.3/14.4/25.3 |
+| cash->SPY if SPY>200d, 50% | 93.1 | 9.5 | 1.65 | 23.6 | 12.1/-7.8/9.1/28.0/10.2/21.4 |
+| cash->SPY always, 50% | 111.5 | 13.1 | 1.58 | 26.3 | 12.1/-9.6/16.1/28.0/13.1/24.0 |
+| cash->SPY always, 100% | 167.7 | 25.3 | 1.24 | 31.3 | 18.7/-19.3/28.8/38.3/19.9/30.8 |
+| SPY buy&hold (same window) | 83.1 | 25.4 | 0.83 | 12.0 | 13.0/-19.5/24.3/23.3/16.3/12.9 |
+
+Findings: the overlay is just SPY beta added on top. Return rises, but Sharpe falls (1.96 -> 1.24-1.65), drawdown grows 2-6x, and 2022 turns from flat (-0.1%) to -8..-19% (the SPY>200d gate does not avoid the 2022 bear, it lags). The live setup's value is its near-zero market exposure (~uncorrelated, PF 2.9, DD 4.3%); diluting that with index beta contradicts the goal. A user who wants more return should use the already-logged size-up (15% x 8) or run the sleeve next to a separately held index position by choice, not inside the bot.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: web-research run (e.g. sector-level washout / VIXY term-structure proxy, or true PEAD if dated earnings data appears).
