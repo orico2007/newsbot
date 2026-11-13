@@ -1,103 +1,103 @@
 {
- "updated": "2026-11-13T19:30:41.643809+00:00",
+ "updated": "2026-11-13T20:40:57.237052+00:00",
  "regime": "neutral",
  "ranked": [
   {
    "etf": "XLV",
    "name": "Healthcare",
-   "score": 8.68,
-   "ret20": 6.8,
+   "score": 8.84,
+   "ret20": 6.9,
    "above50": true
   },
   {
    "etf": "XLP",
    "name": "Consumer Staples",
-   "score": 7.36,
-   "ret20": 5.1,
+   "score": 7.65,
+   "ret20": 5.2,
    "above50": true
   },
   {
    "etf": "XLY",
    "name": "Consumer Discretionary",
-   "score": 6.67,
-   "ret20": 6.8,
+   "score": 6.62,
+   "ret20": 6.6,
    "above50": true
   },
   {
    "etf": "XLF",
    "name": "Financials",
-   "score": 5.96,
+   "score": 6.08,
    "ret20": 5.4,
    "above50": true
   },
   {
    "etf": "XLU",
    "name": "Utilities",
-   "score": 4.41,
-   "ret20": 4.0,
+   "score": 4.73,
+   "ret20": 4.2,
    "above50": true
   },
   {
    "etf": "XLRE",
    "name": "Real Estate",
-   "score": 4.15,
+   "score": 4.29,
    "ret20": 5.1,
    "above50": true
   },
   {
    "etf": "XLB",
    "name": "Materials",
-   "score": 3.32,
-   "ret20": 2.6,
+   "score": 3.26,
+   "ret20": 2.4,
    "above50": true
   },
   {
    "etf": "ITA",
    "name": "Aerospace & Defense",
-   "score": 0.81,
+   "score": 1.01,
    "ret20": 2.3,
    "above50": true
   },
   {
    "etf": "XBI",
    "name": "Biotech",
-   "score": -1.38,
+   "score": -1.26,
    "ret20": 4.3,
    "above50": false
   },
   {
    "etf": "XLC",
    "name": "Communication",
-   "score": -1.45,
-   "ret20": -1.4,
+   "score": -1.5,
+   "ret20": -1.6,
    "above50": false
   },
   {
    "etf": "XLI",
    "name": "Industrials",
-   "score": -1.91,
-   "ret20": 0.5,
+   "score": -1.88,
+   "ret20": 0.4,
    "above50": false
   },
   {
    "etf": "XLE",
    "name": "Energy",
-   "score": -2.21,
-   "ret20": -5.2,
+   "score": -1.95,
+   "ret20": -5.1,
    "above50": false
   },
   {
    "etf": "XLK",
    "name": "Technology",
-   "score": -6.01,
-   "ret20": -7.2,
+   "score": -6.19,
+   "ret20": -7.5,
    "above50": false
   },
   {
    "etf": "SMH",
    "name": "Semiconductors",
-   "score": -9.1,
-   "ret20": -10.0,
+   "score": -9.16,
+   "ret20": -10.1,
    "above50": false
   }
  ]
