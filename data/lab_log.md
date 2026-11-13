@@ -686,3 +686,20 @@ Verdict: NOT a promotion candidate; not added to challenger.py; no live change s
 ## 2026-11-13 (run 42) - exit rules (RSI2>70, close>SMA5/SMA10, prior-high OR RSI2>70, prior-high AND SMA5) re-tested on the LIVE vol60>=1.75% setup (own idea; run 25 was on the old setup; lab_exit2.py)
 5 variants vs live (n=308, win 74.4, PF 2.83, ret 60.6, DD 4.3, L12 PF 3.37). rsi70: PF 2.04, ret 47.3; prior-high OR rsi70: PF 2.78, ret 58.1, L12 3.30 (2024 better, 2021/2023/2025 worse); ma5: PF 2.33, ret 51.2; ma10: PF 1.70, ret 39.1; prior-high AND ma5: PF 2.32, ret 54.2. Every variant is below live on PF, return and last 12 months.
 Verdict: NOT a promotion candidate; not added to challenger.py. The live "close > prior high" exit stays.
+
+## 2026-11-13 (run 43) - own-stock same-calendar-month seasonality (Heston-Sadka 12-month cycle) as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_seas.py)
+Sources: https://www.nber.org/papers/w20815.pdf , https://quantpedia.com/strategies/12-month-cycle-in-cross-section-of-stocks-returns , https://rhsmith.umd.edu/news/seasonality-stock-market-returns (search snippets only; claim unverified, rules are my own). Rules: seasonal = mean return of the stock in the same calendar month over the prior 2-5 completed years (needs >=2 years, so only 261 of 308 live trades, 2023+, qualify). Split/rank the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 7 variants tried, no tuned thresholds (median/tertiles).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (all) | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 1.72/4.70/2.51/3.44 |
+| LIVE ref (with feature) | 261 | 74.7 | 3.00 | 53.0 | 4.3 | 100 / 3.39 | 1.72/4.70/2.51/3.44 |
+| seasonal >= median | 142 | 75.4 | 3.06 | 30.4 | 2.3 | 59 / 3.15 | 1.93/4.27/2.40/3.36 |
+| seasonal < median | 138 | 72.5 | 2.59 | 18.6 | 2.9 | 44 / 4.01 | 1.80/5.11/1.30/3.65 |
+| seasonal top tertile | 101 | 73.3 | 2.66 | 19.2 | 1.9 | 39 / 2.43 | 1.06/5.86/1.74/2.76 |
+| seasonal bottom tertile | 92 | 72.8 | 2.50 | 11.5 | 2.0 | 24 / 3.28 | 1.76/6.20/1.45/2.94 |
+| skip bottom tertile | 187 | 74.9 | 2.99 | 38.7 | 3.3 | 79 / 3.44 | 1.94/4.31/2.04/3.67 |
+| rank by highest seasonal | 258 | 74.0 | 2.89 | 50.5 | 4.3 | 100 / 3.39 | 1.50/4.73/2.33/3.44 |
+
+Findings: no seasonal effect inside the live setup. Win rate and PF are flat across halves/tertiles (73-75% win), the top tertile is not better than the bottom, L12 PF flips sign of the difference (top tertile 2.43 vs below-median 4.01), and ranking by seasonal leaves PF unchanged while lowering return. Only ~3.5 years of eligible trades, so power is low, but nothing points the right way.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. gap between signal close and next open as entry-timing check, or true PEAD if dated earnings data appears).
