@@ -647,3 +647,19 @@ Source: https://www.nber.org/papers/w35840 (Asymmetric Reversals: negative idios
 
 Findings: the literature direction (bigger negative idiosyncratic shock = stronger reversal) does not hold: the most idiosyncratic tertile is the WORST (PF 2.05, win 65%), the two halves have near-equal PF, and the effect is non-monotone and flips by year. Ranking by z3 slightly lowers PF and return. Within vol60>=1.75% candidates the residual size adds no information (consistent with runs 14, 21, 35: stock-specific vs market-wide does not matter once the breadth/peer/vol filters are applied).
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. correlation of the candidate with the held book, or max positions per signal-day cluster) or a true earnings-date test if dated data appears.
+
+## 2026-11-13 (run 40) - industry-adjusted reversal (stock 3d return minus same-sector peer mean 3d return) as conditioner of the LIVE vol60>=1.75% setup (web-seeded; lab_indadj.py)
+Source: https://www.dimensional.com/us-en/insights/q-and-a-on-short-run-reversals-with-mamdouh-medhat-and-robert-novy-marx (industry-adjusted reversal claimed stronger; unverified, other universe, rules are my own; earlier "pairs" idea was already tested in run 17). Rules: idio = stock 3d % minus mean 3d % of its sector peers (lab_sector.feats); split/rank the LIVE trade list (breadth>=10%, weakest-peer rank, vol60>=1.75, 10% x 12, 4/day). 6 variants tried, no tuned thresholds (median/tertiles); mild multiple-comparison discount.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| idio below median (lags sector) | 179 | 77.7 | 3.12 | 37.2 | 3.2 | 59 / 3.38 | 11.2/-/1.11/5.23/2.22/3.59 |
+| idio above median | 158 | 70.3 | 2.48 | 21.0 | 2.3 | 50 / 3.74 | 1.25/.75/1.95/3.74/3.53/3.30 |
+| idio bottom tertile | 125 | 74.4 | 3.21 | 27.7 | 2.4 | 47 / 3.24 | 160/-/1.42/5.95/1.62/3.35 |
+| idio top tertile | 115 | 67.8 | 2.59 | 14.4 | 1.2 | 39 / 3.18 | 1.09/0/2.43/4.35/3.24/2.94 |
+| skip idio bottom tertile | 209 | 71.3 | 2.05 | 22.5 | 3.4 | 62 / 2.87 | 1.10/.87/1.34/3.27/2.29/2.93 |
+| rank by most negative idio | 308 | 73.7 | 2.70 | 58.5 | 4.3 | 100 / 3.37 | 2.41/.87/1.38/5.69/1.89/3.43 |
+
+Findings: direction mildly matches the literature (stocks lagging their sector win 77.7% vs 70.3%, PF 3.1 vs 2.5), but the gain is small, L12 PF is unchanged (3.38 vs 3.37), 2023 and 2025 are worse than live, and the 2021 PF is tiny-sample noise (few losers). Return falls 60.6 -> 37.2 because half the trades are dropped. Ranking by idio instead of peer weakness lowers PF and return. The live peer-weakness rank already captures the sector component.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. correlation of candidate with held book / per-day cluster cap) or earnings-date test if dated data appears.
