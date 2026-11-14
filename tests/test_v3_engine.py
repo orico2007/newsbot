@@ -219,3 +219,9 @@ def test_failed_partial_close_reprotects_full_position_and_retries(mk3):
     sym, qty, side, stop, take = b.protected[-1]
     assert qty == 90 and side == "sell" and take == 115                  # bracket restored for the whole position
     assert e.state["meta"]["AAA"]["tp_fail"] == 1 and not e.state["meta"]["AAA"]["tp_done"]   # will retry next session
+
+
+def test_inverse_and_leveraged_etfs_are_excluded(mk3):
+    b, e = mk3()
+    ok, why, _ = e._gate("SQQQ", "long"); assert not ok and "excluded" in why
+    ok, why, _ = e._gate("RWM", "long"); assert not ok

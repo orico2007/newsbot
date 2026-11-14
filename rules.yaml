@@ -146,3 +146,6 @@ premarket:                       # חדשות ודוחות שיצאו לפני �
   window_minutes: 100
   news_lookback_minutes: 600
   retry_minutes_after_open: 20
+
+# leveraged / inverse ETFs: swing "longs" in them are really shorts (shorts are off) and decay; never trade them
+exclude_symbols: [SQQQ, TQQQ, SPXU, SPXS, SPXL, UPRO, SDOW, UDOW, SOXS, SOXL, TZA, TNA, SDS, SSO, QID, QLD, SH, PSQ, DOG, DXD, RWM, SRTY, URTY, FAZ, FAS, LABD, LABU, UVXY, SVXY, VXX, VIXY, UVIX, SVIX, TECS, TECL, YANG, YINN, NUGT, DUST, JNUG, JDST, ERX, ERY, BOIL, KOLD, UCO, SCO, TMV, TMF, TBT, SPDN, SPUU]

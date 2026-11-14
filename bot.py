@@ -89,6 +89,7 @@ class Engine:
 
     def _gate(self, sym, side):
         """Cooldown, תקרת סקטור והתאמה לשוק/סקטור. מחזיר (ok, הסבר, נקודות יישור)"""
+        if sym in set(self.r.get("exclude_symbols", [])): return False, "excluded: leveraged/inverse ETF (a short in disguise, decays)", 0.0
         cd = self.r.get("cooldown_minutes", 0)
         if cd and time.time() - self.state.get("cool", {}).get(sym, 0) < cd * 60: return False, "cooldown after recent exit", 0.0
         sec, cap = SECTOR_OF.get(sym), self.r.get("sector_cap")
