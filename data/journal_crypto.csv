@@ -651,3 +651,5 @@ time,symbol,headline,score,strategy,action,detail
 2026-11-13T17:52:23.267759+00:00,BTC/USD,"Bitcoin Crashes to $68,000, but 'Real Test' Still Lies Ahead, Analyst Says",7,news,scored,bearish other
 2026-11-13T18:22:36.563787+00:00,BTC/USD,Why Is IREN Stock Falling on Friday?,3,news,scored,bearish other
 2026-11-13T18:42:44.967607+00:00,BTC/USD,"AMD Sinks 10.5% as Chip Rally Unwinds, Nasdaq 100 Falls 1.7%: Stock Market Today",3,news,scored,bearish macro
+2026-11-14T00:14:48.898971+00:00,ETH/USD,,30.3,bullish_harami_support,blocked,BTC regime down
+2026-11-14T00:14:48.898971+00:00,SOL/USD,,30.3,bullish_harami_support,blocked,BTC regime down
