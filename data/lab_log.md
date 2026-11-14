@@ -901,3 +901,24 @@ Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 
 Findings: the tilt is not a threshold artifact: every threshold 0.3-0.7 and both smooth forms beat LIVE on PF (+0.17 to +0.34), return (except 0.7: 59.6 vs 61.7), and L12 PF, with equal or lower drawdown at 0.4+. It helps in both halves on PF. Weak points: 2022 PF falls at thr 0.6/0.7 (few trades), 2025 PF dips at thr 0.3/0.4, Sharpe gain is small (2.32 -> 2.35-2.41) and 2nd-half Sharpe is flat (2.77 vs 2.71), so the gain is modest sizing efficiency, not a new edge. Slippage at 1.25x size not modelled.
 Verdict: run-52 PROMOTION CANDIDATE stands as modest and robust to threshold choice; keep 0.5 / 1.25-0.75 (middle of a flat plateau, no tuning). No new challenger variant added. Next: web-sourced new family (e.g. sector-ETF reversion sleeve) since conditioner ideas on the live setup are saturated.
+
+## 2026-11-14 (run 56) - sector/index ETF short-term reversion sleeve, standalone and added to the LIVE setup (web-seeded; lab_etf.py)
+Sources (search-result titles only, not fetched; claims unverified): https://quantifiedstrategies.substack.com/p/best-etf-for-mean-reversion-strategies , https://concretumgroup.substack.com/p/a-mean-reversion-model-for-us-sectors . Rules my own.
+Rules: 15 ETFs (XLB/XLC/XLE/XLF/XLI/XLK/XLP/XLRE/XLU/XLV/XLY, QQQ, IWM, DIA, XBI); long when close>SMA200, SPY>200d gate, trigger in {RSI2<10, RSI2<5, down-3-days & RSI2<20, RSI2<5 & IBS<0.25}; exit prior-high close, hold 7, stop 4 ATR, 10% size. Standalone: max 6 pos, 2/day. Combined: added to the LIVE trade list in the shared 10% x 12, 4/day simulator. 9 variants tried (discount any winner).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ETF alone RSI2<10 | 450 | 68.4 | 1.45 | 13.2 | 3.7 | 0.86 | 2.54 | .98/.06/1.77/1.39/2.27/2.23 |
+| LIVE + ETF RSI2<10 | 790 | 68.7 | 1.81 | 60.1 | 6.5 | 1.56 | 2.57 | 1.37/.11/1.49/2.17/2.18/2.50 |
+| ETF alone RSI2<5 | 240 | 64.6 | 1.20 | 3.5 | 3.8 | 0.35 | 3.11 | .92/.13/1.88/.99/1.90/2.39 |
+| LIVE + ETF RSI2<5 | 545 | 68.4 | 1.94 | 53.2 | 5.7 | 1.60 | 2.98 | 1.52/.16/1.53/2.55/2.03/2.89 |
+| ETF alone down3 & RSI2<20 | 422 | 65.9 | 1.26 | 7.5 | 4.4 | 0.56 | 2.06 | 1.01/.03/1.39/1.21/1.75/1.99 |
+| LIVE + ETF down3 & RSI2<20 | 779 | 67.4 | 1.85 | 63.2 | 6.1 | 1.71 | 2.61 | 1.52/.09/1.58/2.17/2.00/2.66 |
+| ETF alone RSI2<5 & IBS<.25 | 169 | 60.4 | 1.01 | 0.0 | 4.9 | 0.01 | 3.81 | .56/.19/1.55/.77/1.25/2.72 |
+| LIVE + ETF RSI2<5 & IBS<.25 | 479 | 67.6 | 1.96 | 50.0 | 6.2 | 1.64 | 3.15 | 1.48/.21/1.46/2.50/1.87/3.08 |
+| ETF alone RSI2<10, no SPY gate | 500 | 68.6 | 1.33 | 11.9 | 4.1 | 0.68 | 2.62 | .98/.56/1.33/1.39/1.91/2.31 |
+
+Daily-pnl correlation LIVE vs ETF RSI2<10: 0.27 (moderate; they share the SPY>200d regime).
+Findings: ETF reversion is a weak, low-return edge here (PF 1.0-1.45, return 0-13% at 10% size; flat or losing in 2021, strongly losing in 2022, only decent in 2023/2025/2026). Adding it to the LIVE list cuts PF (2.83 -> 1.8-1.96), Sharpe (2.28 -> 1.56-1.71) and raises drawdown (4.3 -> 5.7-6.5); returns are no better (50-63 vs 61). The sleeve competes for the 12 slots and 4/day with the far better vol60-filtered stock signals. Low-vol index ETFs fail the same vol60>=1.75 logic that makes the stock filter work (consistent with runs 8-9).
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: stock-selection ideas are saturated; remaining untested families are multi-day pairs/relative value inside sectors (pair spreads rather than single-stock drops) and intraday-data-dependent ideas that daily bars cannot test.
