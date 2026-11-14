@@ -867,3 +867,18 @@ Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 
 Findings: no edge. Only 25% of live signals occur in high-correlation regimes (breadth gate already selects stress days), the split gives no PF difference (2.58 vs 2.86), and tilting toward high correlation lowers PF and return (2.83 / 50%) while the inverse tilt only adds return via leverage (avg size ~1.0 but DD 5.4 vs 4.3) with PF flat. Unlike dispersion (run 51/52), correlation level carries no usable information beyond the breadth gate.
 Verdict: NOT a promotion candidate; not added to challenger.py. Run 52 dispersion tilt remains the only open candidate. Next: own-idea robustness check of the run-52 tilt (threshold 0.4/0.6, early/late halves) or a different web family.
+
+## 2026-11-14 (run 54) - inverse-volatility (equal-risk) trade sizing on the LIVE setup (own idea; web search for volatility-scaled reversal returned only title-level hits, e.g. https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-multi-asset-pullback-strategy-discovery/, not fetched; lab_invvol.py)
+Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Size multiplier = clip(target/vol60, lo, hi), emulated by scaling pnl (PF size-weighted). Controls: the opposite (direct) vol tilt. 5 variants tried (discount any winner).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| inv-vol 2.5, clip .5-1.5 | 308 | 74.4 | 2.70 | 54.7 | 3.8 | 2.27 | 3.15 | 2.02/.67/1.65/5.03/2.60/2.90 |
+| inv-vol 2.5, clip .75-1.25 | 308 | 74.4 | 2.71 | 56.1 | 4.2 | 2.29 | 3.18 | 2.16/.68/1.58/4.87/2.57/3.02 |
+| inv-vol 3.0, clip .5-1.5 | 308 | 74.4 | 2.72 | 67.3 | 4.6 | 2.29 | 3.18 | 2.15/.68/1.62/5.00/2.61/2.94 |
+| DIRECT tilt v/2.5, clip .5-1.5 | 308 | 74.4 | 2.94 | 70.6 | 4.9 | 2.16 | 3.51 | 2.78/1.14/1.67/4.47/2.36/3.88 |
+| DIRECT tilt v/2.5, clip .75-1.25 | 308 | 74.4 | 2.97 | 66.2 | 4.6 | 2.22 | 3.54 | 2.73/1.14/1.65/4.66/2.45/3.82 |
+
+Findings: equal-risk sizing does not help: PF falls 2.83 -> 2.70, L12 PF falls, Sharpe flat (2.27-2.29 vs 2.28); the return rise in the 3.0 version is only added exposure. The direct tilt (bigger on more volatile names) lifts PF/return but Sharpe falls (2.16-2.22) and drawdown rises (4.6-4.9 vs 4.3) - it is mostly extra leverage, consistent with runs 9/31 (vol60 dose-response already captured by the live filter).
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: web-sourced idea on cross-asset/sector-ETF reversion sleeve, or robustness of the run-52 dispersion tilt (threshold/halves).
