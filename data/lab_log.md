@@ -788,3 +788,20 @@ Sources: search only (https://www.quantconnect.com/research/15367/short-term-rev
 Combined with LIVE: every variant lowers PF (2.88 -> 1.09-1.89) and raises drawdown (4.3 -> 7.7-16.5%); the least-bad (r2>98) gives 60.7% return / PF 1.89, i.e. nothing gained.
 Findings: shorting overbought stocks in bear regimes has no edge on this universe; win rate 38-47%, PF <=1, only 2022 (the one sustained bear) is above 1 and even that is thin; 2023 and 2025 bear-gate bounces destroy it. Confirms the standing skepticism on shorts (violent bear-market rallies in a survivor universe of large caps).
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. sizing by per-stock realized downside; true PEAD if dated earnings data appears).
+
+## 2026-11-14 (run 49) - downside semi-deviation, up/down vol asymmetry and worst-day crash history as selectors on the LIVE setup (own idea; follow-up listed in run 48; lab_downvol.py)
+Source: none (own idea). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12, 4/day). Features over the last 60 daily returns: downside semi-deviation sqrt(mean(min(r,0)^2)), upside semi-deviation, worst single-day return. Variants: (a,b) drop the vol60 filter and require downside dev >=1.3 / >=1.5; (c,d) inside LIVE split by down/up ratio <1 vs >=1; (e,f) inside LIVE split by worst day > -8% vs <= -8%. 6 variants, thresholds not tuned (one pass), so a luck discount of roughly 1-in-6 applies to any "winner".
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| breadth only (no vol filter) | 605 | 68.6 | 1.79 | 52.3 | 5.6 | 137 / 2.59 | 2.04/.13/1.35/1.93/1.71/2.66 |
+| no vol filter, downside dev >=1.3 | 180 | 73.3 | 2.84 | 36.4 | 3.7 | 55 / 3.75 | 6.29/0.0/1.22/3.36/1.90/4.81 |
+| no vol filter, downside dev >=1.5 | 131 | 74.8 | 3.32 | 31.4 | 2.7 | 43 / 5.21 | 3.58/-/1.51/3.59/2.80/5.98 |
+| LIVE & down/up ratio <1 | 289 | 74.0 | 2.69 | 53.4 | 4.7 | 96 / 3.11 | 2.43/.87/1.55/4.76/2.32/3.06 |
+| LIVE & down/up ratio >=1 | 26 | 76.9 | 5.07 | 5.1 | 0.5 | 5 / n.a. | 0/-/.87/6.08/5.04/- |
+| LIVE & worst day > -8% | 269 | 72.9 | 2.62 | 42.6 | 3.8 | 88 / 2.86 | 3.18/.87/1.53/5.62/1.46/3.13 |
+| LIVE & worst day <= -8% | 55 | 70.9 | 2.25 | 9.7 | 2.2 | 16 / 5.01 | .44/-/.55/2.48/3.83/4.20 |
+
+Findings: downside semi-deviation is just another face of the vol60 filter (it selects the same high-vol names); it reaches PF 2.8-3.3 but at roughly half the trades and half the return (31-36% vs 61.7%), with 2023 weaker (1.2-1.5 vs 1.72) and 2021 wildly unstable. Splitting LIVE by down/up asymmetry or by crash history gives no usable improvement: the "bad" halves (ratio<1, worst day > -8%) hold most of the return, the other halves are tiny samples (26 and 55 trades, 5 and 16 in the last 12 months) with erratic yearly PF. No monotone, stable pattern, so no edge beyond vol60 itself.
+Verdict: NOT a promotion candidate; not added to challenger.py. Live vol60>=1.75% remains the better selector (same PF band, double the return). Next: web-research run (e.g. sector-level washout / VIXY proxy, or true PEAD if dated earnings data appears).
