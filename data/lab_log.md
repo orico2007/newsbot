@@ -851,3 +851,19 @@ Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 
 Findings: the tilt beats LIVE on PF, return, last-12-months PF and in every year (2022 ties; no trades differ, 2022 has little signal), with equal or lower drawdown for 1.25/0.75, whose average size is about 1x so the gain is not just extra leverage (+8.5 pts return, PF 2.88 -> 3.16, DD 4.3 -> 3.9). Mechanism is plausible (reversals pay more in high-dispersion stress, consistent with run 51's split) and it uses a size rule rather than a filter, so no trades are lost. Caveats: the dispersion feature was found on this same data in run 51, the size uplift per year (+6 to +17% PF) is modest, and execution slippage at larger size is not modelled. The prior-21d-return split is noise (15 trades below -10%; the >=0% bucket is unstable in 2022/2023 and halves return).
 Verdict: PROMOTION CANDIDATE (size rule only, modest; recommend 1.25x / 0.75x). Added to challenger.py as "lab run52". Prior-21d-return: NOT a candidate. Next: web-research run on something other than conditioners (e.g. true PEAD if dated earnings data appears), or re-check the tilt on next month's data.
+
+## 2026-11-14 (run 53) - correlated-stress regime (universe average correlation with the equal-weight index, 20d, trailing-250d percentile) as filter / size tilt on the LIVE setup (web-seeded: https://quantpedia.com/short-term-correlated-stress-reversal-trading/ , title only, not fetched, claims unverified; rules my own; lab_corr.py)
+Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Corr = mean over universe stocks of the 20d correlation of daily returns with the equal-weight universe return; percentile uses prior 250 days only. Variants tried: 7 (splits at 0.5 / 0.8, two size tilts); discount any winner.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| corr pct >= 0.5 | 77 | 70.1 | 2.58 | 9.9 | 1.8 | 19 / 6.81 | 4.94/0/1.06/1.93/2.76/2.84 |
+| corr pct < 0.5 | 238 | 74.4 | 2.86 | 46.5 | 4.4 | 82 / 3.13 | 1.49/1.89/1.73/6.94/2.38/3.49 |
+| corr pct >= 0.8 | 19 | 57.9 | 2.67 | 2.7 | 1.2 | 2 / 0.88 | too few |
+| corr pct < 0.8 | 289 | 75.4 | 2.90 | 57.5 | 4.3 | 98 / 3.41 | 1.89/.87/1.72/5.75/2.63/3.48 |
+| tilt 1.25x if corr>=.5 else 0.75x | 308 | 74.4 | 2.83 | 50.0 | 3.3 | 100 / 3.53 | 2.74/.64/1.71/3.88/2.56/3.41 |
+| inverse tilt 1.25x if corr<.5 else 0.75x | 308 | 74.4 | 2.92 | 74.2 | 5.4 | 100 / 3.29 | 2.15/1.11/1.73/5.60/2.47/3.46 |
+
+Findings: no edge. Only 25% of live signals occur in high-correlation regimes (breadth gate already selects stress days), the split gives no PF difference (2.58 vs 2.86), and tilting toward high correlation lowers PF and return (2.83 / 50%) while the inverse tilt only adds return via leverage (avg size ~1.0 but DD 5.4 vs 4.3) with PF flat. Unlike dispersion (run 51/52), correlation level carries no usable information beyond the breadth gate.
+Verdict: NOT a promotion candidate; not added to challenger.py. Run 52 dispersion tilt remains the only open candidate. Next: own-idea robustness check of the run-52 tilt (threshold 0.4/0.6, early/late halves) or a different web family.
