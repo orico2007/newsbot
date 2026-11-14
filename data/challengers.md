@@ -36,6 +36,7 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | LAB run19: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted) | 749 | 66.0 | 1.7 | 49.6 | 7.3 | 1.39 | 171 | 67.8 | 1.93 | better in 2/5 years |
 | LAB run19: size 1.25x if SPY 3d<-1% else 0.75x (PF is size-weighted) | 749 | 66.0 | 1.52 | 43.1 | 6.7 | 1.24 | 171 | 67.8 | 1.68 | better in 1/5 years |
 | lab: live setup + vol60>=1.75%, size 15% x 8 | 308 | 74.4 | 2.83 | 103.2 | 6.4 | 2.28 | 100 | 75.0 | 3.37 | PROMOTE-CANDIDATE |
+| lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted) | 308 | 74.4 | 3.14 | 70.3 | 3.9 | 2.33 | 100 | 75.0 | 3.76 | PROMOTE-CANDIDATE |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 256 | 76.2 | 3.29 | 57.9 | 3.4 | 2.39 | 84 | 77.4 | 4.51 | better in 5/5 years |
 
 ## Profit factor by year
@@ -74,4 +75,5 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | LAB run19: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted) | 2.85 | 0.1 | 1.14 | 2.24 | 1.53 | 1.97 |
 | LAB run19: size 1.25x if SPY 3d<-1% else 0.75x (PF is size-weighted) | 2.19 | 0.12 | 1.27 | 1.82 | 1.37 | 1.65 |
 | lab: live setup + vol60>=1.75%, size 15% x 8 | 2.41 | 0.87 | 1.62 | 4.74 | 2.51 | 3.41 |
+| lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted) | 2.93 | 0.87 | 1.78 | 5.3 | 2.58 | 3.73 |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 2.71 | 0.87 | 2.04 | 5.41 | 2.4 | 5.09 |

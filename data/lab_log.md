@@ -835,3 +835,19 @@ Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 
 Findings: the upper-half bucket has higher PF in every year (>= live in all 6) and lower drawdown, but halves the trade count so total return falls (40.2 vs 61.7%, capital sits idle); win rate is identical (74%), so the gain is in loss size, not hit rate. The top-quintile cut is unstable by year. The ">=0.5" effect is likely partly the same stress information as the breadth gate.
 Verdict: NOT a promotion candidate (fails total-return bar); not added to challenger.py. Possible follow-up: use it as a size tilt (1.5x above median / 0.75x below) rather than a filter.
+
+## 2026-11-14 (run 52) - dispersion SIZE TILT (follow-up of run 51) and prior-21d-return conditioning of the LIVE setup (web-inspired, unverified: https://alphaarchitect.com/how-volatility-and-turnover-affect-return-reversals/ and https://quantpedia.com/short-term-return-reversals-and-intraday-transactions/ , titles only, not fetched; rules my own; lab_dsz.py)
+Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Size tilt scales pnl_pct (PF/return size-weighted) by hi when the universe 1d-return dispersion percentile (prior 250d, no look-ahead) >= 0.5, else lo. Same trades taken, only size changes. 6 variants this run (threshold 0.5 reused from run 51, not tuned, but run 51 looked at the same data, so the discount is real: ~4 dispersion looks in total).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| tilt 1.5x / 0.75x | 308 | 74.4 | 3.25 | 85.3 | 4.2 | 100 / 3.91 | 2.84/.87/1.93/5.49/2.57/3.87 |
+| tilt 1.25x / 0.75x (avg size ~1.0) | 308 | 74.4 | 3.16 | 70.2 | 3.9 | 100 / 3.78 | 2.71/.87/1.87/5.28/2.55/3.77 |
+| tilt 1.5x / 1.0x | 308 | 74.4 | 3.10 | 91.7 | 5.0 | 100 / 3.70 | 2.65/.87/1.84/5.16/2.54/3.70 |
+| prior 21d ret < -10% | 15 | 60.0 | 1.61 | 1.6 | 1.7 | 3 / 9.62 | too few trades |
+| prior 21d ret >= -10% | 296 | 75.0 | 3.01 | 59.2 | 3.6 | 97 / 3.21 | 3.26/.87/1.97/4.53/2.62/3.20 |
+| prior 21d ret >= 0% | 195 | 76.4 | 3.41 | 41.1 | 3.7 | 65 / 5.94 | 3.99/.12/1.45/4.50/3.09/7.91 |
+
+Findings: the tilt beats LIVE on PF, return, last-12-months PF and in every year (2022 ties; no trades differ, 2022 has little signal), with equal or lower drawdown for 1.25/0.75, whose average size is about 1x so the gain is not just extra leverage (+8.5 pts return, PF 2.88 -> 3.16, DD 4.3 -> 3.9). Mechanism is plausible (reversals pay more in high-dispersion stress, consistent with run 51's split) and it uses a size rule rather than a filter, so no trades are lost. Caveats: the dispersion feature was found on this same data in run 51, the size uplift per year (+6 to +17% PF) is modest, and execution slippage at larger size is not modelled. The prior-21d-return split is noise (15 trades below -10%; the >=0% bucket is unstable in 2022/2023 and halves return).
+Verdict: PROMOTION CANDIDATE (size rule only, modest; recommend 1.25x / 0.75x). Added to challenger.py as "lab run52". Prior-21d-return: NOT a candidate. Next: web-research run on something other than conditioners (e.g. true PEAD if dated earnings data appears), or re-check the tilt on next month's data.
