@@ -805,3 +805,19 @@ Source: none (own idea). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, 
 
 Findings: downside semi-deviation is just another face of the vol60 filter (it selects the same high-vol names); it reaches PF 2.8-3.3 but at roughly half the trades and half the return (31-36% vs 61.7%), with 2023 weaker (1.2-1.5 vs 1.72) and 2021 wildly unstable. Splitting LIVE by down/up asymmetry or by crash history gives no usable improvement: the "bad" halves (ratio<1, worst day > -8%) hold most of the return, the other halves are tiny samples (26 and 55 trades, 5 and 16 in the last 12 months) with erratic yearly PF. No monotone, stable pattern, so no edge beyond vol60 itself.
 Verdict: NOT a promotion candidate; not added to challenger.py. Live vol60>=1.75% remains the better selector (same PF band, double the return). Next: web-research run (e.g. sector-level washout / VIXY proxy, or true PEAD if dated earnings data appears).
+
+## 2026-11-14 (run 50) - sector-level washout (share of same-sector peers with RSI2<10 on the signal day) as conditioner of the LIVE setup (web-seeded; lab_secwash.py)
+Source: search only (https://sentimentrader.com/blog/massive-capitulation-in-the-utilities-sector; result titles only, not fetched; claims unverified). Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day); peer RSI2<10 share computed per signal over same-sector symbols (>=3 peers). Variants tried: 6 (thresholds 10/20/35/50% plus a rank variant); all post-hoc, so any winner is discounted for multiple comparisons.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| sector washout >=20% | 216 | 71.8 | 2.73 | 37.8 | 3.8 | 67 / 3.87 | 2.45/.12/1.09/4.85/2.16/4.79 |
+| sector washout <20% | 112 | 75.9 | 2.29 | 15.3 | 2.4 | 39 / 2.56 | 2.49/-/2.07/4.52/1.63/2.14 |
+| sector washout >=35% | 158 | 71.5 | 2.50 | 22.4 | 2.8 | 50 / 3.89 | 2.46/0/1.03/5.37/1.54/4.78 |
+| sector washout <10% | 63 | 76.2 | 1.83 | 4.9 | 1.4 | 22 / 1.34 | .65/-/4.19/10.07/1.16/1.38 |
+| sector washout >=50% | 115 | 72.2 | 2.70 | 18.4 | 2.0 | 33 / 4.07 | 3.56/0/1.57/5.38/1.49/5.10 |
+| rank by highest sector washout | 308 | 74.0 | 2.82 | 60.6 | 4.3 | 100 / 3.39 | 2.41/.87/1.58/4.67/2.51/3.44 |
+
+Findings: no useful separation. Every washout threshold has lower PF than the live reference over the full period and about half the return; the high-washout buckets look better only in the last 12 months (PF 3.9-4.1 on 33-67 trades) while 2022 and 2023 get worse (2022 PF 0-0.12). Ranking by sector washout changes nothing (already captured by peer-weakness rank and the market breadth gate). Sector washout is just a thinner copy of the market breadth filter.
+Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. VIXY/vol-term proxy, or true PEAD if dated earnings data appears).
