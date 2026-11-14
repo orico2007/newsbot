@@ -821,3 +821,17 @@ Source: search only (https://sentimentrader.com/blog/massive-capitulation-in-the
 
 Findings: no useful separation. Every washout threshold has lower PF than the live reference over the full period and about half the return; the high-washout buckets look better only in the last 12 months (PF 3.9-4.1 on 33-67 trades) while 2022 and 2023 get worse (2022 PF 0-0.12). Ranking by sector washout changes nothing (already captured by peer-weakness rank and the market breadth gate). Sector washout is just a thinner copy of the market breadth filter.
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: own-idea run (e.g. VIXY/vol-term proxy, or true PEAD if dated earnings data appears).
+
+## 2026-11-14 (run 51) - cross-sectional return dispersion (universe stdev of 1d returns, trailing-250d percentile) as conditioner of the LIVE setup (own idea; lab_disp.py)
+Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day); dispersion percentile uses only prior 250 days. Variants tried: 4 (split at 0.5 and 0.8); post-hoc, discount for multiple comparisons.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF by year 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| dispersion pct >= 0.5 | 167 | 74.3 | 3.79 | 40.2 | 2.1 | 67 / 4.76 | 4.97/.87/1.78/7.28/2.49/4.63 |
+| dispersion pct < 0.5 | 168 | 74.4 | 2.13 | 19.2 | 3.9 | 42 / 2.12 | 2.31/-/1.10/3.54/2.54/2.08 |
+| dispersion pct >= 0.8 | 82 | 73.2 | 3.78 | 21.0 | 2.1 | 39 / 4.04 | 115.9/0/.23/11.45/1.83/4.01 |
+| dispersion pct < 0.8 | 239 | 74.5 | 2.47 | 35.5 | 3.6 | 65 / 3.05 | 1.87/-/1.95/3.27/2.17/3.23 |
+
+Findings: the upper-half bucket has higher PF in every year (>= live in all 6) and lower drawdown, but halves the trade count so total return falls (40.2 vs 61.7%, capital sits idle); win rate is identical (74%), so the gain is in loss size, not hit rate. The top-quintile cut is unstable by year. The ">=0.5" effect is likely partly the same stress information as the breadth gate.
+Verdict: NOT a promotion candidate (fails total-return bar); not added to challenger.py. Possible follow-up: use it as a size tilt (1.5x above median / 0.75x below) rather than a filter.
