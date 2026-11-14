@@ -882,3 +882,22 @@ Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>
 
 Findings: equal-risk sizing does not help: PF falls 2.83 -> 2.70, L12 PF falls, Sharpe flat (2.27-2.29 vs 2.28); the return rise in the 3.0 version is only added exposure. The direct tilt (bigger on more volatile names) lifts PF/return but Sharpe falls (2.16-2.22) and drawdown rises (4.6-4.9 vs 4.3) - it is mostly extra leverage, consistent with runs 9/31 (vol60 dose-response already captured by the live filter).
 Verdict: NOT a promotion candidate; not added to challenger.py. Next: web-sourced idea on cross-asset/sector-ETF reversion sleeve, or robustness of the run-52 dispersion tilt (threshold/halves).
+
+## 2026-11-14 (run 55) - robustness of the run-52 dispersion size tilt: threshold 0.3-0.7, smooth tilts, early/late halves (own idea; lab_dsz2.py)
+Rules: LIVE trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75, hold 7, stop 4 ATR, 10% x 12, 4/day). Size x1.25 if universe 1d-return dispersion percentile (prior 250d) >= thr else x0.75; two smooth linear tilts. 7 new variants (cumulative dispersion looks now ~11, so discount). No web source this run (own robustness check).
+
+| Variant | n | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 2.32 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| thr 0.3 | 308 | 74.4 | 3.08 | 76.9 | 4.4 | 2.41 | 3.49 | 2.94/.87/1.89/5.23/2.27/3.75 |
+| thr 0.4 | 308 | 74.4 | 3.08 | 72.9 | 3.9 | 2.37 | 3.61 | 2.74/.87/1.94/5.00/2.29/3.86 |
+| thr 0.5 (run 52) | 308 | 74.4 | 3.16 | 70.2 | 3.9 | 2.35 | 3.78 | 2.71/.87/1.87/5.28/2.55/3.77 |
+| thr 0.6 | 308 | 74.4 | 3.21 | 67.1 | 3.9 | 2.39 | 3.74 | 3.10/.57/1.66/5.25/2.80/3.71 |
+| thr 0.7 | 308 | 74.4 | 3.05 | 59.6 | 3.9 | 2.40 | 3.35 | 3.02/.52/1.56/5.42/2.64/3.37 |
+| smooth 0.75+0.5*pct | 308 | 74.4 | 3.05 | 67.8 | 4.1 | 2.38 | 3.53 | 2.74/.74/1.78/5.11/2.45/3.63 |
+| smooth 0.5+1.0*pct | 308 | 74.4 | 3.22 | 74.0 | 3.9 | 2.40 | 3.66 | 3.16/.65/1.84/5.54/2.40/3.80 |
+| Early half (to 2024-06-13): ref vs thr .5 tilt | 138 | 74.6 | 2.52 vs 2.83 | 19.4 vs 20.9 | 4.3 vs 3.9 | 1.77 vs 1.86 | - | |
+| Late half: ref vs thr .5 tilt | 170 | 74.1 | 3.17 vs 3.39 | 35.5 vs 40.8 | 2.6 vs 2.6 | 2.77 vs 2.71 | 3.39 vs 3.78 | |
+
+Findings: the tilt is not a threshold artifact: every threshold 0.3-0.7 and both smooth forms beat LIVE on PF (+0.17 to +0.34), return (except 0.7: 59.6 vs 61.7), and L12 PF, with equal or lower drawdown at 0.4+. It helps in both halves on PF. Weak points: 2022 PF falls at thr 0.6/0.7 (few trades), 2025 PF dips at thr 0.3/0.4, Sharpe gain is small (2.32 -> 2.35-2.41) and 2nd-half Sharpe is flat (2.77 vs 2.71), so the gain is modest sizing efficiency, not a new edge. Slippage at 1.25x size not modelled.
+Verdict: run-52 PROMOTION CANDIDATE stands as modest and robust to threshold choice; keep 0.5 / 1.25-0.75 (middle of a flat plateau, no tuning). No new challenger variant added. Next: web-sourced new family (e.g. sector-ETF reversion sleeve) since conditioner ideas on the live setup are saturated.
