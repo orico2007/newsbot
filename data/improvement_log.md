@@ -105,3 +105,9 @@ Decision: no change to live rules; not added to challenger.py.
 
 ## 2026-11-14 (UTC) - fix: leveraged/inverse ETFs excluded (SQQQ, RWM entered as swing "longs")
 The chart-pattern scan bought SQQQ (3x inverse Nasdaq) and RWM (inverse Russell) as swing longs: that is a short in disguise (shorts are off, no proven edge) and leveraged products decay. Added rules.exclude_symbols (53 leveraged/inverse/vol ETFs) checked in _gate. Existing SQQQ/RWM positions are left to their stops/targets.
+
+## 2026-11-15 (UTC, Sunday) - round: SPY short-term trend / realized-vol conditioner (lab_spysma.py, lab run 24) + fix
+Checked: stock sessions through run 161 all success/cancelled-by-concurrency; 11-13 report: 1 error, equity $99,046, 12 open positions. The one error was NBG6 (German squeeze-out headline) failing Alpaca snapshot with 400. Live scorecard: only 2 closed swing trades (both stops, one a news trade) and 4 crypto; far too few to compare with backtest win/PF. challengers.md: still no variant with 3 consecutive weekly wins on the current champion. Note: 11-14 report mentions SQQQ/RWM already fixed. Tests: 215 passed.
+Tested 4 variants (SPY>SMA20, <=SMA20, SPY 5d rv above/below median) on the live vol60 setup: all roughly halve trades and return (18-36% vs 60.6%), win rate unchanged ~74%; fails promotion bar.
+Fix: non-US ticker codes (e.g. NBG6) are now journaled as "blocked: not a US ticker" before the snapshot call instead of raising a 400 error (test added).
+Decision: no change to live strategy rules.

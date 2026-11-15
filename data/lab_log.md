@@ -390,3 +390,13 @@ Rules: LIVE setup (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75
 | dist from 20d high deeper / shallower | 167 / 169 | 74.3 / 75.1 | 2.81 / 2.98 | 34.3 / 23.9 | 2.9 / 2.1 | 67 / 3.57 ; 42 / 2.61 | no effect |
 
 Verdict: NOT a promotion candidate. Each filter roughly halves the trade count and the return (37% or less vs 60.6%). The best, ret21 above median (PF 3.57, L12 5.72, 2026 PF 8.1), fails the return bar and collapses in 2022 (0.12); the ret10 and ret5 splits point in opposite directions, so the effect is not monotone and fits chance after 8 comparisons. Distance from the 20d high does nothing. Weak hint only: pullbacks inside a positive 1-month trend revert a bit better, consistent with the existing SMA50>SMA200 trend rule. Not added to challenger.py. Next: true PEAD with earnings dates, pairs inside sector, a non-overlapping sleeve (e.g. long-only gap-up continuation) to combine with the champion.
+
+## 2026-11-15 (run 24) - SPY short-term trend (close vs SMA20) and 5d realized-vol state as conditioner of the LIVE setup (own idea). Script: lab_spysma.py.
+4 variants (median split of SPY 5d realized vol, mild look-ahead). LIVE vol175: n=308, PF 2.83, ret 60.6, DD 4.3.
+| Variant | n | Win % | PF | Ret % | DD | L12 PF |
+|---|---|---|---|---|---|---|
+| SPY > SMA20 | 162 | 74.1 | 2.49 | 20.8 | 2.4 | 2.92 |
+| SPY <= SMA20 | 161 | 74.5 | 3.14 | 36.2 | 3.2 | 3.62 |
+| SPY 5d rv > median | 170 | 73.5 | 3.11 | 36.2 | 3.8 | 2.75 |
+| SPY 5d rv <= median | 156 | 73.7 | 2.28 | 18.8 | 2.4 | 4.38 |
+Verdict: null. Win rate is identical across halves; PF differences come from a few years with tiny loss counts and the split halves return, failing the return bar. Mild hint (consistent with earlier fear-filter runs): signals during SPY weakness/higher vol are slightly better, already captured by the breadth filter. Not added to challenger.py.

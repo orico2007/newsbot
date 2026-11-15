@@ -200,6 +200,8 @@ class Engine:
         """מהחלטת Claude להזמנה: גרף -> שוק/סקטור -> Risk Gate. מחזיר 'retry' אם אין עדיין מספיק נרות 5 דקות"""
         d = self.r["day"]
         strategy, side = route
+        if not str(sym).replace(".", "").isalpha():  # foreign/OTC codes like NBG6 have no Alpaca snapshot (400)
+            self._j(now, sym, headline, v, strategy, side, "blocked", "not a US ticker"); return
         if strategy == "day" and mtc is not None and mtc <= d["flatten_minutes_before_close"] + 5:
             self._j(now, sym, headline, v, strategy, side, "blocked", "too close to market close"); return
         try:

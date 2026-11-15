@@ -124,3 +124,9 @@ def test_session_trades_then_ends_at_close(mk):
 def test_ts_nanoseconds(): assert bot._ts("2026-10-29T10:00:00.337868559-04:00").year == 2026
 def test_weekdays_between():
     assert bot.weekdays_between("2026-10-23", "2026-10-30") == 5      # ו' -> ה' הבאה
+
+def test_non_us_ticker_blocked_not_error(mk, tmp_path):
+    b, e = mk(news_items=[news(symbols=("NBG6",))]); e.step()
+    assert not b.orders
+    t = journal_text(tmp_path)
+    assert "NBG6" not in t or ("not a US ticker" in t and "error" not in t)
