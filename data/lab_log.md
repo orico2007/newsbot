@@ -471,3 +471,18 @@ Rules: one-day drop (prior close - close)/ATR14 >= k, optional volume >= m x 20d
 | COMBINED LIVE + drop2 vol2 IBS<=.2 | 347 | 72.3 | 2.57 | 61.2 | 4.7 | 107 / 3.48 | 2.5/.87/1.39/2.99/2.59/3.57 |
 
 Verdict: NOT a promotion candidate. Capitulation bars inside an uptrend with SPY>200d are rare (13-134 trades in 5+ years) and have no edge as a standalone sleeve (PF 0.7-1.5, 56-59% win, ~0-3% return). The only variant that looks good (IBS<=.2) has 46 trades and its PF is carried by 2025-26 (8.9/8.6 on 8 recent trades) while 2024 is 0.52 - small-sample luck among 6 comparisons. Combining dilutes the champion's PF (2.83 -> 2.2-2.6) with no return gain. Panic-day size is not a better selector than the champion's RSI2/breadth/vol60 logic. Not added to challenger.py. Next: true PEAD using earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
+
+## 2026-11-15 (run 29) - short-term volatility expansion (sd5/sd60, sd20/sd60, signal-day TR/ATR14) as conditioner of the vol60>=1.75% LIVE setup (own idea; follow-up of runs 12 and 28). Script: lab_volratio.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) split at the median of each feature. 6 variants tried (multiple-comparison discount); 2026 not used to choose.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| sd5/sd60 > med | 160 | 70.6 | 3.15 | 33.4 | 2.9 | 57 / 3.61 | 5.25/-/1.23/6.76/1.65/3.44 |
+| sd5/sd60 <= med | 177 | 74.6 | 2.26 | 21.9 | 3.6 | 51 / 3.06 | 1.27/.75/1.70/3.38/2.23/3.73 |
+| sd20/sd60 > med | 160 | 72.5 | 2.60 | 28.6 | 3.1 | 61 / 4.18 | 3.22/.12/1.23/2.44/2.21/4.78 |
+| sd20/sd60 <= med | 170 | 76.5 | 3.30 | 29.9 | 2.2 | 46 / 2.77 | 1.88/-/2.03/9.67/3.48/2.36 |
+| TR/ATR14 > med | 170 | 73.5 | 3.09 | 35.0 | 2.3 | 53 / 4.08 | 1.77/1.89/2.14/8.12/2.16/3.77 |
+| TR/ATR14 <= med | 180 | 75.0 | 2.48 | 24.9 | 2.9 | 59 / 2.63 | 6.25/0/1.34/3.30/1.66/3.10 |
+
+Verdict: NOT a promotion candidate. The two vol-ratio splits point in opposite directions (sd5 high better, sd20 high worse) and flip sign year to year, i.e. noise. Only TR/ATR14 > median looks good (PF 3.09, 2022 even 1.89) but it beats live in only 3/5 non-2022 years (2021 and 2025 lower), halves the trade count and return, and is 1 of 6 comparisons; consistent with run 28 that bigger signal-day bars are not a reliable selector. Not added to challenger.py. Next: true PEAD with earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
