@@ -453,3 +453,21 @@ Rules: each stock's partner = highest-correlation stock over the 252 days BEFORE
 | COMBINED LIVE + z<-1.5 & rsi2<10 | 979 | 66.5 | 1.58 | 73.1 | 7.7 | 248 / 1.65 | .14/1.43/1.84/1.43/1.66 |
 
 Verdict: NOT a promotion candidate. Pair-spread reversion has a mild positive edge standalone (PF 1.2-1.5, win 63-67%) but is weaker than the champion in every year, and the strongest variant (z<-2 & rsi2<10) is mostly the RSI2 rule already in the champion, with 2022 collapsing (0.09) and 2025 below 1. Combining adds return (60 -> 73%) but lowers PF (1.88 -> 1.58-1.69) and Sharpe and raises drawdown, so it is not a clean complement; the signals are largely the same oversold stocks the champion already trades (correlated, not diversifying). Long-only pairs here is not true market-neutral relative value. Not added to challenger.py. Next: true PEAD with earnings dates; momentum sleeve with a SPY hedge; sector-ETF-relative drop (needs sector map).
+
+## 2026-11-15 (run 28) - capitulation-bar reversion sleeve: big ATR-sized down day + volume spike (web-seeded)
+Sources (search results only, titles; claims unverified, not relied on): https://www.tradingview.com/script/WWuTjyDx-Capitulation-Stretch-Reversion-Jayadev-Rana/ , https://quantifiedstrategies.substack.com/p/turnaround-tuesday-strategy-backtest . Script: lab_climax.py. (Turnaround Tuesday itself is already covered by the weekday split in lab_dow.py.)
+Rules: one-day drop (prior close - close)/ATR14 >= k, optional volume >= m x 20d avg and IBS cap, close > SMA50 > SMA200, SPY>200d, ATR% <= 9; buy at close, exit on prior high, hold 7, stop 4 ATR, 5-day cooldown. Same simulator (10% x 12, 4/day). 6 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| drop>=2ATR vol>=2x | 70 | 55.7 | 1.08 | 0.8 | 3.7 | 9 / 2.9 | -/0/1.25/.53/1.52/2.9 |
+| drop>=3ATR vol>=2x | 13 | 69.2 | 0.72 | -0.6 | 1.3 | 1 | too few |
+| drop>=2ATR vol>=2x IBS<=.2 | 46 | 58.7 | 1.50 | 2.8 | 2.8 | 8 / 8.6 | -/-/1.41/.52/8.9/8.6 |
+| drop>=2ATR no vol filter | 134 | 57.5 | 1.11 | 1.9 | 7.0 | 18 / 3.2 | 1.41/0/1.8/.6/1.09/3.7 |
+| drop>=3ATR vol>=2x + vol60 | 3 | 66.7 | 0.33 | -0.8 | 1.1 | 1 | too few |
+| drop>=2ATR vol>=3x | 19 | 57.9 | 0.86 | -0.4 | 1.8 | 1 | too few |
+| COMBINED LIVE + drop2 vol2 | 365 | 71.0 | 2.20 | 51.2 | 4.7 | 106 / 3.01 | 2.5/.82/1.35/2.22/2.37/2.94 |
+| COMBINED LIVE + drop2 vol2 IBS<=.2 | 347 | 72.3 | 2.57 | 61.2 | 4.7 | 107 / 3.48 | 2.5/.87/1.39/2.99/2.59/3.57 |
+
+Verdict: NOT a promotion candidate. Capitulation bars inside an uptrend with SPY>200d are rare (13-134 trades in 5+ years) and have no edge as a standalone sleeve (PF 0.7-1.5, 56-59% win, ~0-3% return). The only variant that looks good (IBS<=.2) has 46 trades and its PF is carried by 2025-26 (8.9/8.6 on 8 recent trades) while 2024 is 0.52 - small-sample luck among 6 comparisons. Combining dilutes the champion's PF (2.83 -> 2.2-2.6) with no return gain. Panic-day size is not a better selector than the champion's RSI2/breadth/vol60 logic. Not added to challenger.py. Next: true PEAD using earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
