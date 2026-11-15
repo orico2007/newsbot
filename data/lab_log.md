@@ -360,3 +360,19 @@ Rules: LIVE setup unchanged (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, v
 | CONTRA skip after winners (N=10/20/30) | 49-65 | 69-79 | 1.2-2.8 | 1-9 | 2.4 | 0.3-2.1 | - | tiny samples |
 
 Verdict: NOT a promotion candidate. Only the N=10 versions help (max DD 4.3 -> 2.4, Sharpe 2.28 -> 2.65, PF 3.13), and they do so by dropping just 17-34 trades; the N=20/30 windows give no gain and lower return, so the effect is not stable across the window grid. Last-12-month PF is unchanged (3.37, the filter never fires in that period), and the "better" years are only 2023 and 2025 with the rest equal. A win%<50 on 10 trades is a very small-sample signal, the shadow curve depends on the same trades being evaluated, and the contra rows show winners-only periods are simply the low-trade-count periods (not informative). Possible use as a drawdown guard only; needs live data (the live bot has too few closed stock trades) before it is worth tracking. Not added to challenger.py.
+
+## 2026-11-15 (run 22) - market-conditioned exits (SPY state decides when to leave) on the LIVE setup (own idea)
+Source: none (the web-seeded exit variants were already covered by runs 25/28/42; this ties the exit to the market, not the stock). Script: lab_mktexit.py.
+Rules: LIVE setup entries (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Only the exit changes: the live exit is "close > prior high". 6 variants tried (multiple-comparison discount; SPY RSI2 thresholds 10/20/70/80 are not tuned, one-shot).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ignore prior-high exit while SPY RSI2<10 | 306 | 74.2 | 2.80 | 62.2 | 4.3 | 2.31 | 100 / 3.53 | 2.06/.65/1.68/4.85/2.45/3.64 |
+| ignore prior-high exit while SPY RSI2<20 | 304 | 74.0 | 2.88 | 65.3 | 4.2 | 2.30 | 100 / 3.82 | 1.96/.65/1.75/4.89/2.45/4.04 |
+| also exit if SPY RSI2>70 | 326 | 70.9 | 2.81 | 52.4 | 3.6 | 2.38 | 106 / 2.72 | 8.39/.87/1.53/4.33/2.12/2.77 |
+| also exit if SPY RSI2>80 | 320 | 73.1 | 3.03 | 60.5 | 3.5 | 2.49 | 104 / 2.87 | 6.77/.87/1.73/5.08/2.23/2.87 |
+| prior-high exit only if SPY closed up | 302 | 72.5 | 2.76 | 64.7 | 4.4 | 2.38 | 99 / 3.36 | 1.99/.65/1.74/4.68/2.49/3.40 |
+| control: prior-high exit only if SPY closed down/flat | 298 | 60.1 | 1.71 | 41.4 | 4.7 | 1.22 | 94 / 2.09 | 1.09/0/1.63/2.39/2.14/1.57 |
+
+Verdict: NOT a promotion candidate. No variant moves PF/return meaningfully beyond noise: holding through market washouts (RSI2<20) gives PF 2.88 / return 65.3 / L12 3.82, but 2021 and 2022 get worse, only ~4 trades change, and it is one of 6 comparisons. The SPY-RSI2>80 exit lifts Sharpe slightly (2.49) and cuts drawdown (3.5) but L12 PF falls 3.37 -> 2.87 and 2021's PF is inflated by a tiny sample. The control (exit only on SPY-down days) is clearly worse (PF 1.71), which only confirms that the live exit already works best with market strength helping. The stock-level exit is not improved by market state. Not added to challenger.py. Next: true PEAD with earnings dates; relative-value pairs inside sector; cross-sectional stock 12-1m momentum sleeve with the vol60 filter.
