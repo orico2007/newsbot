@@ -376,3 +376,17 @@ Rules: LIVE setup entries (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol
 | control: prior-high exit only if SPY closed down/flat | 298 | 60.1 | 1.71 | 41.4 | 4.7 | 1.22 | 94 / 2.09 | 1.09/0/1.63/2.39/2.14/1.57 |
 
 Verdict: NOT a promotion candidate. No variant moves PF/return meaningfully beyond noise: holding through market washouts (RSI2<20) gives PF 2.88 / return 65.3 / L12 3.82, but 2021 and 2022 get worse, only ~4 trades change, and it is one of 6 comparisons. The SPY-RSI2>80 exit lifts Sharpe slightly (2.49) and cuts drawdown (3.5) but L12 PF falls 3.37 -> 2.87 and 2021's PF is inflated by a tiny sample. The control (exit only on SPY-down days) is clearly worse (PF 1.71), which only confirms that the live exit already works best with market strength helping. The stock-level exit is not improved by market state. Not added to challenger.py. Next: true PEAD with earnings dates; relative-value pairs inside sector; cross-sectional stock 12-1m momentum sleeve with the vol60 filter.
+
+## 2026-11-15 (run 23) - prior 21d/10d/5d return and distance-from-20d-high conditioning of the vol60>=1.75% LIVE setup (own idea; web search for a new Quantpedia short-term-reversal angle returned only index pages, https://quantpedia.com/strategies/short-term-reversal-in-stocks, no testable new rule). Script: lab_ret21.py.
+Rules: LIVE setup (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Signals split at the full-sample median of the feature (mild look-ahead); each half re-run through the portfolio simulator. 8 variants (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ret21 > median (+1.4%) | 171 | 77.2 | 3.57 | 37.3 | 2.5 | 58 / 5.72 | 5.8/.12/1.48/4.35/2.81/8.09 |
+| ret21 <= median | 163 | 71.2 | 2.08 | 19.1 | 3.4 | 48 / 2.23 | 1.73/-/1.04/4.59/2.37/1.9 |
+| ret10 > / <= median (-4.2%) | 181 / 156 | 75.1 / 71.8 | 2.98 / 2.43 | 32.9 / 23.4 | 3.5 / 2.1 | 53 / 7.8 ; 54 / 2.03 | direction unstable |
+| ret5 > / <= median (-5.3%) | 180 / 168 | 71.1 / 78.0 | 2.14 / 3.75 | 19.9 / 38.8 | 3.1 / 2.2 | 44 / 1.94 ; 69 / 4.54 | opposite sign of ret10 |
+| dist from 20d high deeper / shallower | 167 / 169 | 74.3 / 75.1 | 2.81 / 2.98 | 34.3 / 23.9 | 2.9 / 2.1 | 67 / 3.57 ; 42 / 2.61 | no effect |
+
+Verdict: NOT a promotion candidate. Each filter roughly halves the trade count and the return (37% or less vs 60.6%). The best, ret21 above median (PF 3.57, L12 5.72, 2026 PF 8.1), fails the return bar and collapses in 2022 (0.12); the ret10 and ret5 splits point in opposite directions, so the effect is not monotone and fits chance after 8 comparisons. Distance from the 20d high does nothing. Weak hint only: pullbacks inside a positive 1-month trend revert a bit better, consistent with the existing SMA50>SMA200 trend rule. Not added to challenger.py. Next: true PEAD with earnings dates, pairs inside sector, a non-overlapping sleeve (e.g. long-only gap-up continuation) to combine with the champion.
