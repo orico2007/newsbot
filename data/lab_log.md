@@ -400,3 +400,21 @@ Verdict: NOT a promotion candidate. Each filter roughly halves the trade count a
 | SPY 5d rv > median | 170 | 73.5 | 3.11 | 36.2 | 3.8 | 2.75 |
 | SPY 5d rv <= median | 156 | 73.7 | 2.28 | 18.8 | 2.4 | 4.38 |
 Verdict: null. Win rate is identical across halves; PF differences come from a few years with tiny loss counts and the split halves return, failing the return bar. Mild hint (consistent with earlier fear-filter runs): signals during SPY weakness/higher vol are slightly better, already captured by the breadth filter. Not added to challenger.py.
+
+## 2026-11-15 (run 25) - cross-sectional stock 12-1m momentum monthly sleeve, +/- vol60 tilt, combined with champion (web-seeded)
+Source: https://quantpedia.com/strategies/momentum-factor-effect-in-stocks and https://quantpedia.com/optimization-of-equity-momentum/ (search results only; claims unverified, not relied on). Script: lab_xsmom.py (reuses lab_rotation.rotation on the stock universe).
+Rules: first trading day of each month, rank universe stocks by 12-1m (or 6-1m) return, buy top N, hold 21 days, 0.05% slippage per side, optional SPY>200d gate, optional vol60>=1.75% filter on picks. Portfolio simulator 10% x 12, 4/day. 6 variants tried (multiple-comparison discount; no tuning beyond N=5/10/20 and lookback 6 vs 12).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD % | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE vol175 champion | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| mom 12-1 top5 gate | 136 | 54.4 | 1.72 | 59.6 | 20.4 | 0.90 | 20 / 2.13 | 1.01/.10/1.08/4.72/1.42/2.68 |
+| mom 12-1 top10 gate | 182 | 49.5 | 1.64 | 69.9 | 21.0 | 0.86 | 33 / 2.72 | 1.01/.10/1.03/3.02/1.19/3.18 |
+| mom 12-1 top10 no gate | 232 | 53.9 | 1.84 | 121.8 | 17.2 | 1.05 | 37 / 3.09 | 1.01/.65/1.44/3.02/1.64/3.62 |
+| mom 12-1 top10 gate + vol60>=1.75 | 160 | 51.2 | 1.82 | 84.3 | 20.2 | 0.98 | 30 / 2.97 | 1.01/.10/1.16/3.69/1.35/3.61 |
+| mom 6-1 top10 gate | 192 | 49.5 | 1.49 | 48.3 | 20.8 | 0.79 | 36 / 1.83 | 1.42/.01/1.43/2.43/1.46/2.28 |
+| mom 12-1 top20 gate (control) | 192 | 50.0 | 1.74 | 85.5 | 21.0 | 1.02 | 40 / 2.93 | 1.01/.10/1.03/3.18/1.18/3.43 |
+| COMBINED champion + top10 no-gate | 483 | 64.0 | 1.91 | 195.0 | 15.9 | 1.14 | 116 / 3.18 | 1.31/.65/1.48/2.98/1.70/3.45 |
+| COMBINED champion + top10 gate+vol | 406 | 64.5 | 1.92 | 143.8 | 17.3 | 1.04 | 109 / 3.10 | 1.31/.10/1.24/3.45/1.58/3.42 |
+
+Verdict: NOT a promotion candidate. Standalone momentum earns real return (PF 1.6-1.8, 50-54% win) but with 17-21% max drawdown (champion 4.3%) and PF around 1.0 in 2021 and 2023; 2022 collapses when gated (0.10). Adding it raises combined return (up to 195%) but drops Sharpe 2.28 -> ~1.0-1.1 and PF 2.83 -> ~1.9, driven by a high-beta, highly correlated-to-market book that loses in selloffs, i.e. the opposite of an uncorrelated complement. Return gain is mostly leverage on market beta in a bull sample (2023-2026); vol60 tilt helps a little but is one of 6 comparisons. Not added to challenger.py. Next: pairs inside sector (relative value), true PEAD with earnings dates, momentum sleeve with market-neutral hedge (short SPY) to test whether the alpha survives beta removal.
