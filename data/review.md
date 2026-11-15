@@ -1,33 +1,34 @@
 # Weekly review
 
-# Weekly Review — Paper Bot (reports 2026-10-30 → 2026-11-06)
+# Weekly Review — 2026-11-09 to 2026-11-13
 
 ## 1. What worked / what didn't
 
-**Closed trades: only 3** (all crypto). Win rate 33.3%, avg P&L **-4.04%**, profit factor **0.19**, avg R **-0.51**.
-- cum_rsi2 (1 trade): win, +2.92%
-- spring_reversal (1 trade): loss, -6.68%
-- trend_pullback (1 trade): loss, -8.36%
+**Live paper sample is small — 6 closed trades total.** That's below the 20-trade threshold needed for confident conclusions, so treat the numbers below as directional, not statistically solid.
 
-**Equity, across the reports provided:** $99,883.97 (10/30) → $99,159.47 (11/06). The worst single day was 11/05: **-787.17 (-0.79%)**, when all four open long equity positions (ABBV, JPM, UNH, XOM) lost money simultaneously. Note: the 11/02 report wasn't in the set provided, so this isn't a strict day-by-day reconciliation.
+- **Aggregate:** 6 trades, 16.7% win rate, avg P&L −5.625%, profit factor 0.08, avg R −0.64. Losses are dominating: avg loss −7.33% vs avg win +2.92%.
+- **By strategy:** crypto (4 trades) is the less-bad bucket — 25% win, avg P&L −4.97%, PF 0.13. swing (2 trades) is 0% win, avg P&L −6.93%, PF 0.0.
+- **By signal:** every pattern with >1 trade (`news`, n=2) lost both times, avg −9.8%, with entry slippage of 0.624% — roughly double the swing baseline of 0.3%. The single `cum_rsi2` trade won (+2.92%); everything else (`mr_E`, `spring_reversal`, `trend_pullback`) lost on n=1 each.
+- **Account curve:** equity drifted from $99,269 (11/09) to $99,046 (11/13), a net −$222.93 (−0.22%) for the week, including a −$370.65 (−0.37%) day on 11/12.
+- **Blocked ideas:** most-blocked reasons all week were "shorts disabled" and "price < $5" — the strategy layer is generating a lot of candidates the risk layer immediately throws out (not a loss, but wasted signal-generation effort).
 
-**Activity was light:** only 2 new entries all week (V, AMZN swing longs on 11/06) and one crypto stop-out (BCH/USD, 11/04). 10 ideas were blocked on 11/06 alone (stop-too-wide, price<$5, no-uptrend, shorts-disabled).
+Auto-disable logic (n≥15, avg P&L ≤ −0.5%) hasn't fired on anything yet — expected, since no live pattern has more than 4 trades.
 
-**Backtest context (21,099 trades, 3y/40 symbols)** shows the live losses aren't surprising: spring_reversal has a negative long-run edge (1,479 trades, PF 0.88, avg -0.30%) — the live loss matches. trend_pullback is historically close to breakeven (540 trades, PF 1.01, avg +0.03%), so the live -8.36% loss looks like a single bad outcome, not a pattern flaw. Shorts underperform longs broadly in the backtest (longs PF 1.08/win 49.2% vs shorts PF 0.73/win 39.9%, n=8,992/12,107) — correctly, the live blocked-idea log confirms shorts are already disabled.
+## 2. Evidence-based rules.yaml changes
 
-## 2. Changes — sample too small for rules.yaml tuning
+Given the tiny live sample, these are grounded primarily in the 3-year, large-N backtest (cited per item), not the 6-trade scorecard.
 
-Only 3 closed trades exist, far below the 20-trade minimum needed to responsibly adjust rules.yaml parameters. No numeric rule changes recommended this week. Process fixes instead:
-
-1. **Fix slippage logging** — scorecard shows "None" for entry slippage on every row, even though the backtest assumes 0.05%/side. Without this you can't tell if live fills match backtest assumptions.
-2. **Verify trailing-stop logic fires** — "Trailing-stop raises: 0" every day this week despite UNH swinging from +91.44 to -37.08 unrealized; confirm the trigger condition is actually reachable, not dormant.
-3. **Audit the max-risk/structure-stop filter** — 2 of 10 blocked ideas on 11/06 were rejected for stop distance just over the cap (12.1%, 15.8% vs. 12.0% limit). Worth a manual check of whether that threshold is cutting off reasonable setups by a hair, before touching the number.
-4. **Add portfolio-level correlation/exposure tracking** — all 4 open positions dropped together on 11/05 despite sitting in nominally different "leading" sectors; sector labels alone didn't prevent a correlated down day.
-5. **Keep accumulating trade data** before acting on pattern-level stats — at n=1 per pattern, don't disable or favor cum_rsi2/spring_reversal/trend_pullback based on this week alone.
+| # | Key | Suggested value | Support |
+|---|---|---|---|
+| 1 | `patterns.spring_reversal.enabled` | `false` | Backtest n=1486, PF 0.88, avg R −0.066 — persistent negative edge at scale; the one live instance also lost (−6.68%, R −1.04). |
+| 2 | `patterns.higher_low_breakout.enabled` | `false` | Backtest n=292, PF 0.70, avg R −0.118 — one of the weaker patterns overall; was actually fired live this week (COST, 11/11). |
+| 3 | `patterns.breakaway_gap.enabled` | `false` | Backtest n=46, win 23.9%, PF 0.62, avg R −0.045 — lowest win rate of any pattern with a meaningful sample. |
+| 4 | `strategies.news.max_slippage_pct` (or `enabled`) | `0.3` (cap) / `false` | **Live only, n=2** — both trades lost (avg −9.8%) with slippage 0.624%, ~2x the swing baseline. Flagging as a process fix given the tiny sample, not a confident numeric tune. |
+| 5 | *(process, no key)* | — | Hold off on further rules.yaml tuning from live results until the paper book has ≥20 closed trades per pattern; keep relying on the backtest table above in the meantime. |
 
 ## 3. Risks
 
-- **Concentration**: book is long-only equities (shorts disabled), so it carries undiversified long-market-beta risk — this showed up directly in the correlated -787 day on 11/05.
-- **Statistical noise**: 3 trades is not a sample; current win-rate/PF/avg-R numbers should not drive decisions yet.
-- **Losing streak**: 2 of the last 3 closed trades were losses, and the trend_pullback loss (-8.36%) was much worse than its historical average — worth a one-off look at execution/stop placement on that specific trade, not a pattern-level conclusion.
-- **Slippage blind spot**: slippage isn't being recorded live, so there's no way to detect fill-quality drift versus the backtest's assumptions.
+- **Concentration in laggards:** JPM and XOM were negative on every single daily snapshot this week (JPM: −115 → −68; XOM: −272 → +2 only after the position was cut from 58 to 8 shares on 11/12) while their sectors (financials, energy/XLE) were flagged as laggards in the bot's own market regime readout. The book is long-only (shorts disabled) and sat in names misaligned with its own sector-leadership signal.
+- **Slippage on news entries:** 0.624% vs 0.3% for swing — chasing headline-driven moves is costing roughly 2x the normal entry cost, on top of a 0% win rate for that signal so far.
+- **Losing streak:** 4 of 6 closed trades lost (66.7%), and the book had a −0.37% single day (11/12) against a week that otherwise moved in small increments — a short but notable drawdown cluster.
+- **Sample-size risk itself:** every rule-level conclusion drawn from live trades right now rests on n=1 or n=2. Any single large win or loss could flip the picture; don't over-react to this week's scorecard in isolation.
