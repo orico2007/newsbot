@@ -418,3 +418,21 @@ Rules: first trading day of each month, rank universe stocks by 12-1m (or 6-1m) 
 | COMBINED champion + top10 gate+vol | 406 | 64.5 | 1.92 | 143.8 | 17.3 | 1.04 | 109 / 3.10 | 1.31/.10/1.24/3.45/1.58/3.42 |
 
 Verdict: NOT a promotion candidate. Standalone momentum earns real return (PF 1.6-1.8, 50-54% win) but with 17-21% max drawdown (champion 4.3%) and PF around 1.0 in 2021 and 2023; 2022 collapses when gated (0.10). Adding it raises combined return (up to 195%) but drops Sharpe 2.28 -> ~1.0-1.1 and PF 2.83 -> ~1.9, driven by a high-beta, highly correlated-to-market book that loses in selloffs, i.e. the opposite of an uncorrelated complement. Return gain is mostly leverage on market beta in a bull sample (2023-2026); vol60 tilt helps a little but is one of 6 comparisons. Not added to challenger.py. Next: pairs inside sector (relative value), true PEAD with earnings dates, momentum sleeve with market-neutral hedge (short SPY) to test whether the alpha survives beta removal.
+
+## 2026-11-15 (run 26) - gap-up continuation sleeve (web-seeded: earnings/runaway-gap drift proxy)
+Sources (search results only, titles; claims unverified, not relied on): https://quantifiedstrategies.substack.com/p/gap-trading-strategies-with-backtest , https://www.quantifiedstrategies.com/runaway-gaps/ , https://financialnoob.substack.com/p/buy-on-gap-strategy-and-its-performance . Script: lab_gapup.py.
+Rules: open > prior close by >= g%, close > open, IBS >= 0.6, volume >= k x 20d avg, close > SMA50 > SMA200, SPY>200d, ATR% <= 8; buy at close, stop 4 ATR, hold 10 or 20 days (no early exit), 10-day cooldown per stock. Same simulator (10% x 12, 4/day). 6 variants tried (multiple-comparison discount). Combined = LIVE vol60>=1.75% setup + sleeve.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| gap>=3% vol>=2x h10 | 157 | 54.8 | 1.07 | 2.4 | 8.6 | 33 / 0.71 | 1.41/.14/1.46/1.61/.67/.93 |
+| gap>=3% vol>=2x h20 | 148 | 52.0 | 1.06 | 2.5 | 9.9 | 30 / 0.56 | 1.32/0/1.31/1.93/.72/.66 |
+| gap>=5% vol>=2x h10 | 88 | 50.0 | 1.01 | -0.1 | 9.7 | 19 / 0.43 | |
+| gap>=2% vol>=1.5x h10 | 287 | 51.2 | 1.10 | 8.1 | 11.0 | 72 / 0.90 | |
+| gap>=3% vol>=2x h10 + vol60 | 121 | 55.4 | 1.07 | 2.4 | 11.3 | 29 / 0.70 | |
+| gap>=5% vol>=2x h20 | 86 | 52.3 | 1.34 | 11.9 | 7.2 | 18 / 0.60 | |
+| COMBINED LIVE + best (gap5 h20) | 368 | 68.8 | 1.92 | 69.3 | 8.9 | 109 / 1.50 | 2.0/.2/1.78/3.08/1.54/1.51 |
+| COMBINED LIVE + gap3 h10 | 449 | 67.0 | 1.65 | 54.4 | 7.3 | 128 / 1.45 | |
+
+Verdict: NOT a promotion candidate. Gap-up continuation has no edge on daily bars of this universe: PF ~1.0-1.3, ~50-55% win, last-12-month PF below 1 in every variant (0.43-0.90), 2025/2026 negative. Every combination lowers the champion's PF (2.83 -> 1.4-1.9), Sharpe and doubles drawdown; the sleeve is not a useful complement. Consistent with the earlier finding that this universe pays for short-term reversion, not continuation (also 52wh run 1, xsmom run 25). Not added to challenger.py. Next: pairs/relative value inside sector; true PEAD with earnings dates (earnings.py exists); market-neutral hedge of the momentum sleeve.
