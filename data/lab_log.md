@@ -486,3 +486,21 @@ Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol
 | TR/ATR14 <= med | 180 | 75.0 | 2.48 | 24.9 | 2.9 | 59 / 2.63 | 6.25/0/1.34/3.30/1.66/3.10 |
 
 Verdict: NOT a promotion candidate. The two vol-ratio splits point in opposite directions (sd5 high better, sd20 high worse) and flip sign year to year, i.e. noise. Only TR/ATR14 > median looks good (PF 3.09, 2022 even 1.89) but it beats live in only 3/5 non-2022 years (2021 and 2025 lower), halves the trade count and return, and is 1 of 6 comparisons; consistent with run 28 that bigger signal-day bars are not a reliable selector. Not added to challenger.py. Next: true PEAD with earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
+
+## 2026-11-15 (run 30) - SPY signal-day close location (IBS) and overnight-gap vs intraday split as conditioner / size tilt of the vol60>=1.75% LIVE setup (own idea; web search for market-wide selloff reversion returned only substack/blog index pages, e.g. https://backtest.substack.com/p/buying-weakness-on-the-nasdaq-100, nothing testable and not relied on). Script: lab_spyibs.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) split by SPY's own signal-day IBS = (close-low)/(high-low), SPY open-to-close return and SPY overnight gap (all known at the close). Size tilts emulated by scaling pnl (PF size-weighted). 11 comparisons tried (multiple-comparison discount). Earlier SPY 1d return skips were already tested (improvement_log); IBS/intraday/gap were not.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| SPY IBS<0.3 only | 153 | 77.8 | 3.62 | 34.6 | 2.3 | 45 / 4.45 | 8.0/-/2.93/4.33/2.88/3.19 |
+| SPY IBS>=0.3 only | 187 | 69.5 | 1.85 | 18.1 | 4.3 | 65 / 2.51 | 1.12/.75/.64/3.39/1.5/3.33 |
+| SPY intraday<0 | 218 | 76.1 | 3.36 | 50.9 | 3.3 | 75 / 3.41 | 9.67/.26/2.11/3.96/2.79/3.27 |
+| SPY intraday>=0 | 118 | 66.1 | 1.57 | 7.3 | 3.4 | 30 / 2.38 | .6/1.38/.81/5.03/.73/2.9 |
+| SPY gap<-0.3% | 131 | 76.3 | 3.05 | 23.4 | 3.3 | 46 / 2.98 | -/-/1.3/7.07/1.29/4.43 |
+| tilt 1.25x if SPY IBS<0.3 else 0.75x | 308 | 74.4 | 3.25 | 67.5 | 3.3 | 100 / 3.70 | 2.96/.95/2.18/5.20/2.87/3.49 |
+| tilt 1.5x / 0.5x | 308 | 74.4 | 3.78 | 74.6 | 2.5 | 100 / 4.10 | 3.72/1.10/3.04/5.80/3.30/3.58 |
+| tilt IBS<0.5 1.25x / 0.75x | 308 | 74.4 | 3.12 | 72.6 | 3.9 | 100 / 3.37 | 2.81/.72/1.94/5.52/2.68/3.45 |
+
+Early/late check (threshold 0.3 was the first one tried, not tuned): IBS<0.3 vs live in 2021-23 PF 4.29 vs 1.89; in 2024-26 PF 3.31 vs 3.48 (equal-ish), so the effect is concentrated in the early years, and the late years are neutral rather than contradicting.
+Verdict: PROMOTION CANDIDATE (as a size tilt, NOT as a filter). Days where SPY closes near its daily low (a market sell-off into the close) have much better reversion follow-through (PF 3.6 vs 1.9 elsewhere); intraday<0 shows the same thing. As a filter it halves return so it fails the return bar, but as a mild 1.25x/0.75x size tilt it beats live in every year including 2022 (0.87 -> 0.95), return 60.6 -> 67.5, max DD 4.3 -> 3.3, L12 PF 3.37 -> 3.70. Caveats: 11 comparisons, the three SPY features are strongly overlapping (one idea, not three), 2024-26 alone is only neutral, and it is the same economic story as the SPY-3d dip tilt (run 19/20, which did not hold on the new setup) and the dispersion tilt (run 52), so tilts may be partly redundant with each other; test stacking before any promotion. Added to challenger.py as "lab run30" variant for weekly tracking. Live rules NOT changed (the daily improvement task decides). Next: stack run30 + run52 tilts; true PEAD with earnings dates; sector-ETF-relative drop.

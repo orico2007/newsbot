@@ -64,6 +64,23 @@ def disp_tilt(trades, hi=1.25, lo=0.75):
         out.append(u)
     return out
 
+def spy_ibs():
+    """date -> SPY close location in the day's range (0 = at low); known at the close (lab run 30)."""
+    spy = lab.load_bars()["SPY"]; out = {}
+    for b in spy:
+        r = b["h"] - b["l"]; out[b["t"][:10]] = (b["c"] - b["l"]) / r if r else .5
+    return out
+
+def spyibs_tilt(trades, thr=0.3, hi=1.25, lo=0.75):
+    """Scale trade size by hi when SPY signal-day IBS < thr else lo (PF is size-weighted; lab run 30)."""
+    ib = spy_ibs(); out = []
+    for t in trades:
+        x = ib.get(t["t"][:10]); m = hi if (x is not None and x < thr) else lo
+        u = dict(t); u["pnl_pct"] = t["pnl_pct"] * m
+        if "R" in u: u["R"] = t["R"] * m
+        out.append(u)
+    return out
+
 VARIANTS = [   # name, rules, portfolio kwargs
     ("CHAMPION (live): A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT, "live"),
     ("previous champion: A+E+F, SPY>200d, no breadth filter, no sector rank", ruleset(), DEF_PORT),
@@ -108,6 +125,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     # lab run 36: vol60>=1.75% setup minus the least-liquid third (20d dollar volume percentile < 1/3); see data/lab_log.md
     # lab run 52: live vol60>=1.75% setup with size tilt by cross-sectional dispersion percentile (PROMOTION CANDIDATE as a size rule; see data/lab_log.md)
     ("lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_disp"),
+    # lab run 30: live vol60>=1.75% setup with size tilt by SPY signal-day IBS (PROMOTION CANDIDATE as a size rule; see data/lab_log.md)
+    ("lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_spyibs"),
     ("lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume", ruleset(), DEF_PORT, "live_vol175_dvol"),
 ]
 
@@ -158,6 +177,15 @@ def run():
                 v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
                 return v_ is not None and v_ >= 1.75
             T0 = disp_tilt([dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)])
+        elif len(v) > 3 and v[3] == "live_vol175_spyibs":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                return v_ is not None and v_ >= 1.75
+            T0 = spyibs_tilt([dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
                   for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)])
         elif len(v) > 3 and v[3] == "live_vol175_dvol":
             import lab_breadth, lab_sector, lab_dvol
