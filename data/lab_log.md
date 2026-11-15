@@ -436,3 +436,20 @@ Rules: open > prior close by >= g%, close > open, IBS >= 0.6, volume >= k x 20d 
 | COMBINED LIVE + gap3 h10 | 449 | 67.0 | 1.65 | 54.4 | 7.3 | 128 / 1.45 | |
 
 Verdict: NOT a promotion candidate. Gap-up continuation has no edge on daily bars of this universe: PF ~1.0-1.3, ~50-55% win, last-12-month PF below 1 in every variant (0.43-0.90), 2025/2026 negative. Every combination lowers the champion's PF (2.83 -> 1.4-1.9), Sharpe and doubles drawdown; the sleeve is not a useful complement. Consistent with the earlier finding that this universe pays for short-term reversion, not continuation (also 52wh run 1, xsmom run 25). Not added to challenger.py. Next: pairs/relative value inside sector; true PEAD with earnings dates (earnings.py exists); market-neutral hedge of the momentum sleeve.
+
+## 2026-11-15 (run 27) - relative-value pairs reversion (stock vs its most-correlated peer), own idea (also a Quantpedia/QuantConnect pairs/residual-reversal theme; no new sources fetched). Script: lab_pairs.py (first logged run).
+Rules: each stock's partner = highest-correlation stock over the 252 days BEFORE each calendar year (corr > 0.5, 505 stock-years). Signal: z of the 60d log spread (stock/partner) <= threshold, close > SMA200, SPY>200d gate, ATR% <= 9; buy at close, exit on prior-high or 7 days, stop 4 ATR, 5-day cooldown. Same simulator (10% x 12, 4/day). 5 variants tried (multiple-comparison discount). Reference is the live setup before the vol60 filter (breadth>=10% + peer rank, PF 1.88), so compare within this table only.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (breadth+rank) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | .13/1.42/2.19/1.92/2.68 |
+| z<-2 h7 | 1022 | 65.4 | 1.21 | 25.8 | 6.3 | 283 / 1.33 | .43/1.02/1.37/1.36/1.31 |
+| z<-2.5 h7 | 512 | 64.5 | 1.26 | 14.9 | 4.7 | 147 / 1.22 | .45/.99/1.77/1.27/1.22 |
+| z<-2 & rsi2<10 | 320 | 66.9 | 1.47 | 17.3 | 3.6 | 98 / 1.48 | .09/1.97/2.03/.77/1.64 |
+| z<-2 h5 | 1098 | 64.1 | 1.18 | 23.9 | 9.0 | 304 / 1.31 | .33/.97/1.46/1.28/1.31 |
+| z<-1.5 & rsi2<10 | 528 | 63.1 | 1.35 | 23.0 | 5.7 | 152 / 1.54 | .16/1.61/1.60/1.08/1.57 |
+| z<-2 breadth>=10% alone | 481 | 65.7 | 1.41 | 22.5 | 3.9 | 157 / 1.26 | .44/1.38/1.75/1.39/1.31 |
+| COMBINED LIVE + z<-2 & rsi2<10 | 838 | 68.4 | 1.69 | 73.1 | 6.7 | 209 / 1.90 | .11/1.61/2.13/1.61/1.92 |
+| COMBINED LIVE + z<-1.5 & rsi2<10 | 979 | 66.5 | 1.58 | 73.1 | 7.7 | 248 / 1.65 | .14/1.43/1.84/1.43/1.66 |
+
+Verdict: NOT a promotion candidate. Pair-spread reversion has a mild positive edge standalone (PF 1.2-1.5, win 63-67%) but is weaker than the champion in every year, and the strongest variant (z<-2 & rsi2<10) is mostly the RSI2 rule already in the champion, with 2022 collapsing (0.09) and 2025 below 1. Combining adds return (60 -> 73%) but lowers PF (1.88 -> 1.58-1.69) and Sharpe and raises drawdown, so it is not a clean complement; the signals are largely the same oversold stocks the champion already trades (correlated, not diversifying). Long-only pairs here is not true market-neutral relative value. Not added to challenger.py. Next: true PEAD with earnings dates; momentum sleeve with a SPY hedge; sector-ETF-relative drop (needs sector map).
