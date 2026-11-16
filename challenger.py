@@ -82,7 +82,8 @@ def spyibs_tilt(trades, thr=0.3, hi=1.25, lo=0.75):
     return out
 
 VARIANTS = [   # name, rules, portfolio kwargs
-    ("CHAMPION (live): A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT, "live"),
+    ("CHAMPION (live): A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT, "live_vol175"),
+    ("previous champion: live setup without the volatility filter", ruleset(), DEF_PORT, "live"),
     ("previous champion: A+E+F, SPY>200d, no breadth filter, no sector rank", ruleset(), DEF_PORT),
     ("gate: strict bull regime", ruleset(gate="bullreg"), DEF_PORT),
     ("gate: none (always on)", ruleset(gate="none"), DEF_PORT),
@@ -116,7 +117,6 @@ VARIANTS = [   # name, rules, portfolio kwargs
     # lab run 13: NEW LIVE setup (breadth>=10% + weakest-peer rank) plus bear-regime long sleeve filtered by the same breadth>=10%
     ("lab: live setup (breadth+rank) + bear-regime long sleeve (breadth>=10%)", ruleset(), DEF_PORT, "live_bear10"),
     # lab run 8: PROMOTION CANDIDATE - live setup restricted to stocks whose 60d daily-return stdev >= 1.75% (see data/lab_log.md)
-    ("lab: live setup + only stocks with 60d daily vol >= 1.75%", ruleset(), DEF_PORT, "live_vol175"),
     # lab run 9: same vol>=1.75% filter with larger positions (15% x 8, 4/day): ret ~103% vs 60%, mdd 6.4% vs 5.9%
     # lab run 19: dip-scaled sizing on the previous-champion trade list (conditional promotion candidate; PF is size-weighted)
     ("LAB run19: size 1.5x if SPY 3d<-1% else 0.5x (PF is size-weighted)", ruleset(), DEF_PORT, dip_size(1.5, 0.5)),
