@@ -519,3 +519,17 @@ Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol
 
 2x2 cells (unscaled, n / PF): D&I 91 / 4.63; D only 87 / 2.13; I only 70 / 3.12; neither 111 / 1.62. Each condition is true on roughly 40-55% of signals; both-true 91 of 308 trades, so the two are partly independent, ordering is monotone (neither < one < both).
 Verdict: the tilts stack in the expected direction: better than either alone and better than live in every year (2022 0.87 -> 0.95, 2023 1.62 -> 2.44), return 60.6 -> 79.2, DD 4.3 -> 3.0, L12 PF 3.37 -> 4.17. Caveats: Sharpe does not improve (2.28 -> 2.34), so much of the gain is a leverage-like effect of sizing up on days that are already the best; PF is size-weighted, so part of the PF gain is mechanical; the 'neither' cell is still PF 1.62, i.e. fine but worse; the 'D only/I only' cells in some years have a handful of trades. Both tilts come from one family (market-wide stress days), so this is one idea, not two. PROMOTION CANDIDATE only as a mild size rule (1.15x-1.25x / 0.75x-0.85x); not as a filter. Added to challenger.py as "lab run31" for weekly tracking. Live rules NOT changed. Next: web-seeded idea (true PEAD with earnings dates if earnings.py has history; residual-momentum), and check tilt implementability in bot sizing (needs live dispersion percentile + SPY IBS at the close).
+
+## 2026-11-16 (run 32) - profit-lock exits (breakeven stop / ATR trailing stop once in profit) on the vol60>=1.75% LIVE setup (own idea; no earlier run tested trailing/breakeven stops; PEAD still untestable because the repo has no historical earnings dates, only a forward-looking Nasdaq calendar fetch; a web search for Quantpedia short-term-reversal pages returned only index pages: https://quantpedia.com/strategies/combining-fundamental-fscore-and-equity-short-term-reversals needs fundamentals, not testable on daily bars). Script: lab_trail.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, prior-high exit, 10% x 12, 4/day). Added: once a close >= entry + trigger x ATR the stop is raised to entry (BE) or to max(entry, highest close - trail x ATR). 5 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| BE after +0.5 ATR | 311 | 71.1 | 2.76 | 56.8 | 4.9 | 101 / 3.34 | 2.44/.87/1.42/4.84/2.49/3.38 |
+| BE after +1 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| BE after +1.5 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| trail 1.5 ATR after +1 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| trail 1 ATR after +0.5 ATR | 311 | 71.1 | 2.73 | 55.8 | 4.9 | 101 / 3.34 | 2.26/.87/1.42/4.84/2.49/3.38 |
+
+Verdict: NOT a promotion candidate. Profit-lock stops are inert at +1 ATR and above because the live prior-high exit already sells on the first close above the previous day's high, so a trade almost never reaches +1 ATR without exiting; at +0.5 ATR they only convert some winners into scratches (return 60.6 -> 56-57, DD 4.3 -> 4.9, 2023 PF 1.62 -> 1.42). The existing exit already acts as the profit-taking rule. Not added to challenger.py. Next: sector-ETF-relative drop; residual momentum sleeve; a web search on market-wide capitulation / VIX-spike proxies.
