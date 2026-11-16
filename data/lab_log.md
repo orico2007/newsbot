@@ -345,5 +345,20 @@ Verdict: NOT a promotion candidate. On the vol-filtered live set the dip-sizing 
 
 Repo hygiene note: the original run-6 commit (7c81e67) was made from a stale clone and overwrote lab_log.md runs 7-18 and the live variants in challenger.py; this session restored them from 549127a and re-added the dip-sizing material as run 19. Future lab sessions must `git pull --rebase` BEFORE editing and never `git checkout <old commit> -- data/lab_log.md`.
 
-## Lab round 2026-11-16: down-close streak size tilt on live vol60>=1.75% setup (lab_streaksize.py)
-Tilts: streak>=3 x1.25/else x1.0; x1.25/x0.75; x1.5/x1.0 (3 variants). Ref n=308, PF 2.83, ret 60.6%, Sharpe 2.28. Tilts: PF 2.84-2.85, Sharpe 2.27-2.28, L12 PF 3.34-3.35 (ref 3.37), year PFs essentially unchanged; return rises 70-92% only through added exposure (maxDD 4.3 -> 5.2-6.3). Early 2021-23 vs late 2024-26 identical picture. Verdict: no edge beyond leverage; not promoted, not added to challenger.py.
+## 2026-11-16 (run 21) - exit overlays on the LIVE setup: early cut of non-working trades, profit lock, breakeven stop (web hint + own idea)
+Source: https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-multi-asset-pullback-strategy-discovery/ (ETF pullbacks; claims shorter holds raise Sharpe; unverified, other asset class). Also checked https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy (not used). Script: lab_earlycut.py (re-simulates each live trade; base reproduces live exactly). Live trade list: A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, exit close>prior high, 10% x 12, 4/day. 10 variants tried (multiple-comparison discount; none won, so discount is moot).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| cut at day 3 close if below entry | 326 | 65.6 | 2.07 | 42.8 | 4.7 | 1.72 | 2.17 | 2.21/.69/1.46/3.18/1.64/2.17 |
+| cut at day 2 if below entry | 331 | 59.2 | 1.83 | 33.4 | 4.9 | 1.54 | 1.99 | 2.78/.34/1.27/2.31/1.59/1.96 |
+| cut at day 4 if below entry-1% | 313 | 70.3 | 2.36 | 49.6 | 4.2 | 1.92 | 2.20 | 3.47/.72/1.60/3.58/2.17/2.03 |
+| cut at day 5 if below entry | 311 | 70.7 | 2.40 | 50.8 | 5.3 | 1.90 | 2.63 | 2.71/.87/1.42/4.39/1.93/2.48 |
+| profit lock +1.5 ATR close | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | identical (never triggers before prior-high exit) |
+| profit lock +1.0 ATR close | 308 | 74.4 | 2.76 | 57.7 | 4.3 | 2.22 | 3.32 | slightly worse |
+| breakeven stop after +1 ATR close | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | identical (never binds) |
+| hold 5 (control) | 311 | 70.7 | 2.39 | 50.0 | 5.5 | 1.86 | 2.63 | worse |
+| hold 10 (control) | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 3.86 | better 2021/25... worse 2023/25; DD up, Sharpe flat |
+
+Verdict: NOT a promotion candidate; strongly negative for the web hint. Cutting trades that are not working yet destroys edge: the losers at day 2-5 are the ones that mean-revert later (win% falls 74 -> 59-70, PF down in nearly every year). Profit locks and breakeven stops either never bind (the prior-high exit already fires first) or slightly hurt. Faster holds (5d) are worse; hold 10 is a wash (PF/return up marginally, DD 4.3 -> 5.0, Sharpe flat, mixed by year). Takeaway: the live exit (prior-high close, 4 ATR stop, 7-day time stop) is near a local optimum; do not add exit overlays. Not added to challenger.py. No live files touched.
