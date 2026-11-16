@@ -394,3 +394,18 @@ Source: search hits only (Quantified Strategies new-low / reversal-day pages, ht
 | (other 5 variants: PF 0.97-1.16 alone, combined PF 1.21-1.68) | | | | | | | |
 
 Verdict: NOT a promotion candidate. Standalone, the failed-breakdown signal has no real edge on daily bars (PF 0.97-1.31, best only after stacking vol and IBS filters, which is the same exposure the live setup already captures). Every combination dilutes the live setup (PF 2.83 -> <=1.98, Sharpe 2.28 -> <=1.72, worse in 2022-2025 each year). Not added to challenger.py. Next ideas: sector-relative pairs with live signals, multi-day (2-5 day) holding-period decay by vol tier, true PEAD with earnings dates.
+
+## 2026-11-16 (run 23) - SPY-hedge overlay (market-neutralising each trade) on the LIVE setup (own idea, previously untested)
+Source: none (web search for new daily-bar reversion ideas returned only gap / Turnaround Tuesday / IBS / 5-day-low pages that earlier runs already cover: https://algomatictrading.substack.com/p/strategy-9-the-5-day-mean-reversion , https://financialnoob.substack.com/p/buy-on-gap-strategy-and-its-performance , https://quantifiedstrategies.substack.com/p/turnaround-tuesday-strategy-backtest). Rules: live trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); each trade's pnl_pct reduced by h x SPY return over the same entry-to-exit dates (a short-SPY hedge, zero hedge cost assumed, which flatters it). Script: lab_hedge.py. 7 variants (multiple-comparison discount; 2026 not used to select).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE unhedged | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| hedge 0.25 x SPY | 308 | 74.4 | 2.80 | 56.7 | 4.0 | 2.26 | 3.27 | 2.44/.99/1.64/4.47/2.34/3.46 |
+| hedge 0.5 x SPY | 308 | 74.4 | 2.74 | 52.8 | 3.6 | 2.21 | 3.17 | 2.47/1.22/1.66/4.08/2.17/3.51 |
+| hedge 1.0 x SPY | 308 | 74.4 | 2.54 | 45.3 | 3.3 | 2.06 | 2.95 | 2.45/3.32/1.63/3.21/1.83/3.59 |
+| hedge 1.0 x beta60 x SPY | 308 | 74.4 | 2.03 | 32.7 | 3.2 | 1.61 | 2.49 | 1.95/1.20/1.57/2.11/1.43/3.13 |
+| hedge 0.5 x beta60 x SPY | 308 | 74.4 | 2.53 | 46.0 | 3.3 | 2.05 | 2.96 | 2.29/.94/1.67/3.39/1.97/3.33 |
+| hedge 1.0 only if SPY<SMA50 | 308 | 74.4 | 2.77 | 56.0 | 3.7 | 2.23 | 3.21 | 2.23/.48/1.91/3.99/2.24/3.66 |
+
+Verdict: NOT a promotion candidate. The strategy's edge is not market beta: every hedge lowers PF, return, Sharpe and last-12-month PF while only trimming drawdown (4.3 -> 3.3% at best) and turning 2022 positive (full hedge 3.32, but at -15 return points and the 2024-25 PF dropping). Even with a free hedge Sharpe falls, so a costly real hedge would be worse. The 2022 benefit is the only argument, and the live SPY>200d gate plus breadth filter already handle most of it. Not added to challenger.py. Next: true PEAD with earnings dates (needs data), universe/survivorship cross-check, trend-following sleeve uncorrelated with champion.
