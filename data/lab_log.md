@@ -364,3 +364,19 @@ Source: a web search for RSI2 exit/hold variants returned only generic pages (mq
 | vol>=2.0 | 235 | 75.7 | 3.39 | 56.8 | 4.5 | 2.45 | 76 / 4.13 | 7.68/1.38/1.42/4.62/2.60/4.80 |
 
 Verdict: NOT a promotion candidate; the live parameters (hold 7, stop 4 ATR, prior-high exit, A+E+F, SPY>200d gate) remain near a local optimum under the new base. Hold 10/15 gain only ~3% PF and ~1.5 return points with higher drawdown and worse 2023/2025 - within noise after 12 variants. Widening the trigger set (G, H, lower vol threshold) adds trades but cuts PF to 1.6-1.9 and doubles drawdown, i.e. the edge is concentrated in the strict triggers. vol>=2.0 has higher PF/Sharpe and fixes 2022 (1.38) but loses ~4 return points on fewer trades (235); it is just the continuation of the monotone vol gradient (runs 8, 16) with ever fewer trades, not an independent signal. Sizing 12% x 10 raises return 60.6 -> 76.5% for +0.9pt drawdown (already known from run 9). Not added to challenger.py. Next: sector-ETF-relative drop (needs sector map), pairs/relative value, true PEAD with earnings dates.
+
+## 2026-11-16 (run 22) - industry-momentum conditioning of the LIVE setup (web idea: reversal works better in winning industries)
+Sources: https://www.cxoadvisory.com/technical-trading/reviving-short-term-reversal/ , https://www.cxoadvisory.com/momentum-investing/short-term-reversal-by-industry , https://mysimon.rochester.edu/novy-marx/research/RRLP.pdf (search results only, pages not fetched; claims are for monthly reversals on all stocks, unverified for this 3-7 day daily setup). Rules: live setup trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) kept only if the sector-peer mean (self excluded) 126d return, or 12-1 month return, at signal day passes a threshold. Same simulator. Script: lab_indmom.py. 10 variants tried (multiple-comparison discount; 2026 not used to select; data through 2026-10-29).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| sector 126d > 0 | 242 | 74.4 | 3.20 | 52.7 | 3.6 | 2.45 | 75 / 3.72 | 3.59/.87/1.94/4.76/2.53/3.99 |
+| sector 126d <= 0 | 53 | 75.5 | 2.10 | 4.9 | 1.0 | 1.85 | 25 / 2.37 | thin |
+| sector 126d > 5% | 208 | 72.6 | 3.26 | 47.7 | 2.8 | 2.55 | 65 / 3.47 | 7.01/.87/2.33/4.39/2.18/3.77 |
+| sector 12-1m > 0 | 256 | 73.4 | 2.97 | 50.5 | 3.7 | 2.47 | 90 / 3.04 | 3.69/.87/1.15/6.17/2.39/3.0 |
+| sector 12-1m > 10% | 208 | 73.6 | 3.07 | 42.4 | 2.9 | 2.36 | 60 / 3.44 | 3.69/.87/1.13/5.95/1.92/3.91 |
+| no-vol base (breadth+rank) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| no-vol + sector 126d > 0 | 470 | 67.9 | 1.88 | 45.8 | 5.1 | 1.82 | 106 / 2.83 | no gain |
+
+Verdict: NOT a promotion candidate. Winning-industry filters raise PF modestly (2.83 -> 3.2) and lower drawdown, but they remove 14-30% of trades and 8-18 return points, so they fail the return bar; weak-sector trades are still profitable (PF 2.1, 1.9 without the vol filter), so the literature effect does not turn into a loss to avoid here. Without the vol filter the filter does nothing for PF. Consistent with a small, noisy gain after 10 variants. Not added to challenger.py. Possible use only as a sizing tilt (not tested). Next: true PEAD with earnings dates, pairs/relative value, trend-following sleeve uncorrelated with champion.
