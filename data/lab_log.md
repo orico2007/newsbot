@@ -345,37 +345,22 @@ Verdict: NOT a promotion candidate. On the vol-filtered live set the dip-sizing 
 
 Repo hygiene note: the original run-6 commit (7c81e67) was made from a stale clone and overwrote lab_log.md runs 7-18 and the live variants in challenger.py; this session restored them from 549127a and re-added the dip-sizing material as run 19. Future lab sessions must `git pull --rebase` BEFORE editing and never `git checkout <old commit> -- data/lab_log.md`.
 
-## 2026-11-16 (run 21) - exit overlays on the LIVE setup: early cut of non-working trades, profit lock, breakeven stop (web hint + own idea)
-Source: https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-multi-asset-pullback-strategy-discovery/ (ETF pullbacks; claims shorter holds raise Sharpe; unverified, other asset class). Also checked https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy (not used). Script: lab_earlycut.py (re-simulates each live trade; base reproduces live exactly). Live trade list: A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, exit close>prior high, 10% x 12, 4/day. 10 variants tried (multiple-comparison discount; none won, so discount is moot).
+## 2026-11-16 (run 21) - re-tuning hold / stop / exit / trigger breadth / vol threshold under the NEW live base (own idea; parameters were tuned before the vol filter existed)
+Source: a web search for RSI2 exit/hold variants returned only generic pages (mql5 RSI2 article, Quantified Strategies RSI pullback posts); no testable specific claim. Rules: live base (breadth>=10%, weakest-peer rank, vol60>=1.75%, SPY>200d, 10% x 12, 4/day); one parameter changed at a time. Script: lab_retune.py. 12 variants tried (multiple-comparison discount; 2026 not used to select).
 
-| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
 |---|---|---|---|---|---|---|---|---|
-| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
-| cut at day 3 close if below entry | 326 | 65.6 | 2.07 | 42.8 | 4.7 | 1.72 | 2.17 | 2.21/.69/1.46/3.18/1.64/2.17 |
-| cut at day 2 if below entry | 331 | 59.2 | 1.83 | 33.4 | 4.9 | 1.54 | 1.99 | 2.78/.34/1.27/2.31/1.59/1.96 |
-| cut at day 4 if below entry-1% | 313 | 70.3 | 2.36 | 49.6 | 4.2 | 1.92 | 2.20 | 3.47/.72/1.60/3.58/2.17/2.03 |
-| cut at day 5 if below entry | 311 | 70.7 | 2.40 | 50.8 | 5.3 | 1.90 | 2.63 | 2.71/.87/1.42/4.39/1.93/2.48 |
-| profit lock +1.5 ATR close | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | identical (never triggers before prior-high exit) |
-| profit lock +1.0 ATR close | 308 | 74.4 | 2.76 | 57.7 | 4.3 | 2.22 | 3.32 | slightly worse |
-| breakeven stop after +1 ATR close | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | identical (never binds) |
-| hold 5 (control) | 311 | 70.7 | 2.39 | 50.0 | 5.5 | 1.86 | 2.63 | worse |
-| hold 10 (control) | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 3.86 | better 2021/25... worse 2023/25; DD up, Sharpe flat |
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| LIVE at 12% x 10 | 308 | 74.4 | 2.83 | 76.5 | 5.2 | 2.28 | 100 / 3.37 | same |
+| hold 5 | 311 | 70.7 | 2.39 | 50.0 | 5.5 | 1.86 | 100 / 2.63 | 2.71/.87/1.35/4.39/1.93/2.48 |
+| hold 10 | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 100 / 3.86 | 2.75/.87/1.55/5.58/2.00/4.34 |
+| hold 15 | 305 | 76.1 | 2.92 | 62.1 | 4.8 | 2.29 | 100 / 3.72 | 2.75/.87/1.59/5.38/2.05/4.17 |
+| stop 3 ATR / 6 ATR | 308 | 74.4 | 2.66 / 2.79 | 57.9 / 60.0 | 4.3 | 2.17 / 2.25 | 100 / 3.16, 3.37 | worse or equal |
+| exit close>MA5 | 304 | 71.7 | 2.33 | 51.2 | 5.0 | 1.88 | 99 / 2.63 | 3.14/.23/1.23/3.18/2.30/2.65 |
+| + rule G (3 down days) | 560 | 70.0 | 1.70 | 55.5 | 9.9 | 1.57 | 170 / 2.03 | 1.74/.33/.80/3.16/1.90/2.16 |
+| + rule H (RSI2<10, nocrash) | 512 | 68.9 | 1.89 | 62.7 | 8.8 | 1.69 | 153 / 2.25 | 1.65/.69/.91/3.37/2.25/2.47 |
+| gate none | 365 | 72.6 | 2.35 | 59.9 | 5.0 | 1.85 | 102 / 3.25 | 2.41/.75/1.97/4.74/2.51/3.25 |
+| vol>=1.5 + rule H | 647 | 67.7 | 1.63 | 56.4 | 10.1 | 1.42 | 188 / 2.16 | 1.33/.40/.90/2.62/1.95/2.33 |
+| vol>=2.0 | 235 | 75.7 | 3.39 | 56.8 | 4.5 | 2.45 | 76 / 4.13 | 7.68/1.38/1.42/4.62/2.60/4.80 |
 
-Verdict: NOT a promotion candidate; strongly negative for the web hint. Cutting trades that are not working yet destroys edge: the losers at day 2-5 are the ones that mean-revert later (win% falls 74 -> 59-70, PF down in nearly every year). Profit locks and breakeven stops either never bind (the prior-high exit already fires first) or slightly hurt. Faster holds (5d) are worse; hold 10 is a wash (PF/return up marginally, DD 4.3 -> 5.0, Sharpe flat, mixed by year). Takeaway: the live exit (prior-high close, 4 ATR stop, 7-day time stop) is near a local optimum; do not add exit overlays. Not added to challenger.py. No live files touched.
-
-## 2026-11-16 (run 22) - liquidity (20d dollar volume) and price-level conditioners on the LIVE setup (web hint + own idea)
-Source: https://delphicalpha.substack.com/p/us-equity-cross-sectional-mean-reversion (only a liquidity/price universe screen is described; results paywalled, nothing verified). Other pages seen, not used: Quantified Strategies new-low / 3-down-day pullback posts (already covered by runs 4, 15). Script: lab_liq.py. Live trade list (A+E+F, SPY>200d, breadth>=10%, peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) filtered by (a) the stock's 20-day median dollar volume as a percentile among the 126 universe stocks ON THE SAME DATE (time-neutral; a first version using raw dollar-volume terciles was rejected because dollar volume drifts up over time and the "top" bucket had no 2022 trades), (b) share price. 8 variants + base (multiple-comparison discount).
-
-| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
-|---|---|---|---|---|---|---|---|---|
-| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
-| dollar-vol percentile top 2/3 | 257 | 75.9 | 3.32 | 58.5 | 3.4 | 2.46 | 4.63 | 2.71/.87/2.11/4.80/2.46/5.56 |
-| dollar-vol bottom 2/3 | 164 | 72.0 | 1.72 | 13.3 | 2.4 | 1.27 | 1.50 | 1.24/-/.99/3.23/2.10/1.47 |
-| dollar-vol top 1/3 | 169 | 74.0 | 3.89 | 40.9 | 3.0 | 2.40 | 9.10 | 76/.87/1.68/6.83/1.83/11.95 |
-| dollar-vol bottom 1/3 | 62 | 66.1 | 1.31 | 2.1 | 1.5 | 0.60 | 0.82 | 1.59/-/.31/3.92/5.84/.82 |
-| price >= $20 | 302 | 74.2 | 2.85 | 59.2 | 3.6 | 2.36 | 3.31 | ~same as live |
-| price < $50 | 45 | 68.9 | 1.78 | 4.6 | 2.7 | 0.88 | 2.27 | weak |
-| price top 2/3 | 227 | 73.1 | 2.87 | 40.8 | 2.9 | 2.26 | 3.81 | 2.04/.75/2.34/3.37/2.43/3.93 |
-| price bottom 2/3 | 206 | 72.8 | 2.47 | 34.9 | 4.1 | 1.64 | 3.13 | 2.12/1.60/1.38/4.63/1.68/3.62 |
-
-Verdict: NOT a promotion candidate, but a consistent gradient worth watching: reversion works better on the more liquid stocks and the least liquid third of the universe is poor (PF 1.31, 0.82 last 12m, only +2% return). Excluding the bottom third lifts PF 2.83 -> 3.32, Sharpe 2.28 -> 2.46, last-12m PF 3.37 -> 4.63, max DD 4.3 -> 3.4, and wins 4 of 5 non-2022 years (2025 is a hair lower, 2.46 vs 2.51), but total return is slightly LOWER (58.5 vs 60.6) because it drops 51 trades, so it fails the "beats on return" bar; with 9 variants tried the PF gain is within what selection could produce, and the 2026 sealed year is part of the last-12m number so it is not a clean holdout. Price level adds nothing beyond the dollar-volume effect (price>=$20 identical to live). Possible follow-up for the daily improvement task: a size tilt (e.g. 1.25x for top-2/3 dollar volume, 0.75x for bottom third) instead of a hard filter, and re-check when bars-cache has more history. Caveat: the universe is only 126 large stocks, so "least liquid" is still liquid in absolute terms.
+Verdict: NOT a promotion candidate; the live parameters (hold 7, stop 4 ATR, prior-high exit, A+E+F, SPY>200d gate) remain near a local optimum under the new base. Hold 10/15 gain only ~3% PF and ~1.5 return points with higher drawdown and worse 2023/2025 - within noise after 12 variants. Widening the trigger set (G, H, lower vol threshold) adds trades but cuts PF to 1.6-1.9 and doubles drawdown, i.e. the edge is concentrated in the strict triggers. vol>=2.0 has higher PF/Sharpe and fixes 2022 (1.38) but loses ~4 return points on fewer trades (235); it is just the continuation of the monotone vol gradient (runs 8, 16) with ever fewer trades, not an independent signal. Sizing 12% x 10 raises return 60.6 -> 76.5% for +0.9pt drawdown (already known from run 9). Not added to challenger.py. Next: sector-ETF-relative drop (needs sector map), pairs/relative value, true PEAD with earnings dates.
