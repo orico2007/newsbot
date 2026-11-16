@@ -380,3 +380,17 @@ Sources: https://www.cxoadvisory.com/technical-trading/reviving-short-term-rever
 | no-vol + sector 126d > 0 | 470 | 67.9 | 1.88 | 45.8 | 5.1 | 1.82 | 106 / 2.83 | no gain |
 
 Verdict: NOT a promotion candidate. Winning-industry filters raise PF modestly (2.83 -> 3.2) and lower drawdown, but they remove 14-30% of trades and 8-18 return points, so they fail the return bar; weak-sector trades are still profitable (PF 2.1, 1.9 without the vol filter), so the literature effect does not turn into a loss to avoid here. Without the vol filter the filter does nothing for PF. Consistent with a small, noisy gain after 10 variants. Not added to challenger.py. Possible use only as a sizing tilt (not tested). Next: true PEAD with earnings dates, pairs/relative value, trend-following sleeve uncorrelated with champion.
+
+## 2026-11-16 (run 21) - failed-breakdown / Turtle-Soup reversal sleeve on top of the LIVE setup (web idea)
+Source: search hits only (Quantified Strategies new-low / reversal-day pages, https://quantifiedstrategies.substack.com/p/new-low-trading-strategy , https://www.pulse.bot/stock-trading/news/reversal-day-strategy-for-the-markets-1fbb2118-59a3-415b-8f16-28b75dbc8c47/); not fetched, claims unverified. Rules: long at close when today's low undercuts the prior N-day low (N=10 or 20) but the close is back above that prior low; optional IBS>=0.5; optional vol60>=1.75%; close>SMA200, SPY>200d, ATR/price<6%, breadth>=10%; exit prior-high/hold 7/stop 4 ATR; 10% x 12, 4/day; sleeve ranked AFTER live signals. Script: lab_fbd.py. 8 variants (multiple-comparison discount). Data through 2026-10-29, 2026 not used to select.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| N=10 alone | 1174 | 63.9 | 1.03 | 2.9 | 18.4 | 1.39 | .91/.28/1.03/.94/1.0/1.46 |
+| N=10 ibs>=.5 + vol175 alone | 501 | 69.3 | 1.24 | 15.7 | 7.9 | 1.63 | 3.31/.29/1.11/1.05/.90/1.99 |
+| N=20 ibs>=.5 + vol175 alone | 299 | 71.2 | 1.31 | 11.3 | 6.1 | 1.72 | 5.32/.14/1.11/1.18/1.15/1.88 |
+|   + live combined | 518 | 72.0 | 1.98 | 64.0 | 5.6 | 2.32 | 2.7/.14/1.62/2.75/1.7/2.36 |
+| (other 5 variants: PF 0.97-1.16 alone, combined PF 1.21-1.68) | | | | | | | |
+
+Verdict: NOT a promotion candidate. Standalone, the failed-breakdown signal has no real edge on daily bars (PF 0.97-1.31, best only after stacking vol and IBS filters, which is the same exposure the live setup already captures). Every combination dilutes the live setup (PF 2.83 -> <=1.98, Sharpe 2.28 -> <=1.72, worse in 2022-2025 each year). Not added to challenger.py. Next ideas: sector-relative pairs with live signals, multi-day (2-5 day) holding-period decay by vol tier, true PEAD with earnings dates.
