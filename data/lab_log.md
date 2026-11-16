@@ -362,3 +362,20 @@ Source: https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-mult
 | hold 10 (control) | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 3.86 | better 2021/25... worse 2023/25; DD up, Sharpe flat |
 
 Verdict: NOT a promotion candidate; strongly negative for the web hint. Cutting trades that are not working yet destroys edge: the losers at day 2-5 are the ones that mean-revert later (win% falls 74 -> 59-70, PF down in nearly every year). Profit locks and breakeven stops either never bind (the prior-high exit already fires first) or slightly hurt. Faster holds (5d) are worse; hold 10 is a wash (PF/return up marginally, DD 4.3 -> 5.0, Sharpe flat, mixed by year). Takeaway: the live exit (prior-high close, 4 ATR stop, 7-day time stop) is near a local optimum; do not add exit overlays. Not added to challenger.py. No live files touched.
+
+## 2026-11-16 (run 22) - liquidity (20d dollar volume) and price-level conditioners on the LIVE setup (web hint + own idea)
+Source: https://delphicalpha.substack.com/p/us-equity-cross-sectional-mean-reversion (only a liquidity/price universe screen is described; results paywalled, nothing verified). Other pages seen, not used: Quantified Strategies new-low / 3-down-day pullback posts (already covered by runs 4, 15). Script: lab_liq.py. Live trade list (A+E+F, SPY>200d, breadth>=10%, peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) filtered by (a) the stock's 20-day median dollar volume as a percentile among the 126 universe stocks ON THE SAME DATE (time-neutral; a first version using raw dollar-volume terciles was rejected because dollar volume drifts up over time and the "top" bucket had no 2022 trades), (b) share price. 8 variants + base (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| dollar-vol percentile top 2/3 | 257 | 75.9 | 3.32 | 58.5 | 3.4 | 2.46 | 4.63 | 2.71/.87/2.11/4.80/2.46/5.56 |
+| dollar-vol bottom 2/3 | 164 | 72.0 | 1.72 | 13.3 | 2.4 | 1.27 | 1.50 | 1.24/-/.99/3.23/2.10/1.47 |
+| dollar-vol top 1/3 | 169 | 74.0 | 3.89 | 40.9 | 3.0 | 2.40 | 9.10 | 76/.87/1.68/6.83/1.83/11.95 |
+| dollar-vol bottom 1/3 | 62 | 66.1 | 1.31 | 2.1 | 1.5 | 0.60 | 0.82 | 1.59/-/.31/3.92/5.84/.82 |
+| price >= $20 | 302 | 74.2 | 2.85 | 59.2 | 3.6 | 2.36 | 3.31 | ~same as live |
+| price < $50 | 45 | 68.9 | 1.78 | 4.6 | 2.7 | 0.88 | 2.27 | weak |
+| price top 2/3 | 227 | 73.1 | 2.87 | 40.8 | 2.9 | 2.26 | 3.81 | 2.04/.75/2.34/3.37/2.43/3.93 |
+| price bottom 2/3 | 206 | 72.8 | 2.47 | 34.9 | 4.1 | 1.64 | 3.13 | 2.12/1.60/1.38/4.63/1.68/3.62 |
+
+Verdict: NOT a promotion candidate, but a consistent gradient worth watching: reversion works better on the more liquid stocks and the least liquid third of the universe is poor (PF 1.31, 0.82 last 12m, only +2% return). Excluding the bottom third lifts PF 2.83 -> 3.32, Sharpe 2.28 -> 2.46, last-12m PF 3.37 -> 4.63, max DD 4.3 -> 3.4, and wins 4 of 5 non-2022 years (2025 is a hair lower, 2.46 vs 2.51), but total return is slightly LOWER (58.5 vs 60.6) because it drops 51 trades, so it fails the "beats on return" bar; with 9 variants tried the PF gain is within what selection could produce, and the 2026 sealed year is part of the last-12m number so it is not a clean holdout. Price level adds nothing beyond the dollar-volume effect (price>=$20 identical to live). Possible follow-up for the daily improvement task: a size tilt (e.g. 1.25x for top-2/3 dollar volume, 0.75x for bottom third) instead of a hard filter, and re-check when bars-cache has more history. Caveat: the universe is only 126 large stocks, so "least liquid" is still liquid in absolute terms.
