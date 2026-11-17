@@ -345,6 +345,195 @@ Verdict: NOT a promotion candidate. On the vol-filtered live set the dip-sizing 
 
 Repo hygiene note: the original run-6 commit (7c81e67) was made from a stale clone and overwrote lab_log.md runs 7-18 and the live variants in challenger.py; this session restored them from 549127a and re-added the dip-sizing material as run 19. Future lab sessions must `git pull --rebase` BEFORE editing and never `git checkout <old commit> -- data/lab_log.md`.
 
+## 2026-11-14 (run 21) - equity-curve throttling: skip entries after the strategy's own recent losers (web-seeded)
+Source: https://www.luxalgo.com/library/concept/equity-curve-based-throttling/ (concept page only; no testable numbers, treated as unverified hypothesis). Script: lab_eqcurve.py.
+Rules: LIVE setup unchanged (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Shadow curve = the unfiltered live portfolio's closed trades; an entry is skipped if, among the last N trades that exited BEFORE the entry date, mean pnl < 0 (or win% below a threshold). CONTRA rows do the opposite (skip after winners) as a direction control. 8 variants tried (multiple-comparison discount; N=10/20/30 grid, no tuning beyond that).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE (vol175) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| skip if last10 mean pnl<0 | 274 | 74.8 | 3.06 | 57.8 | 2.4 | 2.61 | 3.34 | 1.93/.87/2.30/4.74/2.88/3.38 |
+| skip if last20 mean pnl<0 | 275 | 73.5 | 2.83 | 56.1 | 4.9 | 2.32 | 3.37 | 2.41/.87/1.43/4.67/2.72/3.41 |
+| skip if last30 mean pnl<0 | 276 | 73.2 | 2.71 | 51.7 | 4.3 | 2.10 | 3.37 | 2.41/.87/1.57/5.47/2.02/3.41 |
+| skip if last10 win%<50 | 291 | 75.3 | 3.13 | 62.5 | 2.4 | 2.65 | 3.37 | 2.41/.87/2.30/4.74/2.75/3.41 |
+| skip if last20 win%<60 | 277 | 73.3 | 2.81 | 56.0 | 5.0 | 2.29 | 3.37 | 2.41/.87/1.41/4.67/2.72/3.41 |
+| CONTRA skip after winners (N=10/20/30) | 49-65 | 69-79 | 1.2-2.8 | 1-9 | 2.4 | 0.3-2.1 | - | tiny samples |
+
+Verdict: NOT a promotion candidate. Only the N=10 versions help (max DD 4.3 -> 2.4, Sharpe 2.28 -> 2.65, PF 3.13), and they do so by dropping just 17-34 trades; the N=20/30 windows give no gain and lower return, so the effect is not stable across the window grid. Last-12-month PF is unchanged (3.37, the filter never fires in that period), and the "better" years are only 2023 and 2025 with the rest equal. A win%<50 on 10 trades is a very small-sample signal, the shadow curve depends on the same trades being evaluated, and the contra rows show winners-only periods are simply the low-trade-count periods (not informative). Possible use as a drawdown guard only; needs live data (the live bot has too few closed stock trades) before it is worth tracking. Not added to challenger.py.
+
+## 2026-11-15 (run 22) - market-conditioned exits (SPY state decides when to leave) on the LIVE setup (own idea)
+Source: none (the web-seeded exit variants were already covered by runs 25/28/42; this ties the exit to the market, not the stock). Script: lab_mktexit.py.
+Rules: LIVE setup entries (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Only the exit changes: the live exit is "close > prior high". 6 variants tried (multiple-comparison discount; SPY RSI2 thresholds 10/20/70/80 are not tuned, one-shot).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ignore prior-high exit while SPY RSI2<10 | 306 | 74.2 | 2.80 | 62.2 | 4.3 | 2.31 | 100 / 3.53 | 2.06/.65/1.68/4.85/2.45/3.64 |
+| ignore prior-high exit while SPY RSI2<20 | 304 | 74.0 | 2.88 | 65.3 | 4.2 | 2.30 | 100 / 3.82 | 1.96/.65/1.75/4.89/2.45/4.04 |
+| also exit if SPY RSI2>70 | 326 | 70.9 | 2.81 | 52.4 | 3.6 | 2.38 | 106 / 2.72 | 8.39/.87/1.53/4.33/2.12/2.77 |
+| also exit if SPY RSI2>80 | 320 | 73.1 | 3.03 | 60.5 | 3.5 | 2.49 | 104 / 2.87 | 6.77/.87/1.73/5.08/2.23/2.87 |
+| prior-high exit only if SPY closed up | 302 | 72.5 | 2.76 | 64.7 | 4.4 | 2.38 | 99 / 3.36 | 1.99/.65/1.74/4.68/2.49/3.40 |
+| control: prior-high exit only if SPY closed down/flat | 298 | 60.1 | 1.71 | 41.4 | 4.7 | 1.22 | 94 / 2.09 | 1.09/0/1.63/2.39/2.14/1.57 |
+
+Verdict: NOT a promotion candidate. No variant moves PF/return meaningfully beyond noise: holding through market washouts (RSI2<20) gives PF 2.88 / return 65.3 / L12 3.82, but 2021 and 2022 get worse, only ~4 trades change, and it is one of 6 comparisons. The SPY-RSI2>80 exit lifts Sharpe slightly (2.49) and cuts drawdown (3.5) but L12 PF falls 3.37 -> 2.87 and 2021's PF is inflated by a tiny sample. The control (exit only on SPY-down days) is clearly worse (PF 1.71), which only confirms that the live exit already works best with market strength helping. The stock-level exit is not improved by market state. Not added to challenger.py. Next: true PEAD with earnings dates; relative-value pairs inside sector; cross-sectional stock 12-1m momentum sleeve with the vol60 filter.
+
+## 2026-11-15 (run 23) - prior 21d/10d/5d return and distance-from-20d-high conditioning of the vol60>=1.75% LIVE setup (own idea; web search for a new Quantpedia short-term-reversal angle returned only index pages, https://quantpedia.com/strategies/short-term-reversal-in-stocks, no testable new rule). Script: lab_ret21.py.
+Rules: LIVE setup (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Signals split at the full-sample median of the feature (mild look-ahead); each half re-run through the portfolio simulator. 8 variants (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| ret21 > median (+1.4%) | 171 | 77.2 | 3.57 | 37.3 | 2.5 | 58 / 5.72 | 5.8/.12/1.48/4.35/2.81/8.09 |
+| ret21 <= median | 163 | 71.2 | 2.08 | 19.1 | 3.4 | 48 / 2.23 | 1.73/-/1.04/4.59/2.37/1.9 |
+| ret10 > / <= median (-4.2%) | 181 / 156 | 75.1 / 71.8 | 2.98 / 2.43 | 32.9 / 23.4 | 3.5 / 2.1 | 53 / 7.8 ; 54 / 2.03 | direction unstable |
+| ret5 > / <= median (-5.3%) | 180 / 168 | 71.1 / 78.0 | 2.14 / 3.75 | 19.9 / 38.8 | 3.1 / 2.2 | 44 / 1.94 ; 69 / 4.54 | opposite sign of ret10 |
+| dist from 20d high deeper / shallower | 167 / 169 | 74.3 / 75.1 | 2.81 / 2.98 | 34.3 / 23.9 | 2.9 / 2.1 | 67 / 3.57 ; 42 / 2.61 | no effect |
+
+Verdict: NOT a promotion candidate. Each filter roughly halves the trade count and the return (37% or less vs 60.6%). The best, ret21 above median (PF 3.57, L12 5.72, 2026 PF 8.1), fails the return bar and collapses in 2022 (0.12); the ret10 and ret5 splits point in opposite directions, so the effect is not monotone and fits chance after 8 comparisons. Distance from the 20d high does nothing. Weak hint only: pullbacks inside a positive 1-month trend revert a bit better, consistent with the existing SMA50>SMA200 trend rule. Not added to challenger.py. Next: true PEAD with earnings dates, pairs inside sector, a non-overlapping sleeve (e.g. long-only gap-up continuation) to combine with the champion.
+
+## 2026-11-15 (run 24) - SPY short-term trend (close vs SMA20) and 5d realized-vol state as conditioner of the LIVE setup (own idea). Script: lab_spysma.py.
+4 variants (median split of SPY 5d realized vol, mild look-ahead). LIVE vol175: n=308, PF 2.83, ret 60.6, DD 4.3.
+| Variant | n | Win % | PF | Ret % | DD | L12 PF |
+|---|---|---|---|---|---|---|
+| SPY > SMA20 | 162 | 74.1 | 2.49 | 20.8 | 2.4 | 2.92 |
+| SPY <= SMA20 | 161 | 74.5 | 3.14 | 36.2 | 3.2 | 3.62 |
+| SPY 5d rv > median | 170 | 73.5 | 3.11 | 36.2 | 3.8 | 2.75 |
+| SPY 5d rv <= median | 156 | 73.7 | 2.28 | 18.8 | 2.4 | 4.38 |
+Verdict: null. Win rate is identical across halves; PF differences come from a few years with tiny loss counts and the split halves return, failing the return bar. Mild hint (consistent with earlier fear-filter runs): signals during SPY weakness/higher vol are slightly better, already captured by the breadth filter. Not added to challenger.py.
+
+## 2026-11-15 (run 25) - cross-sectional stock 12-1m momentum monthly sleeve, +/- vol60 tilt, combined with champion (web-seeded)
+Source: https://quantpedia.com/strategies/momentum-factor-effect-in-stocks and https://quantpedia.com/optimization-of-equity-momentum/ (search results only; claims unverified, not relied on). Script: lab_xsmom.py (reuses lab_rotation.rotation on the stock universe).
+Rules: first trading day of each month, rank universe stocks by 12-1m (or 6-1m) return, buy top N, hold 21 days, 0.05% slippage per side, optional SPY>200d gate, optional vol60>=1.75% filter on picks. Portfolio simulator 10% x 12, 4/day. 6 variants tried (multiple-comparison discount; no tuning beyond N=5/10/20 and lookback 6 vs 12).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD % | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE vol175 champion | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| mom 12-1 top5 gate | 136 | 54.4 | 1.72 | 59.6 | 20.4 | 0.90 | 20 / 2.13 | 1.01/.10/1.08/4.72/1.42/2.68 |
+| mom 12-1 top10 gate | 182 | 49.5 | 1.64 | 69.9 | 21.0 | 0.86 | 33 / 2.72 | 1.01/.10/1.03/3.02/1.19/3.18 |
+| mom 12-1 top10 no gate | 232 | 53.9 | 1.84 | 121.8 | 17.2 | 1.05 | 37 / 3.09 | 1.01/.65/1.44/3.02/1.64/3.62 |
+| mom 12-1 top10 gate + vol60>=1.75 | 160 | 51.2 | 1.82 | 84.3 | 20.2 | 0.98 | 30 / 2.97 | 1.01/.10/1.16/3.69/1.35/3.61 |
+| mom 6-1 top10 gate | 192 | 49.5 | 1.49 | 48.3 | 20.8 | 0.79 | 36 / 1.83 | 1.42/.01/1.43/2.43/1.46/2.28 |
+| mom 12-1 top20 gate (control) | 192 | 50.0 | 1.74 | 85.5 | 21.0 | 1.02 | 40 / 2.93 | 1.01/.10/1.03/3.18/1.18/3.43 |
+| COMBINED champion + top10 no-gate | 483 | 64.0 | 1.91 | 195.0 | 15.9 | 1.14 | 116 / 3.18 | 1.31/.65/1.48/2.98/1.70/3.45 |
+| COMBINED champion + top10 gate+vol | 406 | 64.5 | 1.92 | 143.8 | 17.3 | 1.04 | 109 / 3.10 | 1.31/.10/1.24/3.45/1.58/3.42 |
+
+Verdict: NOT a promotion candidate. Standalone momentum earns real return (PF 1.6-1.8, 50-54% win) but with 17-21% max drawdown (champion 4.3%) and PF around 1.0 in 2021 and 2023; 2022 collapses when gated (0.10). Adding it raises combined return (up to 195%) but drops Sharpe 2.28 -> ~1.0-1.1 and PF 2.83 -> ~1.9, driven by a high-beta, highly correlated-to-market book that loses in selloffs, i.e. the opposite of an uncorrelated complement. Return gain is mostly leverage on market beta in a bull sample (2023-2026); vol60 tilt helps a little but is one of 6 comparisons. Not added to challenger.py. Next: pairs inside sector (relative value), true PEAD with earnings dates, momentum sleeve with market-neutral hedge (short SPY) to test whether the alpha survives beta removal.
+
+## 2026-11-15 (run 26) - gap-up continuation sleeve (web-seeded: earnings/runaway-gap drift proxy)
+Sources (search results only, titles; claims unverified, not relied on): https://quantifiedstrategies.substack.com/p/gap-trading-strategies-with-backtest , https://www.quantifiedstrategies.com/runaway-gaps/ , https://financialnoob.substack.com/p/buy-on-gap-strategy-and-its-performance . Script: lab_gapup.py.
+Rules: open > prior close by >= g%, close > open, IBS >= 0.6, volume >= k x 20d avg, close > SMA50 > SMA200, SPY>200d, ATR% <= 8; buy at close, stop 4 ATR, hold 10 or 20 days (no early exit), 10-day cooldown per stock. Same simulator (10% x 12, 4/day). 6 variants tried (multiple-comparison discount). Combined = LIVE vol60>=1.75% setup + sleeve.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| gap>=3% vol>=2x h10 | 157 | 54.8 | 1.07 | 2.4 | 8.6 | 33 / 0.71 | 1.41/.14/1.46/1.61/.67/.93 |
+| gap>=3% vol>=2x h20 | 148 | 52.0 | 1.06 | 2.5 | 9.9 | 30 / 0.56 | 1.32/0/1.31/1.93/.72/.66 |
+| gap>=5% vol>=2x h10 | 88 | 50.0 | 1.01 | -0.1 | 9.7 | 19 / 0.43 | |
+| gap>=2% vol>=1.5x h10 | 287 | 51.2 | 1.10 | 8.1 | 11.0 | 72 / 0.90 | |
+| gap>=3% vol>=2x h10 + vol60 | 121 | 55.4 | 1.07 | 2.4 | 11.3 | 29 / 0.70 | |
+| gap>=5% vol>=2x h20 | 86 | 52.3 | 1.34 | 11.9 | 7.2 | 18 / 0.60 | |
+| COMBINED LIVE + best (gap5 h20) | 368 | 68.8 | 1.92 | 69.3 | 8.9 | 109 / 1.50 | 2.0/.2/1.78/3.08/1.54/1.51 |
+| COMBINED LIVE + gap3 h10 | 449 | 67.0 | 1.65 | 54.4 | 7.3 | 128 / 1.45 | |
+
+Verdict: NOT a promotion candidate. Gap-up continuation has no edge on daily bars of this universe: PF ~1.0-1.3, ~50-55% win, last-12-month PF below 1 in every variant (0.43-0.90), 2025/2026 negative. Every combination lowers the champion's PF (2.83 -> 1.4-1.9), Sharpe and doubles drawdown; the sleeve is not a useful complement. Consistent with the earlier finding that this universe pays for short-term reversion, not continuation (also 52wh run 1, xsmom run 25). Not added to challenger.py. Next: pairs/relative value inside sector; true PEAD with earnings dates (earnings.py exists); market-neutral hedge of the momentum sleeve.
+
+## 2026-11-15 (run 27) - relative-value pairs reversion (stock vs its most-correlated peer), own idea (also a Quantpedia/QuantConnect pairs/residual-reversal theme; no new sources fetched). Script: lab_pairs.py (first logged run).
+Rules: each stock's partner = highest-correlation stock over the 252 days BEFORE each calendar year (corr > 0.5, 505 stock-years). Signal: z of the 60d log spread (stock/partner) <= threshold, close > SMA200, SPY>200d gate, ATR% <= 9; buy at close, exit on prior-high or 7 days, stop 4 ATR, 5-day cooldown. Same simulator (10% x 12, 4/day). 5 variants tried (multiple-comparison discount). Reference is the live setup before the vol60 filter (breadth>=10% + peer rank, PF 1.88), so compare within this table only.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (breadth+rank) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 136 / 2.65 | .13/1.42/2.19/1.92/2.68 |
+| z<-2 h7 | 1022 | 65.4 | 1.21 | 25.8 | 6.3 | 283 / 1.33 | .43/1.02/1.37/1.36/1.31 |
+| z<-2.5 h7 | 512 | 64.5 | 1.26 | 14.9 | 4.7 | 147 / 1.22 | .45/.99/1.77/1.27/1.22 |
+| z<-2 & rsi2<10 | 320 | 66.9 | 1.47 | 17.3 | 3.6 | 98 / 1.48 | .09/1.97/2.03/.77/1.64 |
+| z<-2 h5 | 1098 | 64.1 | 1.18 | 23.9 | 9.0 | 304 / 1.31 | .33/.97/1.46/1.28/1.31 |
+| z<-1.5 & rsi2<10 | 528 | 63.1 | 1.35 | 23.0 | 5.7 | 152 / 1.54 | .16/1.61/1.60/1.08/1.57 |
+| z<-2 breadth>=10% alone | 481 | 65.7 | 1.41 | 22.5 | 3.9 | 157 / 1.26 | .44/1.38/1.75/1.39/1.31 |
+| COMBINED LIVE + z<-2 & rsi2<10 | 838 | 68.4 | 1.69 | 73.1 | 6.7 | 209 / 1.90 | .11/1.61/2.13/1.61/1.92 |
+| COMBINED LIVE + z<-1.5 & rsi2<10 | 979 | 66.5 | 1.58 | 73.1 | 7.7 | 248 / 1.65 | .14/1.43/1.84/1.43/1.66 |
+
+Verdict: NOT a promotion candidate. Pair-spread reversion has a mild positive edge standalone (PF 1.2-1.5, win 63-67%) but is weaker than the champion in every year, and the strongest variant (z<-2 & rsi2<10) is mostly the RSI2 rule already in the champion, with 2022 collapsing (0.09) and 2025 below 1. Combining adds return (60 -> 73%) but lowers PF (1.88 -> 1.58-1.69) and Sharpe and raises drawdown, so it is not a clean complement; the signals are largely the same oversold stocks the champion already trades (correlated, not diversifying). Long-only pairs here is not true market-neutral relative value. Not added to challenger.py. Next: true PEAD with earnings dates; momentum sleeve with a SPY hedge; sector-ETF-relative drop (needs sector map).
+
+## 2026-11-15 (run 28) - capitulation-bar reversion sleeve: big ATR-sized down day + volume spike (web-seeded)
+Sources (search results only, titles; claims unverified, not relied on): https://www.tradingview.com/script/WWuTjyDx-Capitulation-Stretch-Reversion-Jayadev-Rana/ , https://quantifiedstrategies.substack.com/p/turnaround-tuesday-strategy-backtest . Script: lab_climax.py. (Turnaround Tuesday itself is already covered by the weekday split in lab_dow.py.)
+Rules: one-day drop (prior close - close)/ATR14 >= k, optional volume >= m x 20d avg and IBS cap, close > SMA50 > SMA200, SPY>200d, ATR% <= 9; buy at close, exit on prior high, hold 7, stop 4 ATR, 5-day cooldown. Same simulator (10% x 12, 4/day). 6 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| drop>=2ATR vol>=2x | 70 | 55.7 | 1.08 | 0.8 | 3.7 | 9 / 2.9 | -/0/1.25/.53/1.52/2.9 |
+| drop>=3ATR vol>=2x | 13 | 69.2 | 0.72 | -0.6 | 1.3 | 1 | too few |
+| drop>=2ATR vol>=2x IBS<=.2 | 46 | 58.7 | 1.50 | 2.8 | 2.8 | 8 / 8.6 | -/-/1.41/.52/8.9/8.6 |
+| drop>=2ATR no vol filter | 134 | 57.5 | 1.11 | 1.9 | 7.0 | 18 / 3.2 | 1.41/0/1.8/.6/1.09/3.7 |
+| drop>=3ATR vol>=2x + vol60 | 3 | 66.7 | 0.33 | -0.8 | 1.1 | 1 | too few |
+| drop>=2ATR vol>=3x | 19 | 57.9 | 0.86 | -0.4 | 1.8 | 1 | too few |
+| COMBINED LIVE + drop2 vol2 | 365 | 71.0 | 2.20 | 51.2 | 4.7 | 106 / 3.01 | 2.5/.82/1.35/2.22/2.37/2.94 |
+| COMBINED LIVE + drop2 vol2 IBS<=.2 | 347 | 72.3 | 2.57 | 61.2 | 4.7 | 107 / 3.48 | 2.5/.87/1.39/2.99/2.59/3.57 |
+
+Verdict: NOT a promotion candidate. Capitulation bars inside an uptrend with SPY>200d are rare (13-134 trades in 5+ years) and have no edge as a standalone sleeve (PF 0.7-1.5, 56-59% win, ~0-3% return). The only variant that looks good (IBS<=.2) has 46 trades and its PF is carried by 2025-26 (8.9/8.6 on 8 recent trades) while 2024 is 0.52 - small-sample luck among 6 comparisons. Combining dilutes the champion's PF (2.83 -> 2.2-2.6) with no return gain. Panic-day size is not a better selector than the champion's RSI2/breadth/vol60 logic. Not added to challenger.py. Next: true PEAD using earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
+
+## 2026-11-15 (run 29) - short-term volatility expansion (sd5/sd60, sd20/sd60, signal-day TR/ATR14) as conditioner of the vol60>=1.75% LIVE setup (own idea; follow-up of runs 12 and 28). Script: lab_volratio.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) split at the median of each feature. 6 variants tried (multiple-comparison discount); 2026 not used to choose.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| sd5/sd60 > med | 160 | 70.6 | 3.15 | 33.4 | 2.9 | 57 / 3.61 | 5.25/-/1.23/6.76/1.65/3.44 |
+| sd5/sd60 <= med | 177 | 74.6 | 2.26 | 21.9 | 3.6 | 51 / 3.06 | 1.27/.75/1.70/3.38/2.23/3.73 |
+| sd20/sd60 > med | 160 | 72.5 | 2.60 | 28.6 | 3.1 | 61 / 4.18 | 3.22/.12/1.23/2.44/2.21/4.78 |
+| sd20/sd60 <= med | 170 | 76.5 | 3.30 | 29.9 | 2.2 | 46 / 2.77 | 1.88/-/2.03/9.67/3.48/2.36 |
+| TR/ATR14 > med | 170 | 73.5 | 3.09 | 35.0 | 2.3 | 53 / 4.08 | 1.77/1.89/2.14/8.12/2.16/3.77 |
+| TR/ATR14 <= med | 180 | 75.0 | 2.48 | 24.9 | 2.9 | 59 / 2.63 | 6.25/0/1.34/3.30/1.66/3.10 |
+
+Verdict: NOT a promotion candidate. The two vol-ratio splits point in opposite directions (sd5 high better, sd20 high worse) and flip sign year to year, i.e. noise. Only TR/ATR14 > median looks good (PF 3.09, 2022 even 1.89) but it beats live in only 3/5 non-2022 years (2021 and 2025 lower), halves the trade count and return, and is 1 of 6 comparisons; consistent with run 28 that bigger signal-day bars are not a reliable selector. Not added to challenger.py. Next: true PEAD with earnings.py dates; momentum sleeve with SPY hedge; sector-ETF-relative drop.
+
+## 2026-11-15 (run 30) - SPY signal-day close location (IBS) and overnight-gap vs intraday split as conditioner / size tilt of the vol60>=1.75% LIVE setup (own idea; web search for market-wide selloff reversion returned only substack/blog index pages, e.g. https://backtest.substack.com/p/buying-weakness-on-the-nasdaq-100, nothing testable and not relied on). Script: lab_spyibs.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) split by SPY's own signal-day IBS = (close-low)/(high-low), SPY open-to-close return and SPY overnight gap (all known at the close). Size tilts emulated by scaling pnl (PF size-weighted). 11 comparisons tried (multiple-comparison discount). Earlier SPY 1d return skips were already tested (improvement_log); IBS/intraday/gap were not.
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| SPY IBS<0.3 only | 153 | 77.8 | 3.62 | 34.6 | 2.3 | 45 / 4.45 | 8.0/-/2.93/4.33/2.88/3.19 |
+| SPY IBS>=0.3 only | 187 | 69.5 | 1.85 | 18.1 | 4.3 | 65 / 2.51 | 1.12/.75/.64/3.39/1.5/3.33 |
+| SPY intraday<0 | 218 | 76.1 | 3.36 | 50.9 | 3.3 | 75 / 3.41 | 9.67/.26/2.11/3.96/2.79/3.27 |
+| SPY intraday>=0 | 118 | 66.1 | 1.57 | 7.3 | 3.4 | 30 / 2.38 | .6/1.38/.81/5.03/.73/2.9 |
+| SPY gap<-0.3% | 131 | 76.3 | 3.05 | 23.4 | 3.3 | 46 / 2.98 | -/-/1.3/7.07/1.29/4.43 |
+| tilt 1.25x if SPY IBS<0.3 else 0.75x | 308 | 74.4 | 3.25 | 67.5 | 3.3 | 100 / 3.70 | 2.96/.95/2.18/5.20/2.87/3.49 |
+| tilt 1.5x / 0.5x | 308 | 74.4 | 3.78 | 74.6 | 2.5 | 100 / 4.10 | 3.72/1.10/3.04/5.80/3.30/3.58 |
+| tilt IBS<0.5 1.25x / 0.75x | 308 | 74.4 | 3.12 | 72.6 | 3.9 | 100 / 3.37 | 2.81/.72/1.94/5.52/2.68/3.45 |
+
+Early/late check (threshold 0.3 was the first one tried, not tuned): IBS<0.3 vs live in 2021-23 PF 4.29 vs 1.89; in 2024-26 PF 3.31 vs 3.48 (equal-ish), so the effect is concentrated in the early years, and the late years are neutral rather than contradicting.
+Verdict: PROMOTION CANDIDATE (as a size tilt, NOT as a filter). Days where SPY closes near its daily low (a market sell-off into the close) have much better reversion follow-through (PF 3.6 vs 1.9 elsewhere); intraday<0 shows the same thing. As a filter it halves return so it fails the return bar, but as a mild 1.25x/0.75x size tilt it beats live in every year including 2022 (0.87 -> 0.95), return 60.6 -> 67.5, max DD 4.3 -> 3.3, L12 PF 3.37 -> 3.70. Caveats: 11 comparisons, the three SPY features are strongly overlapping (one idea, not three), 2024-26 alone is only neutral, and it is the same economic story as the SPY-3d dip tilt (run 19/20, which did not hold on the new setup) and the dispersion tilt (run 52), so tilts may be partly redundant with each other; test stacking before any promotion. Added to challenger.py as "lab run30" variant for weekly tracking. Live rules NOT changed (the daily improvement task decides). Next: stack run30 + run52 tilts; true PEAD with earnings dates; sector-ETF-relative drop.
+
+## 2026-11-16 (run 31) - stacking the run30 (SPY IBS) and run52 (dispersion) size tilts on the vol60>=1.75% LIVE setup (own idea; the follow-up named in run 30). Script: lab_stack.py. No web source this run (run 30 and 29 were own ideas; next run should be web).
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Tilt D = 1.25x if cross-sectional dispersion trailing-250d percentile >= 0.5 else 0.75x; tilt I = 1.25x if SPY day IBS < 0.3 else 0.75x. Stack = product (or additive). PF is size-weighted. Data through 2026-10-29 (bars cache). 5 variants + 4 unscaled 2x2 cells (multiple-comparison discount; thresholds were fixed by runs 30/52, nothing re-tuned).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| D tilt only | 308 | 74.4 | 3.14 | 70.3 | 3.9 | 2.33 | 100 / 3.76 | 2.93/.87/1.78/5.30/2.58/3.73 |
+| I tilt only | 308 | 74.4 | 3.25 | 67.5 | 3.3 | 2.35 | 100 / 3.70 | 2.96/.95/2.18/5.20/2.87/3.49 |
+| STACK multiplicative | 308 | 74.4 | 3.63 | 79.2 | 3.0 | 2.34 | 100 / 4.17 | 3.74/.95/2.44/5.85/2.90/3.94 |
+| STACK additive | 308 | 74.4 | 3.62 | 77.5 | 2.9 | 2.36 | 100 / 4.13 | 3.69/.93/2.46/5.88/2.94/3.83 |
+| STACK 1.15/.85 each | 308 | 74.4 | 3.28 | 71.2 | 3.5 | 2.36 | 100 / 3.82 | 3.10/.91/2.05/5.37/2.75/3.70 |
+
+2x2 cells (unscaled, n / PF): D&I 91 / 4.63; D only 87 / 2.13; I only 70 / 3.12; neither 111 / 1.62. Each condition is true on roughly 40-55% of signals; both-true 91 of 308 trades, so the two are partly independent, ordering is monotone (neither < one < both).
+Verdict: the tilts stack in the expected direction: better than either alone and better than live in every year (2022 0.87 -> 0.95, 2023 1.62 -> 2.44), return 60.6 -> 79.2, DD 4.3 -> 3.0, L12 PF 3.37 -> 4.17. Caveats: Sharpe does not improve (2.28 -> 2.34), so much of the gain is a leverage-like effect of sizing up on days that are already the best; PF is size-weighted, so part of the PF gain is mechanical; the 'neither' cell is still PF 1.62, i.e. fine but worse; the 'D only/I only' cells in some years have a handful of trades. Both tilts come from one family (market-wide stress days), so this is one idea, not two. PROMOTION CANDIDATE only as a mild size rule (1.15x-1.25x / 0.75x-0.85x); not as a filter. Added to challenger.py as "lab run31" for weekly tracking. Live rules NOT changed. Next: web-seeded idea (true PEAD with earnings dates if earnings.py has history; residual-momentum), and check tilt implementability in bot sizing (needs live dispersion percentile + SPY IBS at the close).
+
+## 2026-11-16 (run 32) - profit-lock exits (breakeven stop / ATR trailing stop once in profit) on the vol60>=1.75% LIVE setup (own idea; no earlier run tested trailing/breakeven stops; PEAD still untestable because the repo has no historical earnings dates, only a forward-looking Nasdaq calendar fetch; a web search for Quantpedia short-term-reversal pages returned only index pages: https://quantpedia.com/strategies/combining-fundamental-fscore-and-equity-short-term-reversals needs fundamentals, not testable on daily bars). Script: lab_trail.py.
+Rules: LIVE vol175 trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, prior-high exit, 10% x 12, 4/day). Added: once a close >= entry + trigger x ATR the stop is raised to entry (BE) or to max(entry, highest close - trail x ATR). 5 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| BE after +0.5 ATR | 311 | 71.1 | 2.76 | 56.8 | 4.9 | 101 / 3.34 | 2.44/.87/1.42/4.84/2.49/3.38 |
+| BE after +1 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| BE after +1.5 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| trail 1.5 ATR after +1 ATR | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | identical to live |
+| trail 1 ATR after +0.5 ATR | 311 | 71.1 | 2.73 | 55.8 | 4.9 | 101 / 3.34 | 2.26/.87/1.42/4.84/2.49/3.38 |
+
+Verdict: NOT a promotion candidate. Profit-lock stops are inert at +1 ATR and above because the live prior-high exit already sells on the first close above the previous day's high, so a trade almost never reaches +1 ATR without exiting; at +0.5 ATR they only convert some winners into scratches (return 60.6 -> 56-57, DD 4.3 -> 4.9, 2023 PF 1.62 -> 1.42). The existing exit already acts as the profit-taking rule. Not added to challenger.py. Next: sector-ETF-relative drop; residual momentum sleeve; a web search on market-wide capitulation / VIX-spike proxies.
+
 ## 2026-11-16 (run 21) - re-tuning hold / stop / exit / trigger breadth / vol threshold under the NEW live base (own idea; parameters were tuned before the vol filter existed)
 Source: a web search for RSI2 exit/hold variants returned only generic pages (mql5 RSI2 article, Quantified Strategies RSI pullback posts); no testable specific claim. Rules: live base (breadth>=10%, weakest-peer rank, vol60>=1.75%, SPY>200d, 10% x 12, 4/day); one parameter changed at a time. Script: lab_retune.py. 12 variants tried (multiple-comparison discount; 2026 not used to select).
 
@@ -426,3 +615,28 @@ Source: web search for new daily-bar reversion ideas (consecutive-down-days, 5-d
 | vol<2.5: 7, else 10 | 308 | 74.4 | 2.68 | 58.2 | 5.3 | 2.12 | 3.60 | 2.41/.87/1.62/4.85/2.00/3.91 |
 
 Verdict: marginal, WATCH only (weak PROMOTION CANDIDATE, not added to challenger.py because per-tier hold needs a new post-processor and the gain is small). "Low-vol tier (vol60 1.75-2.5%) holds 10 days, high-vol tier holds 7" is >= live in every year and on PF (3.05 vs 2.83), return, Sharpe and L12 (3.59 vs 3.37), with max DD flat (4.4 vs 4.3). But the gain is +0.2 PF on ~9 comparisons, tied to an exit-time parameter the live bot already tuned (run 21 found hold 10 slightly better too), and the same direction (longer hold helps low-vol stocks) shows in hold 10 all. Shorter holds hurt everywhere (hold 5 PF 2.39), so the signal is that live hold 7 is near-optimal and a longer hold for the calmer tier is a small, plausible refinement. Expected live benefit is within noise. Next: PEAD with earnings dates (needs data), trend-following sleeve uncorrelated with champion, survivorship cross-check.
+
+
+## 2026-11-17 (run 33) - washout-cascade conditioners on the LIVE setup: consecutive lower lows, N-day closing low, signal-day IBS, 5d depth in ATR (web-seeded)
+Source: https://algomatictrading.substack.com/p/strategy-9-the-5-day-mean-reversion (idea only: "5-day washout, a close after a cascade of lower lows"; rules are paywalled, no numbers trusted), https://algotr.substack.com/p/the-mean-reversion-portfolio-that (IBS/RSI2/%B combo, paywalled, no rules). Search surfaced no other testable rule. Script: lab_lowcascade.py. Base = live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). Each variant is a filter (or size tilt) on signal-day features. 13 variants tried (multiple-comparison discount; choose-early/confirm-late not needed because nothing passed).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE vol175 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| lower-lows streak >=2 | 256 | 74.2 | 2.86 | 50.2 | 4.6 | 2.16 | 3.76 | 2.86/.87/1.28/4.66/2.48/4.09 |
+| lower-lows streak >=3 | 194 | 74.2 | 3.02 | 38.0 | 3.0 | 2.36 | 3.52 | 3.62/1.89/1.14/6.38/2.85/3.40 |
+| lower-lows streak <=1 | 78 | 71.8 | 1.86 | 7.0 | 2.4 | 1.16 | 2.31 | 1.34/-/1.18/3.33/2.48/1.58 |
+| close = 10d closing low | 254 | 73.6 | 3.01 | 50.1 | 3.0 | 2.30 | 2.90 | 3.91/-/1.78/5.63/2.37/2.76 |
+| close = 20d closing low | 97 | 69.1 | 2.07 | 11.4 | 1.9 | 1.30 | 2.21 | 2.4/-/1.24/3.69/1.4/2.18 |
+| signal-day IBS <= 0.25 | 202 | 73.8 | 2.48 | 32.2 | 2.7 | 1.77 | 4.24 | 2.02/-/1.99/2.09/2.52/3.73 |
+| signal-day IBS > 0.25 | 155 | 71.6 | 2.49 | 21.9 | 3.9 | 1.64 | 2.24 | 3.61/.75/.86/7.95/1.48/2.81 |
+| 5d depth >= 3 ATR | 49 | 85.7 | 4.99 | 12.2 | 2.1 | 2.27 | 9.87 | thin (only 3 years have trades) |
+| 5d depth < 3 ATR | 281 | 72.2 | 2.42 | 44.2 | 4.2 | 1.86 | 2.80 | 2.17/.75/1.63/4.28/1.63/2.85 |
+| size LL>=3 x1.5 else x1 | 308 | 74.4 | 2.90 | 87.1 | 5.8 | 2.27 | 3.45 | 2.51/1.06/1.50/5.25/2.62/3.51 |
+| size LL>=3 x1.25 else x0.75 | 308 | 74.4 | 2.91 | 66.4 | 4.7 | 2.26 | 3.47 | 2.53/1.11/1.48/5.40/2.65/3.54 |
+| size LL>=3 x1.5 else x0.75 | 308 | 74.4 | 2.93 | 79.5 | 5.5 | 2.24 | 3.50 | 2.58/1.19/1.43/5.65/2.69/3.58 |
+
+("close = 5d closing low" was identical to live: the live rules already force it.)
+Verdict: NOT a candidate. Filtering by cascade depth raises PF a little (LL>=3 3.02, 10d low 3.01) but cuts total return by 17-37% because the trades removed were still profitable, and 2023 gets worse (1.14-1.28 vs 1.62). As a size tilt, Sharpe is flat or lower (2.24-2.27 vs 2.28): the extra return is just more exposure with higher drawdown. The "5d depth >= 3 ATR" bucket looks great (PF 5, L12 9.9) but has only 49 trades and 3 active years, so it is noise-sized. Lower-low streak is largely redundant with the already-tested down-close streak and the vol60 filter. Not added to challenger.py. Web claims (cascade washout edge) not confirmed on this universe.
+
+Repo hygiene note: the lab_log.md on origin/main had lost runs 21-32 filed on a parallel branch (commit 59c69ed history); this run restored that full text and re-appended main's runs 21-24 sections. Run numbers 21-24 therefore appear twice with different topics.
