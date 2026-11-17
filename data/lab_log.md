@@ -1204,3 +1204,21 @@ Script lab_volx.py. LIVE signals (A+E+F, SPY>200d, hold 7, stop 4 ATR, breadth>=
 
 Verdict: NOT a promotion candidate. Entries after volatility expansion (5d range >= 1.0x the 50d range) have a higher PF (2.17 vs 1.88) and contraction entries are clearly worse (PF 1.45, 2021 0.73), which fits the capitulation story seen in runs 5/6/12. But the filter cuts return 59.6 -> 41.0%, Sharpe is flat (1.82 vs 1.85), and 2023 PF falls to 0.95, so it fails the beat-on-return and year tests; the stricter >=1.2 cut has a 2021 PF of 7.3 on a handful of trades. Signal-day range gives nothing usable. Like runs 29-32, it idles capital without adding edge. Not added to challenger.py.
 Follow-ups still untested: TLT/HYG filters (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
+
+## 2026-11-17 (run 38) - own-history oversold percentile (QPI-like) and SPY realized-vol regime as conditioners / size tilt of the vol60>=1.75% LIVE setup (web-seeded). Script: lab_qpi.py
+Source: https://hn.jakechampion.name/reader/https://www.quantitativo.com/p/long-and-short-mean-reversion-machine (mirror of Quantitativo "Long & Short Mean Reversion"; fetched; trigger = 3-day QPI < 15, 20 slots, -5% stop, 6-bar exit, long sized down when VIX > 1.15 x its SMA15; the model-probability part is not reproducible and its claims are unverified). Translation: (a) percentile of the stock's own k-day return (k=3,5) within its prior 252 days, keep <= 5/10/15th pct; (b) VIX proxy = SPY 10d realized vol > 1.15 x its 15d SMA (keep calm days, or keep only stressed days). Applied to LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day). 8 filter variants + 2 size tilts = 10 tried (discount lucky winners).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| own 3d pct <= 10 | 172 | 74.4 | 3.52 | 40.5 | 2.0 | 66 / 4.12 | 4.9/.12/1.07/7.42/1.95/4.64 |
+| own 5d pct <= 10 | 162 | 79.6 | 4.14 | 40.3 | 2.2 | 74 / 4.38 | 45/none/1.29/13.1/2.14/5.47 |
+| own 5d pct <= 5 | 87 | 81.6 | 4.18 | 22.8 | 3.3 | 42 / 6.90 | 38/none/1.48/none/1.70/6.98 |
+| own 5d pct <= 15 | 209 | 76.1 | 3.49 | 45.0 | 2.2 | 83 / 4.07 | 4.55/.12/1.34/7.24/2.17/4.84 |
+| SPY rvol calm (not > 1.15x SMA15) | 231 | 73.6 | 2.29 | 29.9 | 3.3 | 78 / 3.22 | 1.14/.87/1.55/3.93/2.15/3.02 |
+| SPY rvol stressed only | 91 | 73.6 | 3.94 | 25.0 | 2.7 | 26 / 3.64 | 127/none/1.66/7.12/1.86/4.86 |
+| TILT 1.25x/0.75x if own 5d pct <= 10 | 308 | 74.4 | 3.22 | 68.5 | 3.9 | 100 / 3.78 | 2.99/.95/1.67/5.68/2.38/4.17 |
+| TILT 1.25x/0.75x if own 3d pct <= 10 | 308 | 74.4 | 3.07 | 68.9 | 4.0 | 100 / 3.59 | 2.74/.57/1.60/5.35/2.35/3.76 |
+
+Findings: a deeper-than-usual drop relative to the stock's OWN 5-day history raises PF (4.1 vs 2.9, win 80%) and L12 PF, but as a hard filter it halves the trade count and return (40% vs 62%) and 2023 is worse (1.29 vs 1.72), so it is not a replacement. As a size tilt it lifts PF to 3.22, return to 68.5, drawdown 3.9, but is below LIVE in 2023 and 2025 (1.67 vs 1.72, 2.38 vs 2.51) and is not better than the already-logged tilts (run52 PF 3.14, run30 3.25, run31 stacked 3.63). It is likely another proxy for dip depth, which the dispersion/SPY-dip tilts already capture. Stressed-SPY-vol days have PF 3.94 vs 2.29 on calm days (same direction as run 24/19 SPY-dip findings: trade more after market stress; the source's "size down in stress" is NOT supported here, the opposite holds on this setup). 2021 values of 38-127 come from 1-3 losers only and are noise.
+Verdict: NOT a promotion candidate (no new variant added to challenger.py). Possible later check: include the own-history 5d percentile in the stacked tilt only if a future run shows it adds beyond run31 (untested; would be a 3rd tilt on ~300 trades, high overfit risk).
