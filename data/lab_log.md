@@ -1222,3 +1222,19 @@ Source: https://hn.jakechampion.name/reader/https://www.quantitativo.com/p/long-
 
 Findings: a deeper-than-usual drop relative to the stock's OWN 5-day history raises PF (4.1 vs 2.9, win 80%) and L12 PF, but as a hard filter it halves the trade count and return (40% vs 62%) and 2023 is worse (1.29 vs 1.72), so it is not a replacement. As a size tilt it lifts PF to 3.22, return to 68.5, drawdown 3.9, but is below LIVE in 2023 and 2025 (1.67 vs 1.72, 2.38 vs 2.51) and is not better than the already-logged tilts (run52 PF 3.14, run30 3.25, run31 stacked 3.63). It is likely another proxy for dip depth, which the dispersion/SPY-dip tilts already capture. Stressed-SPY-vol days have PF 3.94 vs 2.29 on calm days (same direction as run 24/19 SPY-dip findings: trade more after market stress; the source's "size down in stress" is NOT supported here, the opposite holds on this setup). 2021 values of 38-127 come from 1-3 losers only and are noise.
 Verdict: NOT a promotion candidate (no new variant added to challenger.py). Possible later check: include the own-history 5d percentile in the stacked tilt only if a future run shows it adds beyond run31 (untested; would be a 3rd tilt on ~300 trades, high overfit risk).
+
+## 2026-11-17 (run 39) - PLACEBO / null-model audit of the LIVE setup (own idea; no web source). Script: lab_placebo.py
+Question: does the RSI(2) pullback trigger add anything beyond "buy any uptrend stock (close>SMA50>SMA200) with vol60>=1.75% on a breadth>=10% day with SPY>200d", using the same exit (prior-high, hold 7, stop 4 ATR), same simulator (10% x 12, 4/day), data through 2026-10-29? Placebo candidates replace the RSI2 triggers (and skip the A/E/F extras atrpct4/price15/nocrash); random score (3 seeds) or peer-rank. 5 placebo conditions x 4 orderings = 20 rows counted.
+
+| Variant | n | Win % | PF | Ret % | MaxDD | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE (signals, peer rank) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| any uptrend stock, random (3 seeds) | ~1165 | ~66 | 1.09-1.17 | 15-30 | 11-16 | 357-362 / 1.04-1.39 | mixed, 2022 .48-.85 |
+| any uptrend stock, peer-rank | 1168 | 63.5 | 0.96 | -7.6 | 20.6 | 362 / 0.98 | 2022 .35 |
+| down close today, random (3 seeds) | ~1250 | ~63 | 1.05-1.24 | 8-51 | 13-20 | ~390 / 1.0-1.22 | 2022 ~.45 |
+| 5d return < 0, random (3 seeds) | ~1130 | ~65 | 1.21-1.27 | 37-50 | 17-18 | ~350 / 1.45-1.64 | 2022 ~.34 |
+| 5d return < -3%, random (3 seeds) | ~705 | ~66 | 1.17-1.22 | 20-27 | 17-19 | ~232 / 1.37-1.49 | 2022 ~.14 |
+| IBS<0.25 only (no RSI2), random (3 seeds) | ~1065 | ~64 | 1.25-1.37 | 45-67 | 11-12 | ~349 / 1.40-1.69 | 2022 ~.59 |
+
+Verdict: NOT a new challenger; a CONFIRMATION of the live edge. Regime + volatility + washout filters alone give PF 1.0-1.4 with 11-20% drawdowns, versus PF 2.83 and 4.3% drawdown for the live signals. So the live result is not just "high-vol stocks bounce when the market washes out": the multi-condition RSI2 pullback selection (RSI2<5/10, IBS, extension, extras) carries most of the edge. Even IBS<0.25 alone, the closest placebo, reaches only PF 1.25-1.37. Caveats: placebo skips the A/E/F extras, and its higher trade count is fully drawn from the same slot budget; RSI2 is correlated with "5d return < 0" so this is not a pure independence test. Peer-rank beats random ordering only for the signal set (peer-rank on placebos is not better), which fits earlier runs where it helped modestly. No code change to challenger.py.
+Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
