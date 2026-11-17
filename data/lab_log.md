@@ -677,3 +677,20 @@ Source: none (own idea; no web run needed, runs 33 and 35 were web-seeded). Rule
 | walk-forward, objective return | 332 | 72.6 | 2.56 | 57.0 | 4.5 | 2.31 | 100 / 3.37 | 1.89/1.38/1.42/4.62/2.51/3.41 (chose 2.0,2.0,2.0,1.75,1.75) |
 
 Verdict: the vol filter survives an honest out-of-sample selection. Choosing the threshold only from past data picks 1.75-2.5 in every year (never 0 or 1.25), and the chained out-of-sample result (PF 2.56-2.61, Sharpe 2.06-2.31, max DD 4.5%) is far above the unfiltered base (PF 1.88, DD 5.9%); the walk-forward by return reproduces live-like numbers (ret 57.0 vs 60.6%). Walk-forward never rescues 2023 (1.42) and 2022 only appears positive because the 2.0 threshold keeps few trades. The 2.0 threshold keeps winning PF and Sharpe each year but gives up return (56.8 vs 60.6%) from fewer trades, so no case to move off 1.75. No change; not added to challenger.py (not a new strategy). Confidence in the filter rises; it is not a lucky full-sample pick. Next: trend-following sleeve uncorrelated with champion, survivorship cross-check, true PEAD if earnings dates become available.
+
+## 2026-11-17 (run 37) - risk-appetite leadership (IWM small-cap, QQQ growth vs SPY, 5d/20d) as conditioner of the LIVE setup (own idea; cross-asset filter from the seed list, follow-up of the XLP/XLU test). Script: lab_riskapp.py
+Source: none (own idea). Live setup filtered by whether IWM or QQQ out/under-performed SPY over the last 5 or 20 days at signal time. 8 variants tried (multiple-comparison discount; slices are ~100-230 trades).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 2.32 | 100 / 3.39 | 2.41/.87/1.72/4.7/2.51/3.44 |
+| IWM leads SPY 5d | 86 | 75.6 | 3.53 | 19.0 | 2.8 | 1.64 | 34 / 5.18 | .43/0/2.07/26/7.6/5.1 |
+| IWM lags SPY 5d | 229 | 73.8 | 2.54 | 35.7 | 4.7 | 2.07 | 69 / 2.93 | 7.7/-/1.36/2.88/2.15/2.87 |
+| IWM leads SPY 20d | 108 | 79.6 | 3.46 | 21.6 | 2.4 | 1.85 | 37 / 13.8 | .76/-/1.31/4.1/17/10.3 |
+| IWM lags SPY 20d | 205 | 69.8 | 2.29 | 29.6 | 4.2 | 1.93 | 63 / 2.18 | 4.96/.87/1.43/3.6/1.26/2.5 |
+| QQQ leads SPY 5d | 144 | 67.4 | 1.74 | 11.1 | 2.4 | 1.22 | 45 / 2.03 | 1.54/-/.97/2.15/2.04/1.88 |
+| QQQ lags SPY 5d | 177 | 78.5 | 3.40 | 42.7 | 4.9 | 2.17 | 57 / 4.62 | 8.25/.87/1.53/12.2/1.89/5.9 |
+| QQQ leads SPY 20d | 184 | 70.7 | 2.23 | 22.5 | 2.4 | 1.64 | 46 / 2.07 | 2.04/-/1.82/2.83/2.51/1.84 |
+| QQQ lags SPY 20d | 136 | 80.9 | 4.47 | 37.3 | 2.3 | 2.62 | 58 / 4.89 | 4.7/.87/2.09/26.9/2.66/6.5 |
+
+Verdict: NOT a candidate as a filter. "QQQ lags SPY" slices have much higher PF (3.4-4.5) and win rate (79-81%), but each drops 30-40% of total return since half the trades are removed, and 2022 is unchanged (.87). IWM slices are inconsistent (IWM leads: 2021 PF 0.43-0.76 then huge later, a regime artifact; IWM lags: PF 7.7 in 2021 then 1.3-2.9). Direction of effect differs between IWM and QQQ, a sign of noise. Only watch item: "QQQ lags SPY 20d" as a possible size tilt (up-size when growth lags) - worth one run if sizing tilts are revisited. Not added to challenger.py.
