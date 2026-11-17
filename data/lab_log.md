@@ -662,3 +662,18 @@ Follow-up of run 18, which ran before the vol filter. Live setup (A+E+F, SPY>200
 | skip Fri | 256 | 73.4 | 2.50 | 42.1 | 4.1 | 83 / 2.69 | |
 
 Verdict: NOT a promotion candidate. Monday-signal trades are the weakest slice (PF 1.54, 60% win, L12 PF 0.64, n=48), and skipping them lifts PF to 3.07 and L12 PF to 4.90, but total return falls (58.0 vs 60.6%), 2022 and 2023 get worse, and with 10 slices tried the Monday weakness is within what chance would produce. No "Turnaround Tuesday" edge on this setup (Tue PF 2.23 is below the average). Only watch item: Monday weakness persisting in 2026 live trades. Not added to challenger.py.
+
+## 2026-11-17 (run 36) - walk-forward re-selection of the vol60 threshold (own idea: out-of-sample audit of the live vol60>=1.75% filter). Script: lab_wfvol.py
+Source: none (own idea; no web run needed, runs 33 and 35 were web-seeded). Rules: base = live trade list without the vol filter (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12, 4/day). For each year Y from 2022, the vol60 threshold from {0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0} is chosen using ONLY trades before Y (objective PF, or return), then applied to year Y; the yearly slices are chained. Year 2021 unfiltered (no history). 7 fixed + 2 walk-forward variants (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 n / PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| fixed thr 0 (no filter) | 604 | 69.0 | 1.88 | 59.6 | 5.9 | 1.85 | 136 / 2.65 | 1.89/.13/1.42/2.19/1.92/2.68 |
+| fixed 1.5 | 382 | 71.7 | 2.33 | 59.8 | 4.9 | 2.05 | 117 / 3.44 | 1.74/.19/1.66/3.15/2.10/3.52 |
+| fixed 1.75 (LIVE) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| fixed 2.0 | 235 | 75.7 | 3.39 | 56.8 | 4.5 | 2.45 | 76 / 4.13 | 7.68/1.38/1.42/4.62/2.60/4.80 |
+| fixed 2.5 | 139 | 74.8 | 3.30 | 35.8 | 2.5 | 2.07 | 43 / 4.08 | 3.99/-/1.91/4.37/2.02/5.42 |
+| walk-forward, objective PF | 284 | 72.2 | 2.61 | 49.8 | 4.5 | 2.06 | 76 / 4.13 | 1.89/1.38/1.42/4.37/2.60/4.80 (chose 2.0,2.0,2.5,2.0,2.0) |
+| walk-forward, objective return | 332 | 72.6 | 2.56 | 57.0 | 4.5 | 2.31 | 100 / 3.37 | 1.89/1.38/1.42/4.62/2.51/3.41 (chose 2.0,2.0,2.0,1.75,1.75) |
+
+Verdict: the vol filter survives an honest out-of-sample selection. Choosing the threshold only from past data picks 1.75-2.5 in every year (never 0 or 1.25), and the chained out-of-sample result (PF 2.56-2.61, Sharpe 2.06-2.31, max DD 4.5%) is far above the unfiltered base (PF 1.88, DD 5.9%); the walk-forward by return reproduces live-like numbers (ret 57.0 vs 60.6%). Walk-forward never rescues 2023 (1.42) and 2022 only appears positive because the 2.0 threshold keeps few trades. The 2.0 threshold keeps winning PF and Sharpe each year but gives up return (56.8 vs 60.6%) from fewer trades, so no case to move off 1.75. No change; not added to challenger.py (not a new strategy). Confidence in the filter rises; it is not a lucky full-sample pick. Next: trend-following sleeve uncorrelated with champion, survivorship cross-check, true PEAD if earnings dates become available.
