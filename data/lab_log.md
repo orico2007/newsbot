@@ -643,3 +643,22 @@ Repo hygiene note: the lab_log.md on origin/main had lost runs 21-32 filed on a 
 
 ## 2026-11-17 (run 34) - priority ranking of same-day signals by vol60 on the LIVE setup (own idea). Script: lab_volrank.py
 Live (weakest-peer rank): n=308, PF 2.83, ret 60.6%, Sharpe 2.28. Rank vol60 high first: PF 2.74, ret 59.4%. Low first: PF 2.84, ret 60.5%. Per-day cap rarely binds on the filtered set, so ranking is irrelevant; no variant beats live on return. No edge, not added to challenger.py. (2 variants tried.)
+
+## 2026-11-17 (run 35) - signal-weekday seasonality re-tested on the vol60>=1.75% LIVE setup (web-seeded: Turnaround Tuesday / day-of-week pages, https://quantifiedstrategies.substack.com/p/turnaround-tuesday-strategy-backtest , claims unverified). Script: lab_dow_live.py
+Follow-up of run 18, which ran before the vol filter. Live setup (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day), trades filtered by signal weekday. 10 variants tried (multiple-comparison discount: with ~60-90 trades per day-slice, differences in PF are mostly noise).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| only Mon | 48 | 60.4 | 1.54 | 2.9 | 2.0 | 19 / 0.64 | -/1.38/1.74/1.15/1.14/0.50 |
+| only Tue | 87 | 73.6 | 2.23 | 11.0 | 2.7 | 33 / 3.29 | 3.52/0/1.43/3.35/1.56/3.90 |
+| only Wed | 93 | 78.5 | 4.40 | 19.3 | 0.9 | 28 / 3.32 | 2.03/-/31/18.8/4.18/2.46 |
+| only Thu | 81 | 72.8 | 2.04 | 9.4 | 1.8 | 20 / 5.91 | 0.6/-/0.93/4.07/1.46/11.5 |
+| only Fri | 73 | 76.7 | 3.52 | 14.8 | 1.8 | 22 / 24.1 | -/-/0.79/3.07/1.93/41 |
+| skip Mon | 279 | 76.7 | 3.07 | 58.0 | 4.1 | 91 / 4.90 | 1.91/.26/1.40/4.93/2.88/5.21 |
+| skip Tue | 259 | 75.3 | 3.02 | 50.9 | 2.8 | 79 / 3.43 | 2.45/1.89/1.81/5.46/2.54/3.20 |
+| skip Wed | 242 | 71.9 | 2.42 | 37.7 | 4.1 | 79 / 3.15 | |
+| skip Thu | 255 | 72.9 | 2.98 | 50.0 | 3.5 | 87 / 3.10 | |
+| skip Fri | 256 | 73.4 | 2.50 | 42.1 | 4.1 | 83 / 2.69 | |
+
+Verdict: NOT a promotion candidate. Monday-signal trades are the weakest slice (PF 1.54, 60% win, L12 PF 0.64, n=48), and skipping them lifts PF to 3.07 and L12 PF to 4.90, but total return falls (58.0 vs 60.6%), 2022 and 2023 get worse, and with 10 slices tried the Monday weakness is within what chance would produce. No "Turnaround Tuesday" edge on this setup (Tue PF 2.23 is below the average). Only watch item: Monday weakness persisting in 2026 live trades. Not added to challenger.py.
