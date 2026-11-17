@@ -409,3 +409,20 @@ Source: none (web search for new daily-bar reversion ideas returned only gap / T
 | hedge 1.0 only if SPY<SMA50 | 308 | 74.4 | 2.77 | 56.0 | 3.7 | 2.23 | 3.21 | 2.23/.48/1.91/3.99/2.24/3.66 |
 
 Verdict: NOT a promotion candidate. The strategy's edge is not market beta: every hedge lowers PF, return, Sharpe and last-12-month PF while only trimming drawdown (4.3 -> 3.3% at best) and turning 2022 positive (full hedge 3.32, but at -15 return points and the 2024-25 PF dropping). Even with a free hedge Sharpe falls, so a costly real hedge would be worse. The 2022 benefit is the only argument, and the live SPY>200d gate plus breadth filter already handle most of it. Not added to challenger.py. Next: true PEAD with earnings dates (needs data), universe/survivorship cross-check, trend-following sleeve uncorrelated with champion.
+
+## 2026-11-17 (run 24) - hold period per volatility tier on the LIVE setup (own idea; follow-up listed in run 21)
+Source: web search for new daily-bar reversion ideas (consecutive-down-days, 5-day-low, rubber-band, residual reversal pages on pulse.bot, quantifiedstrategies, cxoadvisory, robeco) only returned topics already covered in runs 4, 14, 15 and 21, so this is an own-idea run. Rules: live trade list (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, stop 4 ATR, exit prior high, 10% x 12, 4/day); each signal takes its max hold from its vol60 tier (cut 2.5%). Script: lab_holdtier.py. 9 variants (multiple-comparison discount; tier cut 2.5% chosen a priori, 2026 not used to select).
+
+| Variant | Trades | Win % | PF | Ret % | MaxDD | Sharpe | L12 PF | PF 21/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE hold 7 | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 2.28 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| hold 5 all | 311 | 70.7 | 2.39 | 50.0 | 5.5 | 1.86 | 2.63 | 2.71/.87/1.35/4.39/1.93/2.48 |
+| hold 10 all | 306 | 75.8 | 2.91 | 62.0 | 5.0 | 2.27 | 3.86 | 2.75/.87/1.55/5.58/2.00/4.34 |
+| vol<2.5: hold 10, else 7 | 307 | 75.6 | 3.05 | 63.9 | 4.4 | 2.41 | 3.59 | 2.75/.87/1.73/5.43/2.51/3.73 |
+| vol<2.5: hold 15, else 7 | 307 | 75.6 | 3.03 | 63.6 | 4.4 | 2.40 | 3.51 | 2.75/.87/1.73/5.43/2.51/3.61 |
+| vol<2.5: 7, else 5 | 310 | 72.6 | 2.41 | 51.2 | 5.3 | 1.91 | 2.63 | 2.32/.87/1.40/4.26/2.21/2.47 |
+| vol<2.5: 10, else 5 | 309 | 73.8 | 2.59 | 54.6 | 5.2 | 2.09 | 2.77 | 2.63/.87/1.53/4.81/2.21/2.65 |
+| vol<2.5: 5, else 10 | 309 | 72.5 | 2.63 | 56.5 | 5.7 | 1.99 | 3.63 | 2.83/.87/1.29/5.02/1.76/3.96 |
+| vol<2.5: 7, else 10 | 308 | 74.4 | 2.68 | 58.2 | 5.3 | 2.12 | 3.60 | 2.41/.87/1.62/4.85/2.00/3.91 |
+
+Verdict: marginal, WATCH only (weak PROMOTION CANDIDATE, not added to challenger.py because per-tier hold needs a new post-processor and the gain is small). "Low-vol tier (vol60 1.75-2.5%) holds 10 days, high-vol tier holds 7" is >= live in every year and on PF (3.05 vs 2.83), return, Sharpe and L12 (3.59 vs 3.37), with max DD flat (4.4 vs 4.3). But the gain is +0.2 PF on ~9 comparisons, tied to an exit-time parameter the live bot already tuned (run 21 found hold 10 slightly better too), and the same direction (longer hold helps low-vol stocks) shows in hold 10 all. Shorter holds hurt everywhere (hold 5 PF 2.39), so the signal is that live hold 7 is near-optimal and a longer hold for the calmer tier is a small, plausible refinement. Expected live benefit is within noise. Next: PEAD with earnings dates (needs data), trend-following sleeve uncorrelated with champion, survivorship cross-check.
