@@ -1357,3 +1357,21 @@ Rules: the 308 LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vo
 
 Findings: no effect. Taking a gap-up exit at the open instead of waiting for the close lifts PF slightly (3.05) and trims drawdown (3.5%) but lowers return (55.4 vs 60.6) and L12 PF, and the PF gain comes mostly from 2024 (6.09 vs 4.74), one year; higher-threshold gap variants are indistinguishable from live. Holding one more day after the trigger (next open) is also a wash (return 63.1 but 2022 0.61, 2026 2.86). The live "act at the trigger close" exit is not leaving measurable money on the table.
 Verdict: NOT a promotion candidate; not added to challenger.py. Exit timing is exhausted alongside runs 25, 28, 32.
+
+## 2026-11-18 (run 48) - Kaufman efficiency ratio (straight vs choppy decline) as conditioner of the vol60>=1.75% LIVE setup (own idea after a web search on multi-day-down reversion pages, e.g. https://quantifiedstrategies.substack.com/p/3-days-down-overnight-trading-strategy-942 , https://articles.stockcharts.com/article/articles-arthurhill-2016-07-systemtrader---testing-a-basic-mean-reversion-system---catch-the-knife-or-wait-for-the-bounce-/ ; search snippets only, not fetched, unverified). Script: lab_er.py
+Rules: the 308 LIVE trades; ER(n) = (close - close[n days ago]) / sum of |daily close changes| over n days, n=5 and 10; split by full-sample terciles (mild look-ahead) plus e5 < -0.6. Same simulator. 8 variants tried.
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| e5 most straight-down third | 120 | 77.5 | 2.79 | 17.7 | 2.9 | 4.49 | 2.99/.28/2.35/2.61/1.72/10.0 |
+| e5 middle | 118 | 72.0 | 2.14 | 13.5 | 2.1 | 1.95 | 2.58/-/.77/8.42/1.35/1.64 |
+| e5 top (choppy) | 133 | 69.9 | 2.92 | 25.6 | 2.2 | 4.23 | 2.75/0/1.44/4.15/2.19/3.88 |
+| e10 most straight-down | 110 | 73.6 | 2.13 | 12.3 | 2.2 | 1.31 | 26.6/-/1.35/2.58/1.47/1.15 |
+| e10 middle | 127 | 76.4 | 3.86 | 24.5 | 1.4 | 3.57 | 3.15/-/5.88/4.68/3.32/3.13 |
+| e10 top (choppy) | 130 | 72.3 | 2.60 | 22.0 | 3.5 | 6.89 | 1.12/0/.77/6.94/1.66/11.7 |
+| e5 < -0.6 | 260 | 75.8 | 3.05 | 48.3 | 3.6 | 3.90 | 2.58/.87/2.02/5.00/2.51/3.98 |
+| e5 >= -0.6 | 74 | 63.5 | 2.01 | 9.0 | 1.9 | 1.56 | no edge |
+
+Findings: non-monotonic (e10 middle best, both extremes weaker; e5 extremes both good, middle weak), so no coherent mechanism and it looks like noise. The only mild signal is that the 74 trades where the 5d path was choppy/up-ish (e5 >= -0.6) are weaker (PF 2.0), but dropping them gives PF 3.05 with return down to 48 vs 60.6, the usual filter-trades-less pattern, within selection noise after 8 variants.
+Verdict: NOT a promotion candidate; not added to challenger.py. Path shape of the decline does not condition the live edge.
