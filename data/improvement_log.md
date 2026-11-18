@@ -89,3 +89,8 @@ Decision: no change to live rules; not added to challenger.py.
 Checked: stock sessions through run 179 (11-17 ~02:27 UTC) success, run 177 in progress, no errors visible; report 2026-11-16: 0 errors, equity $99,109, 0 entries (last entry timing check: no market-open session observed at check time, ~04:30 UTC). trades.csv still only 4 closed crypto trades and no closed stock trades, so live win/PF can't be compared with the backtest (win ~74%, PF ~2.8). Tests: 215 passed. challengers.md: champion is the live setup; no variant has 3 consecutive weekly wins.
 Tested (2 variants): rank by vol60 high first PF 2.74 / ret 59.4%; low first PF 2.84 / ret 60.5% vs live PF 2.83 / ret 60.6%. Cap rarely binds, so ranking is irrelevant.
 Decision: no change to live rules.
+
+## 2026-11-18 (UTC, Wednesday) - round: stock-trend (SMA50 / SMA50>SMA200) conditioner on the live setup (lab_sma50.py)
+Checked: stock sessions through run 192 (11-18 01:35 UTC) success, run 190 in progress at check time (04:25 UTC), no errors; no 11-18 market-open session yet to time against 14:30 UTC. Report 2026-11-17: 0 errors, equity $98,690 (-0.43% day), 11 open longs incl. SQQQ/RWM, regime bear, 0 entries. trades.csv has 7 closed rows (4 crypto, XOM -2.0, BEAM -11.8 news swing); no closed mr stocks yet, so live win/PF cannot be compared with the backtest (win ~74%, PF ~2.8). Tests: 215 passed. challengers.md: three tilt variants are PROMOTE-CANDIDATE but the champion baseline was reset 11-16 and only that run exists on the new baseline, so none has 3 consecutive weekly wins.
+Tested: close>SMA50, SMA50>SMA200 keep all 308 trades (rules already embed the trend); the opposite sets are empty. Null/degenerate result.
+Decision: no change to live rules.
