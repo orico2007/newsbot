@@ -1293,3 +1293,21 @@ Hypothesis: reversion trades should work better on stocks whose own daily return
 | VR5(250d) < 1 / >= 1 | 130 / 183 | 73.1 / 73.8 | 2.60 / 3.07 | 18.0 / 37.4 | 2.86 / 4.13 | mixed |
 
 Findings: the hypothesis is not supported. Stocks that recently mean-reverted (ac1<0, VR<1) are NOT better; the short windows even show the opposite (ac1>=0: PF 3.2-3.5), but the sign flips at 250d and the per-year pattern is erratic (2021 PF 7.7-49 on a handful of trades, 2023 not consistently better), so the "trending stocks revert better" direction is noise-level and not usable. Splitting also halves trades and return in every cell. No consistent monotone effect across windows. Verdict: NOT a promotion candidate; not added to challenger.py. Do not revisit stock-level autocorrelation / variance-ratio conditioners.
+
+## 2026-11-18 (run 44) - 20d linear-regression residual z-score (distance below the fitted trend line) as conditioner of the vol60>=1.75% LIVE setup (web-seeded: https://algomatictrading.substack.com/p/strategy-4-a-mean-reversion-strategy , search hit only, not fetched, claims unverified). Scripts: lab_zscore.py, lab_zscore2.py
+Rules: the 308 LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day); keep a signal only if the z-score of the signal-day close versus the least-squares line through the last N closes (residual / residual std) is below a threshold. Also tested Bollinger z20 (close vs 20d mean/std). 24 variants tried (8 in lab_zscore.py, 16 plateau grid in lab_zscore2.py; multiple-comparison discount applies).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| Bollinger z20 < -1.5 | 127 | 70.1 | 2.41 | 18.8 | 1.9 | 2.55 | worse than live, halves return |
+| zreg20 < -1.5 | 238 | 78.6 | 4.41 | 63.6 | 2.5 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| zreg20 < -1.75 | 201 | 78.1 | 4.91 | 57.8 | 2.0 | 6.34 | 6.39/.12/2.47/14.19/3.33/5.59 |
+| zreg20 < -1.25 | 271 | 76.4 | 3.38 | 62.0 | 3.6 | 3.29 | 4.66/.87/1.81/7.85/2.46/3.47 |
+| zreg20 >= -1.5 (complement) | 98 | 64.3 | 1.07 | 0.9 | 3.0 | 1.40 | no edge |
+| zreg30 < -1.5 | 240 | 77.9 | 4.24 | 61.0 | 1.8 | 3.43 | 11.96/-/3.08/7.77/2.62/3.38 |
+| zreg10 < -1.0 | 239 | 77.8 | 3.96 | 58.6 | 2.8 | 4.83 | 3.63/.87/2.19/9.56/2.70/4.72 |
+| zreg60 < -1.5 | 171 | 74.9 | 3.43 | 35.7 | 1.7 | 3.49 | 4.31/-/1.75/4.97/4.00/2.84 |
+
+Findings: Bollinger z20 (distance from the mean) does nothing useful, but distance below the regression LINE does: the 98 trades whose close is NOT clearly below trend have PF 1.07 (no edge), and removing them lifts PF from 2.83 to ~4.4 with equal return (63.6% vs 60.6%) and drawdown 2.5% vs 4.3%. It is a plateau, not a spike: windows 20-30 with thresholds -1.25..-1.75 all give PF 3.4-4.9 and beat the live champion in every non-2022 year for the 20d/-1.5 setting (2021 4.11 vs 2.41, 2023 2.70 vs 1.62, 2024 11.7 vs 4.74, 2025 3.10 vs 2.51, 2026 4.75 vs 3.41). Early-vs-late check: the filter helps in 2021-23 and again in 2024-26 independently. Caveats: threshold/window were chosen on the full sample (2026 not sealed, in L12); 2022 PF is 0.12 vs 0.87 (few trades, but worse); 24 variants tried, so the headline PF 4.4-4.9 is optimistic, expect maybe 3.3-3.8 live; mechanism (buy dips that break below the recent trend line, not dips that are just a flat range) is plausible but unproven; this overlaps partly with earlier dip-depth tests (run 27/28) yet was not previously found.
+Verdict: PROMOTION CANDIDATE (z20-regression residual < -1.5, vol60>=1.75% setup). Added to challenger.py as "lab run44". Needs the daily task's review; suggested next test: walk-forward re-selection of window/threshold (like lab_wfvol.py) before going live.

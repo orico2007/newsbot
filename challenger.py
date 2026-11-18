@@ -130,6 +130,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     # lab run 31: both tilts stacked multiplicatively (see data/lab_log.md)
     ("lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_stack"),
     ("lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume", ruleset(), DEF_PORT, "live_vol175_dvol"),
+    # lab run 44: vol60>=1.75% setup + 20d linear-regression residual z < -1.5 (PROMOTION CANDIDATE; see data/lab_log.md)
+    ("lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5", ruleset(), DEF_PORT, "live_vol175_zreg"),
 ]
 
 def vol60(A, i):
@@ -207,6 +209,15 @@ def run():
                 v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
                 p_ = lab_dvol.dv_pct(DV, t["sym"], t["t"][:10])
                 return v_ is not None and v_ >= 1.75 and p_ is not None and p_ >= 1 / 3
+            T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
+        elif len(v) > 3 and v[3] == "live_vol175_zreg":
+            import lab_breadth, lab_sector, lab_zscore
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                i_ = IX[t["sym"]].get(t["t"][:10]); v_ = vol60(AS[t["sym"]], i_)
+                return v_ is not None and v_ >= 1.75 and i_ is not None and i_ >= 20 and lab_zscore.zreg(AS[t["sym"]], i_, 20) < -1.5
             T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
                   for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
         elif len(v) > 3 and v[3] == "live_bear10":
