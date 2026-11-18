@@ -1343,3 +1343,17 @@ Rules: the 308 LIVE trades; skewness of the last 60 daily returns and the signal
 
 Findings: nothing usable. Low skew (no recent upside lottery spikes) is directionally better in the last 12 months but is inconsistent by year (2023, 2024 worse; 2022 has no trades) and the sharpest cut (skew<0) is 67 trades with year PFs of 41 and 64 on a handful of trades, i.e. noise. Both halves of the price split are about equal; excluding stocks under $50 gives PF 3.04 with return 55.6 vs 60.6 and L12 about equal, a small drawdown gain that is within selection noise after 8 variants. Return falls in every filter (fewer trades, idle slots), the same pattern as runs 42-45.
 Verdict: NOT a promotion candidate; not added to challenger.py. The live setup shows no dependence on skewness or price level.
+
+## 2026-11-18 (run 47) - exit-at-the-open variants on the vol60>=1.75% LIVE setup (own idea; no web source this run, run 46 was web). Script: lab_openexit.py
+Rules: the 308 LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day) re-simulated with a changed exit only. Live exit = close > prior day's high, filled at that close. Variants: exit at the day's OPEN when the open already gaps above the prior high (any size / >=0.25 ATR / >=0.5 ATR); exit at the next day's open after a trigger close. Same 0.05% slippage per side; re-sim of the live exit reproduces live PnL exactly (max diff 0.0). 4 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (exit at trigger close) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| open if gap above prior high | 319 | 74.0 | 3.05 | 55.4 | 3.5 | 3.31 | 2.66/.81/1.63/6.09/2.48/3.52 |
+| open if gap >= 0.25 ATR | 308 | 74.4 | 2.88 | 58.5 | 4.4 | 3.31 | 2.21/.87/1.66/5.59/2.56/3.40 |
+| open if gap >= 0.5 ATR | 308 | 73.7 | 2.84 | 59.8 | 4.3 | 3.43 | 2.46/.87/1.65/4.50/2.63/3.46 |
+| next-day open after trigger close | 305 | 71.8 | 2.79 | 63.1 | 3.9 | 3.20 | 2.38/.61/1.54/4.16/3.79/2.86 |
+
+Findings: no effect. Taking a gap-up exit at the open instead of waiting for the close lifts PF slightly (3.05) and trims drawdown (3.5%) but lowers return (55.4 vs 60.6) and L12 PF, and the PF gain comes mostly from 2024 (6.09 vs 4.74), one year; higher-threshold gap variants are indistinguishable from live. Holding one more day after the trigger (next open) is also a wash (return 63.1 but 2022 0.61, 2026 2.86). The live "act at the trigger close" exit is not leaving measurable money on the table.
+Verdict: NOT a promotion candidate; not added to challenger.py. Exit timing is exhausted alongside runs 25, 28, 32.
