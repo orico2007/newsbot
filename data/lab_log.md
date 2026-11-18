@@ -1238,3 +1238,21 @@ Question: does the RSI(2) pullback trigger add anything beyond "buy any uptrend 
 
 Verdict: NOT a new challenger; a CONFIRMATION of the live edge. Regime + volatility + washout filters alone give PF 1.0-1.4 with 11-20% drawdowns, versus PF 2.83 and 4.3% drawdown for the live signals. So the live result is not just "high-vol stocks bounce when the market washes out": the multi-condition RSI2 pullback selection (RSI2<5/10, IBS, extension, extras) carries most of the edge. Even IBS<0.25 alone, the closest placebo, reaches only PF 1.25-1.37. Caveats: placebo skips the A/E/F extras, and its higher trade count is fully drawn from the same slot budget; RSI2 is correlated with "5d return < 0" so this is not a pure independence test. Peer-rank beats random ordering only for the signal set (peer-rank on placebos is not better), which fits earlier runs where it helped modestly. No code change to challenger.py.
 Follow-ups still untested: TLT/HYG (not in bars cache); true PEAD needs earnings data; scale-in second tranche.
+
+## 2026-11-18 (run 40) - cross-asset "correlated stress" conditioners of the vol60>=1.75% LIVE setup (web-seeded). Script: lab_stress.py
+Source: https://quantpedia.com/short-term-correlated-stress-reversal-trading/ (fetched; rule = same-day simultaneous decline in two risk-on assets, or risk-asset down + safe-haven up, enter at close, hold 1 day; results are images so no numbers read; threshold choice and in/out-of-sample status unstated; GLD/IEF/USO are NOT in the bars cache). Translation: use cached SPY/QQQ/IWM/XLU/XLP/VIXY same-day returns at the signal close as a filter on LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day; data through 2026-10-29). 8 variants tried (discount winners).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 2.32 | 100 / 3.39 | 2.41/.87/1.72/4.7/2.51/3.44 |
+| SPY dn & XLU up | 102 | 77.5 | 4.04 | 23.8 | 2.4 | 1.80 | 29 / 14.1 | 5.19/-/1.23/8.51/2.35/30.9 |
+| SPY dn & XLP up | 107 | 77.6 | 3.98 | 26.5 | 1.9 | 2.18 | 49 / 5.16 | 19.8/.26/1.40/8.52/2.66/6.02 |
+| SPY dn & VIXY up | 207 | 78.3 | 4.12 | 53.4 | 2.3 | 2.82 | 72 / 4.11 | 10.6/-/2.66/5.5/2.86/4.28 |
+| SPY, QQQ, IWM all dn | 196 | 76.0 | 3.53 | 42.8 | 4.2 | 2.34 | 59 / 4.34 | 7.84/.26/1.64/5.92/3.17/3.95 |
+| NOT (SPY dn & XLU up) | 235 | 72.8 | 2.32 | 34.3 | 3.7 | 1.95 | 80 / 2.47 | 1.79/.75/1.87/4.37/1.96/2.11 |
+| SPY dn & XLU dn | 160 | 74.4 | 2.60 | 25.5 | 2.4 | 1.83 | 53 / 1.94 | 125/1.63/2.63/3.65/2.46/1.16 |
+| SPY dn & XLU, XLP dn | 118 | 75.4 | 2.73 | 16.6 | 2.4 | 1.62 | 28 / 1.72 | 127/-/2.46/2.48/5.40/1.06 |
+| SPY up (control) | 92 | 67.4 | 1.69 | 7.6 | 3.0 | 0.84 | 31 / 4.04 | .55/0/.58/3.61/.57/4.83 |
+
+Findings: the useful split is simply SPY down vs up on the signal day (SPY-up signals PF 1.69, SPY-down PF ~3.6+); "VIXY up" is nearly the same set as SPY down (207 of ~216 trades). Defensive-rotation variants (XLU/XLP up) have higher PF but 2022 is 0.26 or empty and 2023 1.2-1.4, with L12 PF 14 coming from 29 trades; they idle capital (return 24-27% vs 62%). "SPY dn & VIXY up" is the only one with higher PF (4.12), Sharpe (2.82), L12 PF (4.11) and lower drawdown (2.3), but return falls 61.7 -> 53.4 and 2022 has no trades, so it fails the beat-on-return test; it is essentially the SPY-down/IBS tilts of runs 19/20/30 (run30 tilt: PF 3.25, ret 67.5, keeps all trades), i.e. no new information. Cross-asset concordance adds nothing beyond SPY's own sign.
+Verdict: NOT a promotion candidate; not added to challenger.py. Confirms run30 direction (market-down signal days are the better ones under the vol filter; a size tilt beats a hard filter). Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data), scale-in second tranche, ticker-subset jackknife of the universe (next own-idea run).
