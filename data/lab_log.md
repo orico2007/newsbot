@@ -1325,3 +1325,21 @@ Rules: the 308 LIVE trades; for each year Y, choose (window in 10/20/30/60, thre
 Chosen settings by year (PF objective): 2022-24 (30,-1.5), 2025 (10,-1.75), 2026 (20,-1.75); (return objective): (30,-1.5/-1.25) throughout. The selection is stable (window 20-30, threshold -1.25..-1.75), consistent with the run-44 plateau.
 Findings: out of sample the filter keeps most of its edge: PF 3.35-3.74 vs live 2.83 (fixed in-sample 4.41, so about 15-25% of the headline PF was selection optimism), drawdown 2.4% vs 4.3%, return 52-56% vs 60.6% (slightly lower: fewer trades). Per year it is >= live in 2023, 2024, 2026 and about equal in 2021; the PF-objective walk-forward hurts 2025 (1.00 vs 2.51) because it switched to a tight (10,-1.75) setting after a thin year, which the return objective avoids. Return is the weaker spot: the filter trades less, and the benefit is mainly lower drawdown and higher PF, not higher return. 2022 stays untestable (7 live trades).
 Verdict: supports run 44's PROMOTION CANDIDATE (already in challenger.py as "lab run44"; no change this run). Realistic live expectation PF about 3.3-3.7, not 4.4. Suggest the daily round prefers a plateau setting (window 20-30, threshold -1.25..-1.5) over the sharpest one. 32+ variants tried across runs 44-45.
+
+## 2026-11-18 (run 46) - 60d return skewness and share-price level as conditioners of the vol60>=1.75% LIVE setup (web-seeded: lottery/idiosyncratic-skewness literature; search returned only paper index pages, e.g. https://www.quantconnect.com/research/15260/expected-idiosyncratic-skewness/p1 , https://cba.lmu.edu/media/lmucollegeofbusinessadministration/undergrad/Stocks as Lotteries.pdf , not fetched, unverified). Script: lab_skew.py
+Rules: the 308 LIVE trades; skewness of the last 60 daily returns and the signal-day close price split at the sample median / fixed cuts (median splits full-sample, mild look-ahead). Same simulator (10% x 12, 4/day). 8 variants tried (multiple-comparison discount).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| skew60 < median (0.68) | 166 | 75.3 | 2.87 | 31.7 | 2.3 | 4.71 | 2.48/0/1.34/3.89/3.72/3.61 |
+| skew60 >= median | 166 | 72.3 | 2.50 | 24.0 | 3.2 | 2.62 | 2.92/1.89/1.84/5.21/1.28/3.49 |
+| skew60 < 0 | 67 | 77.6 | 4.09 | 15.4 | 1.2 | 39.2 (19 trades) | 41.5/-/1.29/3.09/3.2/64.1 |
+| skew60 >= 0.5 | 186 | 72.6 | 2.60 | 29.0 | 3.2 | 2.37 | 4.32/1.89/1.94/4.70/1.55/2.64 |
+| price < median ($135) | 157 | 74.5 | 2.69 | 26.1 | 3.1 | 3.31 | 2.63/.22/1.25/9.23/1.47/2.75 |
+| price >= median | 173 | 73.4 | 2.63 | 27.9 | 2.1 | 3.48 | 2.05/1.63/1.97/2.38/2.32/3.65 |
+| price >= $50 | 276 | 75.4 | 3.04 | 55.6 | 3.1 | 3.46 | 3.14/.87/1.74/4.62/2.64/3.39 |
+| price < $50 | 45 | 68.9 | 1.78 | 4.6 | 2.7 | 2.27 | thin |
+
+Findings: nothing usable. Low skew (no recent upside lottery spikes) is directionally better in the last 12 months but is inconsistent by year (2023, 2024 worse; 2022 has no trades) and the sharpest cut (skew<0) is 67 trades with year PFs of 41 and 64 on a handful of trades, i.e. noise. Both halves of the price split are about equal; excluding stocks under $50 gives PF 3.04 with return 55.6 vs 60.6 and L12 about equal, a small drawdown gain that is within selection noise after 8 variants. Return falls in every filter (fewer trades, idle slots), the same pattern as runs 42-45.
+Verdict: NOT a promotion candidate; not added to challenger.py. The live setup shows no dependence on skewness or price level.
