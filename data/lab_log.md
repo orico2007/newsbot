@@ -1277,3 +1277,19 @@ Verdict: NOT a promotion candidate; no challenger.py change. Risk note for the d
 
 ## 2026-11-18 (run 42) - stock-level trend conditioner (close vs SMA50, SMA50 vs SMA200) on the vol60>=1.75% LIVE setup (own idea). Script: lab_sma50.py
 Result: degenerate. Every live signal already has close > SMA50 and SMA50 > SMA200 (the A/E/F rules embed an uptrend), so "above50" and "50>200" keep all 308 trades (identical to LIVE: PF 2.83, ret 60.6%) and "below50" / "50<200" are empty (0 signals). The earlier "trend filter: only close > SMA200" challenger is a different, looser rule. Nothing to promote; not added to challenger.py. Implication: pullbacks in downtrending stocks are never traded, so a deeper-trend relaxation (stock below SMA50) would be a new sleeve, not a filter.
+
+## 2026-11-18 (run 43) - stock-specific mean-reverting character (lag-1 autocorrelation, variance ratio) as conditioner of the vol60>=1.75% LIVE setup (web-seeded hypothesis; a search for stock-level autocorrelation / variance-ratio filters for RSI2 only returned blog and index pages, e.g. https://harbourfrontquant.substack.com/p/understanding-mean-reversion-to-enhance , https://business.columbia.edu/sites/default/files-efs/pubfiles/11568/str1.pdf , not fetched, unverified). Script: lab_autocorr.py
+Hypothesis: reversion trades should work better on stocks whose own daily returns have been negatively autocorrelated (ac1<0) or with variance ratio VR5<1. Rules: the 308 LIVE trades (data through 2026-10-29), split by ac1 of daily returns over 60/120/250 days and VR5 over 120/250 days at the signal date. Same simulator (10% x 12, 4/day). 10 variants tried (5 complementary pairs; multiple-comparison discount applies).
+
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 3.39 | 2.41/.87/1.72/4.7/2.51/3.44 |
+| ac1(60d) < 0 | 161 | 72.0 | 2.04 | 19.4 | 3.32 | 1.44/.22/.86/4.16/1.51/3.74 |
+| ac1(60d) >= 0 | 169 | 74.6 | 3.23 | 34.7 | 3.38 | 7.7/1.63/1.89/5.9/2.14/3.12 |
+| ac1(120d) < 0 | 169 | 72.2 | 2.01 | 17.3 | 1.96 | 1.37/.22/1.6/6.05/1.96/1.65 |
+| ac1(120d) >= 0 | 159 | 74.2 | 3.53 | 38.3 | 7.44 | 25/1.63/1.37/4.41/1.96/7.04 |
+| ac1(250d) < 0 / >= 0 | 158 / 153 | 73.4 / 73.9 | 2.87 / 2.70 | 25.5 / 27.8 | 3.89 / 3.02 | no difference |
+| VR5(120d) < 1 / >= 1 | 141 / 189 | 73.8 / 72.0 | 2.37 / 2.77 | 15.9 / 38.5 | 2.11 / 4.34 | mixed |
+| VR5(250d) < 1 / >= 1 | 130 / 183 | 73.1 / 73.8 | 2.60 / 3.07 | 18.0 / 37.4 | 2.86 / 4.13 | mixed |
+
+Findings: the hypothesis is not supported. Stocks that recently mean-reverted (ac1<0, VR<1) are NOT better; the short windows even show the opposite (ac1>=0: PF 3.2-3.5), but the sign flips at 250d and the per-year pattern is erratic (2021 PF 7.7-49 on a handful of trades, 2023 not consistently better), so the "trending stocks revert better" direction is noise-level and not usable. Splitting also halves trades and return in every cell. No consistent monotone effect across windows. Verdict: NOT a promotion candidate; not added to challenger.py. Do not revisit stock-level autocorrelation / variance-ratio conditioners.
