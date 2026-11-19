@@ -7,3 +7,6 @@ closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pc
 2026-11-13T14:39:07.440238+00:00,BEAM,swing,news,long,26.6,23.46,-11.805,-1.01,3,0.624,stop/target/other
 2026-11-18T15:04:54.969411+00:00,UNH,swing,cum_rsi2,long,400.58,379.19,-5.34,-1.01,11,0.019,stop/target/other
 2026-11-18T18:31:48.763166+00:00,NVDA,day,ema9_pullback_5m,short,151.78,152.38,-0.394,-1.0,0,0.0,stop/target/other
+2026-11-19T15:13:47.692557+00:00,SQQQ,swing,trend_pullback,long,42.61,45.8233,7.541,1.06,4,0.023,stop/target/other
+2026-11-19T15:19:19.418820+00:00,JPM,swing,trend_pullback_W,long,351.63,323.4475,-8.015,-1.0,11,0.014,stop/target/other
+2026-11-19T19:50:54.483615+00:00,NVDA,day,ema9_pullback_5m,short,148.49,147.838,0.441,1.59,0,0.013,stop/target/other

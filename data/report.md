@@ -1,21 +1,24 @@
-# Daily report 2026-11-18
+# Daily report 2026-11-19
 
-- Equity: $98,368.07  |  Day P&L: **-334.17 (-0.34%)**
-- Entries: 0  |  Exits: 0  |  Trailing-stop raises: 0  |  Blocked ideas: 0  |  Errors: 0
+- Equity: $99,323.63  |  Day P&L: **+967.23 (+0.98%)**
+- Entries: 1  |  Exits: 0  |  Trailing-stop raises: 22  |  Blocked ideas: 0  |  Errors: 0
 
 ## Market
-Regime: **bear**. Leading: XLP (10.41), XLU (8.38), XLY (8.08). Lagging: XBI (-4.76), XLK (-7.5), SMH (-12.67)
+Regime: **bear**. Leading: XLP (8.45), XLU (7.11), XLY (7.07). Lagging: XBI (-3.23), XLK (-6.4), SMH (-10.47)
 
 ## Open positions
 | Symbol | Side | Qty | Unrealized P&L |
 |---|---|---|---|
-| ABBV | long | 15 | -117.38 |
-| AMZN | long | 5 | +38.25 |
-| COST | long | 1 | -0.26 |
-| HD | long | 5 | -5.15 |
-| JPM | long | 12 | -324.24 |
-| RWM | long | 78 | +34.32 |
-| SQQQ | long | 15 | +54.00 |
-| V | long | 5 | -42.05 |
-| WMT | long | 14 | +0.00 |
-| XOM | long | 8 | -72.32 |
+| ABBV | long | 15 | -155.70 |
+| AMZN | long | 5 | -10.65 |
+| COST | long | 1 | -3.98 |
+| HD | long | 5 | -7.75 |
+| RWM | long | 41 | +653.13 |
+| V | long | 5 | -104.28 |
+| WMT | long | 14 | -17.50 |
+| XOM | long | 8 | -88.32 |
+
+## Entries
+| Time (UTC) | Symbol | Strategy | Side | Why |
+|---|---|---|---|---|
+| 19:36 | NVDA | day | short | DAY ema9_pullback_5m: pullback to EMA20 in 5m uptrend sell qty=20 stop=148.9 tp=147.79 conf=63.0 x1.01 bear market |
