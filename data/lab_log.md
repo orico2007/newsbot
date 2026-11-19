@@ -1412,3 +1412,17 @@ Combined with LIVE (shared slots): PF 1.13-1.35, return 26-68%, max DD 10.6-20%,
 
 Findings: the plain "most oversold by vol-normalised return" rule has no real edge in this universe after costs (PF 1.0-1.3, ~52% win, drawdown 14-24%); the live RSI2 + IBS/extension triggers plus breadth, peer rank and vol60 do the selecting, and a pure cross-sectional rank adds nothing and dilutes the champion. The paper's VIX-dependence claim is already covered by the VIXY / SPY realized-vol / breadth tests (runs 19, 24, 38).
 Verdict: NOT a promotion candidate; not added to challenger.py. The conditioner and trigger-variant space is exhausted; remaining untested directions need new data (historical earnings dates, TLT/HYG/GLD in the bars cache).
+
+## 2026-11-19 (run 51) - Monte Carlo risk audit of the vol60>=1.75% LIVE setup: month-block bootstrap of portfolio trades + cost stress (own idea; no web source this run, run 50 was web). Script: lab_mc.py
+Rules: the 308 LIVE portfolio trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day; data through 2026-10-29). Each trade's contribution = pnl% x 10% of equity, grouped by exit month (65 months, 14 with no trades); 5000 resamples of 65 months with replacement; extra per-trade cost haircut on top of the backtest's 0.05%/side slippage. Also a trade-level iid bootstrap of PF. 1 configuration, 3 cost levels (no variant search, so no winner-discount; but the underlying live setup itself was chosen after many tests, so these intervals are optimistic).
+
+| Scenario | Return 5th / median / 95th % | Max DD median / 95th / 99th % | P(total return < 0) | P(some 12-month block loses) |
+|---|---|---|---|---|
+| As backtested | 35.1 / 61.0 / 91.7 | 2.3 / 4.8 / 6.0 | 0.000 | 0.09 |
+| +0.2% round-trip cost per trade | 27.8 / 51.0 / 80.6 | 2.5 / 5.5 / 7.0 | 0.000 | 0.17 |
+| +0.5% round-trip cost per trade | 17.4 / 37.6 / 62.8 | 3.3 / 6.6 / 8.6 | 0.000 | 0.33 |
+
+Trade-level bootstrap PF 5th / median / 95th = 2.17 / 2.84 / 3.80 (P(PF<1.5) = 0, P(PF<1) = 0). Realised equity contribution by year (pct of equity): 2021 5.6, 2022 -0.1, 2023 3.8, 2024 16.7, 2025 5.7, 2026 15.9 (2024 and 2026 carry 54% of the total).
+
+Findings: the edge survives a heavy cost stress (even +0.5% extra round trip, about 10x the assumed slippage, still gives median +37.6% and 99th-percentile drawdown under 9%). Caveats: bootstrap assumes months are exchangeable (regime clustering such as a 2022-style bear is only represented by the one 2022 block, where the strategy was flat), only 308 trades come from a universe of cached survivors, and the live parameters were selected on this same history after dozens of tests, so the intervals understate true uncertainty; treat them as a floor on sampling noise, not a forecast. Return is concentrated: 2024 and 2026 produce over half of it.
+Verdict: audit only, no strategy change; NOT a promotion candidate and not added to challenger.py. Useful for sizing: realistic drawdown is 5-9% at 10% x 12, so the 15% x 8 sizing variant (earlier run: ret 103%, DD 6.4%) would plausibly see 9-14% drawdowns in a bad draw.
