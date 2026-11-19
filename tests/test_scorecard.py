@@ -69,3 +69,14 @@ def test_alerts_never_hit_the_network_under_pytest(monkeypatch):
     monkeypatch.setenv("NTFY_TOPIC", "should-not-be-used")
     alerts.send("hello")                       # PYTEST_CURRENT_TEST פעיל: לא יוצא החוצה
     assert calls == []
+
+
+def test_append_trade_skips_exact_duplicate(tmp_path):
+    p = tmp_path / "trades.csv"
+    row = {"closed": "t1", "symbol": "UNH", "strategy": "swing", "pattern": "cum_rsi2", "side": "long", "entry": 400.58,
+           "exit": 379.19, "pnl_pct": -5.34, "R": -1.01, "held_days": 11, "entry_slip_pct": 0.019, "reason": "x"}
+    scorecard.append_trade(p, row)
+    scorecard.append_trade(p, {**row, "closed": "t2"})
+    assert len(scorecard.read_trades(p)) == 1
+    scorecard.append_trade(p, {**row, "closed": "t3", "entry": 401.0})
+    assert len(scorecard.read_trades(p)) == 2

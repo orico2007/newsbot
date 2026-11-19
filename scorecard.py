@@ -6,6 +6,10 @@ TRADE_COLS = ["closed", "symbol", "strategy", "pattern", "side", "entry", "exit"
 
 def append_trade(path, row):
     p = pathlib.Path(path); new = not p.exists()
+    if not new:                                   # אותה עסקה סגורה לא נרשמת פעמיים (מצב נשמר ישן אחרי ריצה שבוטלה)
+        key = lambda r: tuple(str(r.get(k, "")) for k in ("symbol", "strategy", "side", "entry", "exit", "pnl_pct", "held_days"))
+        with p.open(encoding="utf-8", newline="") as f:
+            if any(key(r) == key(row) for r in csv.DictReader(f)): return False
     with p.open("a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, TRADE_COLS)
         if new: w.writeheader()
