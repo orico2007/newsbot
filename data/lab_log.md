@@ -1449,3 +1449,24 @@ Combined with LIVE (shared slots):
 
 Findings: plain breakout continuation again fails (PF 1.16, DD 20%, L12 0.94, matches run 1). Adding the volatility-contraction condition is what turns it positive: PF 1.5-1.9 with DD 3-5%, and the volume-confirmed version is above 1.3 in every year including 2022 (the champion's weak year), the first non-reversion sleeve so far to do that. It is a different mechanism (trend continuation after compression) so it fills slots when oversold signals are scarce: LIVE + sleeve lifts return 60.6 -> 92.9% at the same max DD (4.4%), L12 PF 2.36 and a flat-to-positive 2022 (1.25 vs 0.87). But combined PF falls (2.32 vs 2.83) and L12 PF is lower than LIVE's 3.37, so it does NOT meet the strict promotion rule. Caveats: standalone vol>1.5x variant is only 133 trades / 27 in L12 (thin), 5 variants were tried and the 0.8 / 1.5x thresholds are round numbers but the contraction idea itself was chosen after seeing plain-breakout fail (some selection), 2026 is not sealed in this table, and survivor universe flatters breakout strategies.
 Verdict: COMPLEMENT CANDIDATE (not a PROMOTION CANDIDATE): worth tracking as a return/2022 diversifier. Added to challenger.py as "lab run52b" (live + contraction D20 sleeve, r10<=0.8*r60, vol>1.5x, hold 10). Next steps: out-of-sample check as new bars arrive; test the contraction filter with a longer 20d lookback and a 2-tier size; walk-forward the 0.8 threshold.
+
+## 2026-11-19 (run 53) - robustness / sensitivity audit of the run-52b contraction-breakout sleeve (threshold, breakout length, volume multiple, hold) (own idea; follow-up named in run 52, run 52 was web). Script: lab_vcb2.py
+Rules: sleeve = Donchian-N close breakout, SMA50>SMA200, SPY>200d, ATR/close<=6%, prior-10d avg range <= c x prior-60d avg range, volume > v x 20d avg, stop 4 ATR, hold H; combined with LIVE (vol60>=1.75% setup) in the same simulator (10% x 12, 4/day, 0.05% slip). Data through 2026-10-29. 9 variants tried around the base (one-at-a-time changes), so any winner is discounted.
+
+| Variant (standalone) | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | Combined w/ LIVE: PF / Ret % / MDD % / L12 PF |
+|---|---|---|---|---|---|---|---|
+| base c0.8 v1.5 n20 h10 | 133 | 58.6 | 1.94 | 25.7 | 3.3 | 27 / 1.46 | 2.32 / 92.9 / 4.4 / 2.36 |
+| c0.6 | 9 | 66.7 | 1.70 | 1.1 | 1.0 | 3 / 1.55 | 2.75 / 61.6 / 4.3 / 3.16 (too few trades) |
+| c0.7 | 42 | 54.8 | 1.58 | 4.9 | 3.1 | 11 / 0.80 | 2.47 / 65.3 / 4.3 / 2.42 |
+| c0.9 | 305 | 53.1 | 1.43 | 30.8 | 7.4 | 57 / 1.38 | 1.71 / 86.0 / 7.0 / 1.97 |
+| v1.25 | 186 | 53.8 | 1.71 | 29.9 | 5.0 | 35 / 1.36 | 2.07 / 95.5 / 5.6 / 2.13 |
+| v2.0 | 63 | 55.6 | 2.13 | 14.7 | 2.0 | 13 / 2.09 | 2.55 / 79.6 / 4.2 / 2.99 |
+| n55 | 88 | 59.1 | 1.89 | 15.0 | 3.0 | 18 / 1.94 | 2.37 / 76.7 / 3.8 / 2.78 |
+| n10 | 156 | 57.1 | 1.92 | 28.7 | 3.8 | 31 / 1.80 | 2.27 / 97.0 / 4.4 / 2.53 |
+| hold 5 | 138 | 60.1 | 1.85 | 16.1 | 2.0 | 29 / 1.62 | 2.38 / 82.0 / 4.5 / 2.65 |
+| hold 15 | 131 | 62.6 | 2.29 | 38.8 | 3.2 | 26 / 1.47 | 2.45 / 109.8 / 4.7 / 2.36 |
+
+PF per year, base standalone 2021-2026: 1.90/1.30/3.66/1.81/2.03/1.54 (positive every year). LIVE ref: 308 trades, PF 2.83, ret 60.6%, DD 4.3, L12 PF 3.37.
+
+Findings: standalone PF stays 1.4-2.3 for every neighbouring setting (breakout length 10/20/55, volume 1.25-2.0x, hold 5/10/15) and every year of the base is above 1, including 2022, so the sleeve is not a single lucky parameter point. But the contraction threshold itself is lumpy: trade count goes 9 / 42 / 133 / 305 for c = 0.6 / 0.7 / 0.8 / 0.9 and c0.7 has a bad L12 (PF 0.80, 11 trades) and 2021/2022 about zero, which is small-sample noise, not a trend. Looser contraction (c0.9) dilutes: combined PF 1.71, DD 7.0. No variant lifts combined PF above LIVE's 2.83 (best 2.75 only because the sleeve almost never trades); every one raises return (65-110% vs 60.6%) at similar DD, which is the diversification value only. Sample sizes are thin (L12 11-57 trades), survivor universe flatters breakouts, and 2026 is not sealed here.
+Verdict: sleeve is moderately robust as a return diversifier but NOT a PROMOTION CANDIDATE (combined PF and L12 PF stay below LIVE). Keep the existing "lab run52b" tracker unchanged; no new variant added to challenger.py (no variant is clearly better than base after discounting 9 comparisons; v2.0 / n55 look better on L12 but only 13-18 trades). Next: wait for new bars to out-of-sample the base; the remaining untested directions still need new data (historical earnings dates, TLT/HYG/GLD).
