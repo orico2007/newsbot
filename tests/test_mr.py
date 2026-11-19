@@ -35,8 +35,10 @@ import pytest
 def _calm_stocks_allowed():
     """The synthetic fixtures are calm stocks; the volatility filter has its own tests below."""
     old = R["swing"]["mr"].get("vol_min", 0); R["swing"]["mr"]["vol_min"] = 0
+    oz = R["swing"]["mr"].pop("zreg_max", None)
     yield
     R["swing"]["mr"]["vol_min"] = old
+    if oz is not None: R["swing"]["mr"]["zreg_max"] = oz
 
 def _setup(b, e):
     d = uptrend_pullback(); b.bar_data[("AAA", "1Day")] = d; b.snap["AAA"] = (d[-1]["c"], d[-2]["c"], 2e8)
@@ -178,3 +180,23 @@ def test_live_rules_have_volatility_filter():
     import yaml, pathlib
     live = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / "rules.yaml").read_text())["swing"]["mr"]
     assert live["vol_min"] == 1.75
+
+
+def test_zreg_measures_distance_below_trend_line():
+    flat = [bar(100 + (0.1 if i % 2 else -0.1)) for i in range(20)]
+    assert abs(mr.zreg(flat)) < 2
+    c = [100 + 0.5 * i for i in range(19)] + [88.0]          # last close far below the rising line
+    assert mr.zreg([bar(x) for x in c]) < -2
+    assert mr.zreg([bar(10)] * 5) is None
+
+def test_zreg_filter_blocks_shallow_dip_and_allows_deep_washout(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "neutral"; e.mkt.spy_above200 = True
+    e.r["swing"]["mr"]["zreg_max"] = -9.0
+    assert e._mr_scan(NOW) == 0 and not b.orders
+    e.r["swing"]["mr"]["zreg_max"] = 0.0
+    assert e._mr_scan(NOW) == 1
+
+def test_live_rules_have_zreg_filter():
+    import yaml, pathlib
+    live = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / "rules.yaml").read_text())["swing"]["mr"]
+    assert live["zreg_max"] == -1.5 and live["zreg_window"] == 20

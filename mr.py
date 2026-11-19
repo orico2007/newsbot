@@ -54,3 +54,16 @@ def vol60(daily):
     r = [c[j] / c[j - 1] - 1 for j in range(len(c) - 60, len(c))]
     m = sum(r) / 60
     return (sum((x - m) ** 2 for x in r) / 59) ** 0.5 * 100
+
+
+def zreg(daily, n=20):
+    """Regression-residual z-score: how far (in residual std devs) the last close sits below the least-squares line through the last n closes.
+    Strongly negative = a real washout versus trend. None if too little history."""
+    c = [b["c"] for b in daily][-n:]
+    if len(c) < n: return None
+    mx = (n - 1) / 2; my = sum(c) / n
+    sxx = sum((a - mx) ** 2 for a in range(n))
+    slope = sum((a - mx) * (y - my) for a, y in zip(range(n), c)) / sxx
+    res = [y - (my + slope * (a - mx)) for a, y in zip(range(n), c)]
+    mean = sum(res) / n; sd = (sum((r - mean) ** 2 for r in res) / n) ** 0.5
+    return res[-1] / sd if sd else 0.0
