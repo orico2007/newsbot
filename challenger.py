@@ -132,6 +132,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume", ruleset(), DEF_PORT, "live_vol175_dvol"),
     # lab run 44: vol60>=1.75% setup + 20d linear-regression residual z < -1.5 (PROMOTION CANDIDATE; see data/lab_log.md)
     ("lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5", ruleset(), DEF_PORT, "live_vol175_zreg"),
+    # lab run 52: live vol60>=1.75% setup + volatility-contraction Donchian-20 breakout sleeve (COMPLEMENT candidate; see data/lab_log.md)
+    ("lab run52b: live vol60>=1.75% setup + contraction D20 breakout sleeve (r10<=0.8*r60, vol>1.5x, hold 10)", ruleset(), DEF_PORT, "live_vol175_vcb"),
 ]
 
 def vol60(A, i):
@@ -211,6 +213,16 @@ def run():
                 return v_ is not None and v_ >= 1.75 and p_ is not None and p_ >= 1 / 3
             T0 = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
                   for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
+        elif len(v) > 3 and v[3] == "live_vol175_vcb":
+            import lab_breadth, lab_sector, lab_vcb
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                return v_ is not None and v_ >= 1.75
+            live_ = [dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                     for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)]
+            T0 = live_ + lab_vcb.trades(AS, lab_vcb.signals(AS, ctx, contr=0.8, volx=1.5), 10)
         elif len(v) > 3 and v[3] == "live_vol175_zreg":
             import lab_breadth, lab_sector, lab_zscore
             B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)

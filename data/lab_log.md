@@ -1426,3 +1426,26 @@ Trade-level bootstrap PF 5th / median / 95th = 2.17 / 2.84 / 3.80 (P(PF<1.5) = 0
 
 Findings: the edge survives a heavy cost stress (even +0.5% extra round trip, about 10x the assumed slippage, still gives median +37.6% and 99th-percentile drawdown under 9%). Caveats: bootstrap assumes months are exchangeable (regime clustering such as a 2022-style bear is only represented by the one 2022 block, where the strategy was flat), only 308 trades come from a universe of cached survivors, and the live parameters were selected on this same history after dozens of tests, so the intervals understate true uncertainty; treat them as a floor on sampling noise, not a forecast. Return is concentrated: 2024 and 2026 produce over half of it.
 Verdict: audit only, no strategy change; NOT a promotion candidate and not added to challenger.py. Useful for sizing: realistic drawdown is 5-9% at 10% x 12, so the 15% x 8 sizing variant (earlier run: ret 103%, DD 6.4%) would plausibly see 9-14% drawdowns in a bad draw.
+
+## 2026-11-19 (run 52) - volatility-contraction Donchian-20 breakout continuation sleeve, alone and combined with LIVE (web idea). Script: lab_vcb.py
+Sources: https://quantifiedstrategies.substack.com/p/donchian-breakout-strategy (search result only), https://anupshindedotcom.pages.dev/breakout-continuation-backtested/ (fetched: plain 20-bar Donchian breakout, futures NQ/GC, PF 1.08-1.56, DD 40%+; unverified, other market). Contraction idea is a Minervini-VCP / NR-type proxy of my own.
+Rules (long only, enter at close of breakout day): close > highest high of prior 20 bars; close>SMA50>SMA200; SPY>200d gate; ATR/close<6%; 10-bar per-symbol cooldown; hold 10 (or 20), stop 4 ATR, 0.05% slip; contraction = avg(high-low) of prior 10 days <= 0.8 x prior-60-day avg; optional breakout-day volume > 1.5x 20d avg; optional 126d return >= 20%. Same simulator (10% x 12, 4/day). Data through 2026-10-29. 5 variants tried (discount winners).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| D20 plain, hold 10 | 1123 | 53.0 | 1.16 | 44.9 | 19.9 | 267 / 0.94 | 1.51/.37/1.29/1.38/1.48/.84 |
+| D20 + contraction, hold 10 | 326 | 54.6 | 1.55 | 38.6 | 5.1 | 58 / 1.18 | 2.93/.90/2.53/1.42/1.63/1.15 |
+| D20 + contraction + vol>1.5x, hold 10 | 133 | 58.6 | 1.94 | 25.7 | 3.3 | 27 / 1.46 | 1.90/1.30/3.66/1.81/2.03/1.54 |
+| D20 + contraction + 6m RS>=20%, hold 10 | 185 | 58.4 | 1.71 | 29.2 | 3.7 | 36 / 1.38 | 5.04/2.08/1.53/1.43/3.00/1.41 |
+| D20 + contraction, hold 20 | 259 | 54.8 | 1.87 | 73.8 | 7.7 | 46 / 1.34 | 4.42/.62/2.63/2.18/2.23/1.13 |
+Combined with LIVE (shared slots):
+| Combo | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | PF per year 2021-2026 |
+|---|---|---|---|---|---|---|---|
+| LIVE + contraction | 602 | 63.6 | 1.89 | 110.5 | 7.5 | 154 / 1.76 | 2.58/.93/2.03/2.19/1.89/1.66 |
+| LIVE + contraction + vol>1.5x | 429 | 69.0 | 2.32 | 92.9 | 4.4 | 125 / 2.36 | 2.33/1.25/2.08/2.80/2.31/2.29 |
+| LIVE + contraction + RS>=20% | 478 | 68.0 | 2.11 | 97.7 | 6.9 | 134 / 2.16 | 2.92/1.83/1.42/2.25/2.67/2.06 |
+| LIVE + contraction, hold 20 | 518 | 63.5 | 2.00 | 142.3 | 7.4 | 138 / 1.84 | 3.15/.65/1.95/2.53/2.25/1.64 |
+
+Findings: plain breakout continuation again fails (PF 1.16, DD 20%, L12 0.94, matches run 1). Adding the volatility-contraction condition is what turns it positive: PF 1.5-1.9 with DD 3-5%, and the volume-confirmed version is above 1.3 in every year including 2022 (the champion's weak year), the first non-reversion sleeve so far to do that. It is a different mechanism (trend continuation after compression) so it fills slots when oversold signals are scarce: LIVE + sleeve lifts return 60.6 -> 92.9% at the same max DD (4.4%), L12 PF 2.36 and a flat-to-positive 2022 (1.25 vs 0.87). But combined PF falls (2.32 vs 2.83) and L12 PF is lower than LIVE's 3.37, so it does NOT meet the strict promotion rule. Caveats: standalone vol>1.5x variant is only 133 trades / 27 in L12 (thin), 5 variants were tried and the 0.8 / 1.5x thresholds are round numbers but the contraction idea itself was chosen after seeing plain-breakout fail (some selection), 2026 is not sealed in this table, and survivor universe flatters breakout strategies.
+Verdict: COMPLEMENT CANDIDATE (not a PROMOTION CANDIDATE): worth tracking as a return/2022 diversifier. Added to challenger.py as "lab run52b" (live + contraction D20 sleeve, r10<=0.8*r60, vol>1.5x, hold 10). Next steps: out-of-sample check as new bars arrive; test the contraction filter with a longer 20d lookback and a 2-tier size; walk-forward the 0.8 threshold.
