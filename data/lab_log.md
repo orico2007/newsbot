@@ -1394,3 +1394,21 @@ Rules: the 308 LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vo
 (Subsets overlap slightly in n because the simulator re-fills freed slots with other signals.)
 Findings: no coherent monotonic signal. High-MFI3 trades have higher PF (3.42) but on only 87 trades with return 16.6%; low-MFI5 is worse than live, high-MFI5 is erratic by year (7.4 / 10.8 / 0.8 / 0.9). The down-volume-share filter keeps most of the edge (264 of 308 trades) and lifts L12 PF to 4.22, but return drops 61.7 -> 48.7 and 2021/2023/2024 all fall; its complement (light-volume declines) is clearly weaker (PF 1.97, 2025 0.84), consistent with run 6's volume-conditioned reversal and the capitulation theme. Same pattern as runs 29-33, 42-48: conditioners idle capital without improving risk-adjusted return.
 Verdict: NOT a promotion candidate; not added to challenger.py. Volume-flow indicators add no information beyond the live trigger. The conditioner space (price shape, volume, vol regime, breadth, cross-asset, sector, calendar, own-history) now looks exhausted; remaining genuinely new directions need new data (earnings dates, TLT/HYG/GLD in the bars cache) or a new strategy family uncorrelated with the champion.
+
+## 2026-11-19 (run 50) - cross-sectional volatility-normalised short-term reversal (daily bottom-k by return / rolling stdev) as a long-only sleeve (web idea). Script: lab_nrank.py
+Source: https://quantpedia.com/liquidity-creation-in-short-term-reversal-strategies-and-volatility-risk/ (fetched; construction: daily deciles of vol-normalised return, long lowest / short highest, 5-day hold in large stocks, ~27 bps per 5 days, 2001-2016, reversal larger when VIX is high; no thresholds given; claims unverified, other era and long-short). Search also surfaced https://quantreturns.substack.com/p/overnight-mean-reversion and https://www.arxiv.org/pdf/2511.12490 (not fetched; overnight and pullback topics already covered by runs 18/30).
+Rules: each day rank all cached stocks (SPY excluded) by z = N-day return / (60d daily stdev * sqrt(N)); long the bottom k that day, enter at close, stop 4 ATR, same simulator (10% x 12, 4/day, 0.05% slip), per-symbol 5-bar cooldown; gate SPY>200d; optional breadth>=10%, SMA50>SMA200 trend, vol60>=1.75%. Data through 2026-10-29. 6 variants tried.
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| z5 bottom3, hold 5 time exit, trend, vol, breadth | 683 | 52.1 | 1.19 | 26.7 | 17.9 | 183 / 1.24 | 1.27/.14/.98/2.04/1.11/1.25 |
+| z5 bottom3, hold 7 prior-high exit | 701 | 65.0 | 1.26 | 28.9 | 15.7 | 192 / 1.97 | 1.26/.20/.76/1.82/1.23/2.19 |
+| z1 bottom3, hold 3 | 947 | 51.7 | 1.19 | 30.2 | 14.0 | 280 / 1.49 | 1.41/.19/.95/1.38/1.25/1.41 |
+| z5 bottom3, no trend filter | 719 | 52.2 | 1.21 | 30.0 | 20.6 | 194 / 1.90 | 1.67/.15/1.17/.76/1.28/2.11 |
+| z5 bottom3, no breadth gate | 1175 | 51.7 | 1.17 | 42.7 | 24.2 | 263 / 1.20 | 1.36/.18/1.00/1.58/1.18/1.20 |
+| z5 bottom6, vol60>=1.0 | 1126 | 50.4 | 1.02 | 1.6 | 20.2 | 287 / 1.17 | 1.21/.15/.97/1.15/.96/1.24 |
+Combined with LIVE (shared slots): PF 1.13-1.35, return 26-68%, max DD 10.6-20%, every combination far below LIVE PF 2.83 / DD 4.3.
+
+Findings: the plain "most oversold by vol-normalised return" rule has no real edge in this universe after costs (PF 1.0-1.3, ~52% win, drawdown 14-24%); the live RSI2 + IBS/extension triggers plus breadth, peer rank and vol60 do the selecting, and a pure cross-sectional rank adds nothing and dilutes the champion. The paper's VIX-dependence claim is already covered by the VIXY / SPY realized-vol / breadth tests (runs 19, 24, 38).
+Verdict: NOT a promotion candidate; not added to challenger.py. The conditioner and trigger-variant space is exhausted; remaining untested directions need new data (historical earnings dates, TLT/HYG/GLD in the bars cache).
