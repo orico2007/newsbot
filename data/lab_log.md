@@ -1470,3 +1470,21 @@ PF per year, base standalone 2021-2026: 1.90/1.30/3.66/1.81/2.03/1.54 (positive 
 
 Findings: standalone PF stays 1.4-2.3 for every neighbouring setting (breakout length 10/20/55, volume 1.25-2.0x, hold 5/10/15) and every year of the base is above 1, including 2022, so the sleeve is not a single lucky parameter point. But the contraction threshold itself is lumpy: trade count goes 9 / 42 / 133 / 305 for c = 0.6 / 0.7 / 0.8 / 0.9 and c0.7 has a bad L12 (PF 0.80, 11 trades) and 2021/2022 about zero, which is small-sample noise, not a trend. Looser contraction (c0.9) dilutes: combined PF 1.71, DD 7.0. No variant lifts combined PF above LIVE's 2.83 (best 2.75 only because the sleeve almost never trades); every one raises return (65-110% vs 60.6%) at similar DD, which is the diversification value only. Sample sizes are thin (L12 11-57 trades), survivor universe flatters breakouts, and 2026 is not sealed here.
 Verdict: sleeve is moderately robust as a return diversifier but NOT a PROMOTION CANDIDATE (combined PF and L12 PF stay below LIVE). Keep the existing "lab run52b" tracker unchanged; no new variant added to challenger.py (no variant is clearly better than base after discounting 9 comparisons; v2.0 / n55 look better on L12 but only 13-18 trades). Next: wait for new bars to out-of-sample the base; the remaining untested directions still need new data (historical earnings dates, TLT/HYG/GLD).
+
+## 2026-11-19 (run 54) - slow-oscillator (RSI14) trend-pullback sleeve, alone and combined with LIVE (web idea). Script: lab_pb14.py
+Sources: https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy (fetched: SPY only, rules paywalled, claims PF 2.8 / 78% win / 8% exposure; unverified, index not stocks), search also surfaced https://stockcharts.com/articles/arthurhill/2016/07/systemtrader---testing-a-basic-mean-reversion-system---catch-the-knife-or-wait-for-the-bounce-.html (not fetched). Exact rules were not available, so the rules below are my own translation.
+Rules (long only, enter at signal close): Wilder RSI14 < X; close>SMA50>SMA200 (sweep trend_ok s50_200); SPY>200d; ATR/close<=6%; optional close >= p% below prior 20d high; optional vol60>=1.75; 10-bar cooldown; stop 4 ATR, hold 10 (or 5), 0.05% slip; same simulator (10% x 12, 4/day). Data through 2026-10-29. 7 variants tried (discount any winner).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | Combined w/ LIVE: PF / Ret % / MDD % / L12 PF |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | - |
+| RSI14<40, hold 10 | 37 | 37.8 | 0.63 | -3.6 | 4.8 | 9 / 1.19 | 2.21 / 50.6 / 4.8 / 3.17 |
+| RSI14<35 (3 variants) | 0 | - | - | - | - | - | no signals (uptrend filter makes RSI14<35 almost impossible) |
+| RSI14<40 + vol60>=1.75 | 16 | 50.0 | 0.97 | -0.1 | 2.0 | 8 / 1.78 | 2.59 / 56.6 / 4.6 / 3.35 |
+| RSI14<45 + 8% off 20d high | 204 | 52.9 | 1.43 | 22.8 | 7.6 | 62 / 1.80 | 1.82 / 59.9 / 6.5 / 2.45 |
+| RSI14<50 + 10% off 20d high | 240 | 49.2 | 1.01 | -0.2 | 19.0 | 79 / 1.55 | 1.22 / 19.6 / 12.2 / 1.61 |
+
+PF per year of the best standalone (RSI14<45 + 8% off high) 2021-2026: 1.39/0.0/1.45/1.71/1.29/1.56 (2022 PF 0.0, i.e. losing).
+
+Findings: a slower oscillator pullback inside an uptrend has no edge here. Strict versions barely fire (37 trades, PF 0.63); loosening to get volume of signals gives PF 1.0-1.4 with a 50% win rate and large drawdown, far below the RSI2 triggers. Combining with LIVE always lowers combined PF (1.2-2.6 vs 2.83) and does not raise return meaningfully (best 59.9% vs 60.6%). The RSI2 short-horizon extreme, not the generic "dip in an uptrend", carries the edge. Sources' SPY claims do not transfer to single stocks.
+Verdict: REJECTED; not a promotion or complement candidate; not added to challenger.py. Rules for the source's exact version were paywalled, so a different parameterisation is not ruled out, but the family looks dead.
