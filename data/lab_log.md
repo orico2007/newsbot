@@ -1375,3 +1375,22 @@ Rules: the 308 LIVE trades; ER(n) = (close - close[n days ago]) / sum of |daily 
 
 Findings: non-monotonic (e10 middle best, both extremes weaker; e5 extremes both good, middle weak), so no coherent mechanism and it looks like noise. The only mild signal is that the 74 trades where the 5d path was choppy/up-ish (e5 >= -0.6) are weaker (PF 2.0), but dropping them gives PF 3.05 with return down to 48 vs 60.6, the usual filter-trades-less pattern, within selection noise after 8 variants.
 Verdict: NOT a promotion candidate; not added to challenger.py. Path shape of the decline does not condition the live edge.
+
+## 2026-11-19 (run 49) - money-flow (MFI), OBV and down-volume-share conditioners of the vol60>=1.75% LIVE setup (web-seeded by a search on RSI2 scaling-in / volume-ladder pages, snippets only, not fetched: https://quantifiedstrategies.substack.com/p/market-timing-scaling-in-and-the , https://www.luxalgo.com/blog/mean-reversion-playbook-fade-scale-exit/ ; scale-in itself was already tested in lab_scalein.py, so I tested the untested volume-flow family instead). Script: lab_mfi.py
+Rules: the 308 LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day; data through 2026-10-29) split by MFI(3) at 20, MFI(5) at 30, 5d OBV net-flow share at -0.2, and share of 5d volume on down days at 0.7. Thresholds are round numbers chosen before looking. 8 variants tried (discount winners).
+
+| Variant | Trades | Win % | PF | Ret % | MDD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| MFI3 < 20 | 244 | 73.4 | 2.70 | 42.9 | 4.4 | 74 / 3.42 | 2.77/.87/1.16/5.14/2.31/3.46 |
+| MFI3 >= 20 | 87 | 75.9 | 3.42 | 16.6 | 1.3 | 31 / 3.75 | 2.3/-/3.88/3.53/4.67/3.54 |
+| MFI5 < 30 | 244 | 73.0 | 2.38 | 35.8 | 4.9 | 76 / 3.56 | 1.58/.12/1.41/2.72/3.03/3.71 |
+| MFI5 >= 30 | 97 | 70.1 | 2.90 | 18.1 | 2.4 | 34 / 2.80 | 7.41/-/.94/10.76/.79/2.70 |
+| OBV5 flow < -0.2 | 288 | 74.3 | 2.80 | 54.1 | 4.6 | 94 / 3.74 | 2.10/.87/1.68/4.09/2.51/3.86 |
+| OBV5 flow >= -0.2 | 33 | 69.7 | 3.77 | 6.2 | 0.7 | 13 / 1.41 | 5.0/-/7.1/9.7/1.86/1.39 |
+| down-vol share > 0.7 | 264 | 73.9 | 2.80 | 48.7 | 4.5 | 82 / 4.22 | 2.30/.87/1.48/3.99/2.51/4.54 |
+| down-vol share <= 0.7 | 80 | 67.5 | 1.97 | 8.6 | 1.4 | 28 / 1.66 | 3.81/-/1.17/4.91/.84/1.69 |
+
+(Subsets overlap slightly in n because the simulator re-fills freed slots with other signals.)
+Findings: no coherent monotonic signal. High-MFI3 trades have higher PF (3.42) but on only 87 trades with return 16.6%; low-MFI5 is worse than live, high-MFI5 is erratic by year (7.4 / 10.8 / 0.8 / 0.9). The down-volume-share filter keeps most of the edge (264 of 308 trades) and lifts L12 PF to 4.22, but return drops 61.7 -> 48.7 and 2021/2023/2024 all fall; its complement (light-volume declines) is clearly weaker (PF 1.97, 2025 0.84), consistent with run 6's volume-conditioned reversal and the capitulation theme. Same pattern as runs 29-33, 42-48: conditioners idle capital without improving risk-adjusted return.
+Verdict: NOT a promotion candidate; not added to challenger.py. Volume-flow indicators add no information beyond the live trigger. The conditioner space (price shape, volume, vol regime, breadth, cross-asset, sector, calendar, own-history) now looks exhausted; remaining genuinely new directions need new data (earnings dates, TLT/HYG/GLD in the bars cache) or a new strategy family uncorrelated with the champion.
