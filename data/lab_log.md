@@ -1309,3 +1309,21 @@ Rules (daily stock bars, cached universe): slope = (typical price[i] - typical p
 
 Findings: the slope hook is essentially a "second day of a bounce" tick with no oversold requirement; on stocks it gives PF 1.02-1.24 with 12-18% drawdowns, near the placebo level of run 39. The 69% win rate in the source does not survive on stocks (64-67%, PF barely >1), consistent with the expectation that web backtests are optimistic. Combined with LIVE it adds return only by filling slots with lower-quality trades, which cuts PF to 1.3-1.6 and drawdown to 8-13% versus 4.3%; the sleeve crowds out live signals. 2022 is below 1 everywhere. Nothing in the hook beats the live RSI2/IBS pullback selection.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Open follow-ups: TLT/HYG filters (not in cache), true PEAD (no earnings history), semis-exposure cap under vol60 base.
+
+## 2026-11-20 (run 44) - nominal share-price level and distance above the 252d low as conditioners of the vol60>=1.75% LIVE setup (own idea; no web source this run, run 43 was web). Script: lab_price.py
+Rules: LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day; data through 2026-10-29), keep a signal only if the signal-day close satisfies the filter. Price quartiles of live trades: 72 / 135 / 250 USD. 8 variants tried (all reported; multiple-comparison discount applies).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| price >= 20 | 302 | 74.2 | 2.85 | 59.2 | 3.6 | 98 / 3.31 | 2.2/.87/1.78/4.74/2.51/3.34 |
+| price >= 50 | 276 | 75.4 | 3.04 | 55.6 | 3.1 | 96 / 3.46 | 3.14/.87/1.74/4.62/2.64/3.39 |
+| price >= 100 | 212 | 72.6 | 2.69 | 35.3 | 3.0 | 85 / 3.63 | 1.96/1.63/2.22/3.01/2.21/3.67 |
+| price < 150 | 173 | 72.3 | 2.19 | 23.6 | 4.1 | 32 / 3.28 | 2.3/.22/1.11/4.15/1.53/2.86 |
+| price < 300 | 263 | 74.1 | 2.71 | 49.7 | 4.1 | 73 / 2.85 | 2.29/.87/1.58/5.53/2.13/2.94 |
+| 52w-low dist >= 50% | 206 | 74.3 | 3.22 | 46.8 | 4.0 | 65 / 4.73 | 2.95/0/1.46/5.8/2.42/5.66 |
+| 52w-low dist >= 100% | 92 | 73.9 | 2.91 | 23.7 | 2.4 | 36 / 4.31 | 2.96/-/1.4/6.79/1.66/5.09 |
+| 52w-low dist < 100% | 217 | 73.3 | 2.59 | 28.0 | 3.1 | 69 / 2.83 | 4.67/.87/1.4/3.71/2.32/2.86 |
+
+Findings: no price tier lifts return; every filter shrinks the trade count and return (60.6 -> 55.6 best case) for at most a modest PF gain. Price >= 50 (PF 3.04, DD 3.1) mostly removes cheap-stock noise but its gain is a 2021 artifact (3.14 vs 2.41) and 2024 is slightly worse. "Far above the 52w low >= 50%" lifts PF (3.22) and L12 PF (4.73) but 2022 has zero PF (all trades lost) and return falls to 46.8; the >=100% bucket is the same effect with 92 trades. Stocks that have run far from their lows pull back better recently, but this is the same high-beta/semis concentration shown in run 41, not new information. Nothing passes the beat-on-return, last-12m and all-but-one-non-2022-year test.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Remaining untested: TLT/HYG filters (not in cache), true PEAD (no earnings history), semis-exposure cap under vol60 base.
