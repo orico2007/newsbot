@@ -1421,3 +1421,19 @@ Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, ex
 Findings: smooth prior uptrends (R2>=0.5) lift PF slightly (2.90 vs 2.83) and L12 PF (4.00) and turn 2022 positive, but return falls 60.6 -> 46.7 because capacity goes unused; 2023 and 2025 get worse, so it fails the return and all-but-one-year tests. MACD depth < -0.5% has the best PF (3.40) but return 50.4 vs 60.6, L12 PF 3.04 < 3.37, and its 2022 has no trades. Slope>0 alone is a no-op (only 13 trades removed). Trade-quality filters here trade return for PF; with 9 variants tried, a PF gain of this size is inside multiple-comparison noise.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
 Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be own idea.
+
+## 2026-11-20 (run 51) - information discreteness ("frog in the pan") of the pre-signal decline as conditioner of the vol60>=1.75% LIVE setup (web-seeded by search hit only: https://www3.nd.edu/~zda/Frog.pdf , Da/Gurun/Warachka; not fetched, unverified). Script: lab_infodisc.py
+Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, exit close>prior high, hold 7, stop 4 ATR, 10% x 12, 4/day, data through 2026-10-29. For a dip, ID_n = %up days - %down days over n=10/20 days (high = few big drops, "discrete"); mx_n = largest single down day / sum of all down days. Median splits, pure filters. 8 variants tried (discount winners); ties at the median make split counts overlap slightly.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| id10 continuous half | 111 | 73.0 | 2.65 | 17.4 | 2.6 | 32 / 6.59 | 1.98/0/.70/6.78/.94/37.5 |
+| id10 discrete half | 224 | 74.6 | 2.91 | 39.8 | 1.9 | 74 / 2.73 | 3.17/-/2.50/3.97/3.14/2.28 |
+| id20 continuous half | 162 | 75.3 | 2.95 | 29.0 | 2.7 | 53 / 4.54 | 4.57/0/1.74/6.34/1.79/5.18 |
+| id20 discrete half | 188 | 73.4 | 2.54 | 28.7 | 2.7 | 57 / 2.88 | 1.95/-/1.47/3.86/1.77/2.95 |
+| mx10 one day dominates | 169 | 74.0 | 3.47 | 35.6 | 2.6 | 55 / 8.68 | 1.69/.87/1.69/7.17/2.6/7.6 |
+| mx10 spread over days | 173 | 71.7 | 2.18 | 21.9 | 2.7 | 52 / 1.87 | 3.62/-/1.44/3.39/1.4/2.2 |
+| mx20 one day dominates | 165 | 73.9 | 2.91 | 30.3 | 3.0 | 55 / 5.97 | 1.92/.87/.95/4.25/2.51/5.64 |
+| mx20 spread over days | 175 | 73.1 | 2.50 | 26.1 | 2.9 | 56 / 2.20 | 3.08/-/1.67/6.3/1.82/2.43 |
+Findings: the paper's prediction (discrete-information drops revert more) is not supported by the ID measure: id10 and id20 point in opposite directions, so it is noise. The only consistent pattern is mx10: when one big down day dominates the 10-day drop, PF 3.47 vs 2.18 (spread-out slides), L12 8.7 vs 1.9 - plausibly the same "capitulation/shock day" information as the earlier ATR-drop/gap runs. But it halves return (35.6 vs 60.6), 2021 and 2023 are no better than live, and it is one of 8 variants tried.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Possible low-priority follow-up: mx10 as a size tilt (up when one day dominates), overlapping run 28/33 shock-day findings.
