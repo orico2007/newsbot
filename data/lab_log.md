@@ -1406,3 +1406,18 @@ Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, ex
 Findings: tight structural stops destroy the edge (the reversion needs room to retrace below the signal-day low before it bounces; win rate 34-56% vs 74%). Forced weekend flattening also hurts (PF 1.83). Friday-exit-if-profitable is the only near-neutral variant: PF 2.93 vs 2.83 (2021 4.13 vs 2.41) but return 54.5 vs 60.6, L12 PF 3.17 vs 3.37, 2023 and 2025 lower; it fails the return and last-12-months tests and the PF gain is within noise. The existing 4 ATR stop and prior-high exit look well placed.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
 Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data), mean-reversion half-life per stock as selector, next run should be web.
+
+## 2026-11-20 (run 50) - prior-trend quality (60d log-price R^2 / slope, measured on the 60 days ending 5 days before the signal) and MACD(12,26,9) histogram depth as conditioners of the vol60>=1.75% LIVE setup (web-seeded by search only: https://medium.com/@constandinou.antonio/quant-post-3-1-a-guided-path-into-mean-reversion-8b33b3c279e4 , snippet only, unverified; the OU half-life idea itself was already covered by autocorr/stockmem/ER runs). Script: lab_trendq.py
+Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, exit close>prior high, hold 7, stop 4 ATR, 10% x 12, 4/day, data through 2026-10-29. Each variant is a pure filter on live signals. 9 variants tried (discount winners).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| prior60 R2 >= 0.5 | 230 | 73.0 | 2.90 | 46.7 | 3.5 | 79 / 4.00 | 3.16/1.60/1.36/4.93/2.01/4.25 |
+| prior60 R2 < 0.5 | 94 | 75.5 | 1.99 | 8.7 | 2.2 | 24 / 1.91 | 1.45/0/1.42/4.95/1.80/1.95 |
+| prior60 slope > 0.10 | 261 | 74.7 | 2.94 | 53.7 | 3.3 | 84 / 3.33 | 3.39/.87/1.82/4.38/2.58/3.17 |
+| MACD hist/price < -0.5% | 231 | 77.5 | 3.40 | 50.4 | 2.1 | 73 / 3.04 | 4.99/-/2.40/4.54/3.78/2.51 |
+| MACD hist/price < -1% | 134 | 74.6 | 2.93 | 27.7 | 2.1 | 54 / 3.38 | 4.93/-/2.00/2.74/2.83/3.03 |
+| MACD hist/price >= -0.5% | 99 | 67.7 | 1.87 | 9.3 | 3.1 | 31 / 4.23 | 1.07/0/.56/6.43/.57/10.2 |
+Findings: smooth prior uptrends (R2>=0.5) lift PF slightly (2.90 vs 2.83) and L12 PF (4.00) and turn 2022 positive, but return falls 60.6 -> 46.7 because capacity goes unused; 2023 and 2025 get worse, so it fails the return and all-but-one-year tests. MACD depth < -0.5% has the best PF (3.40) but return 50.4 vs 60.6, L12 PF 3.04 < 3.37, and its 2022 has no trades. Slope>0 alone is a no-op (only 13 trades removed). Trade-quality filters here trade return for PF; with 9 variants tried, a PF gain of this size is inside multiple-comparison noise.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
+Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be own idea.
