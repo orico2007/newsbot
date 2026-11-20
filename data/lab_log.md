@@ -1341,3 +1341,19 @@ Rules: LIVE trades incl. zreg20<-1.5 (238 trades, data through 2026-10-29); buck
 | x1.25 if z<-2 else x0.75 | 238 | 78.6 | 4.35 | 64.7 | 2.6 |
 Findings: deeper z is NOT better; PF and win rate fall with depth (3.97 -> 3.33 -> 3.24), so the filter is a threshold effect, not a dose-response. Tilting toward deeper z leaves PF flat/slightly lower; extra return is just extra exposure. Early (2021-23) and late (2024-26) halves agree (z<-2 PF 2.74 / 4.05 vs ref 2.99 / 5.25).
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
+
+## 2026-11-20 (run 46) - CCI(14), Williams %R(14) and Keltner-depth conditioners of the vol60>=1.75% LIVE setup (web-seeded; sources https://www.quantifiedstrategies.com/williams-r-trading-strategy/ , https://quantifiedstrategies.substack.com/p/we-tested-williams-r-on-all-nasdaq - search snippets only, claims unverified). Script: lab_cci.py
+Rules: LIVE trades (data through 2026-10-29); keep a signal only if the signal-day indicator passes. 9 variants tried (multiple-comparison discount applies). Quartiles: CCI -174/-132/-77, WR -96/-90/-74, Keltner depth (SMA20-close)/ATR20 0.54/1.28/1.79.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| CCI14 < -100 | 209 | 75.1 | 3.39 | 41.4 | 2.5 | 63 / 2.67 | 12.1/-/2.32/5.4/3.22/2.1 |
+| CCI14 < -150 | 138 | 76.1 | 3.83 | 28.4 | 1.3 | 39 / 2.79 | 9.13/-/3.2/8.19/3.45/2.22 |
+| CCI14 >= -100 | 129 | 71.3 | 2.14 | 16.9 | 3.1 | 43 / 6.2 | .95/0/.99/2.82/1.32/15.35 |
+| WR14 < -90 | 151 | 75.5 | 3.15 | 31.0 | 2.1 | 51 / 3.39 | 4.36/-/3.14/2.9/3.12/2.83 |
+| WR14 < -97 | 71 | 76.1 | 2.28 | 11.3 | 1.6 | 24 / 2.83 | 2.02/-/2.17/1.25/-/1.46 |
+| WR14 >= -90 | 200 | 74.5 | 2.63 | 29.3 | 3.6 | 61 / 3.58 | 1.89/.75/.92/7.1/1.57/4.52 |
+| Keltner depth >= 1.5 ATR | 127 | 71.7 | 2.55 | 20.2 | 1.8 | 40 / 2.09 | 11.93/-/1.46/2.33/2.71/1.9 |
+| Keltner depth >= 2.5 ATR | 15 | 53.3 | 0.77 | -0.6 | 1.3 | 7 / 0.55 | too few |
+Findings: deeper oscillator readings raise PF slightly (CCI<-100 3.39) but cut return by a third (60.6 -> 41.4) and the last-12-month PF falls (3.37 -> 2.67), so it fails the beat-on-return and last-12m tests; the PF gain is mostly a 2021 artifact (12.1). Williams %R adds nothing beyond the live IBS/RSI2 selection. Extreme Keltner depth (>=2.5 ATR) is a falling knife (PF 0.77, n=15), consistent with the run 45 finding that deeper is not better. The web claim of high win rates for Williams %R is not reproduced as an edge over the live setup.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
