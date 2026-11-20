@@ -1391,3 +1391,18 @@ Rules: long at close when low < prior low AND close > prior high (outside revers
 Combined with LIVE: every combination lowers PF (best: LIVE + down3 sleeve PF 2.26 vs 2.83, return 66.1 vs 60.6, L12 PF 2.26 vs 3.37) - the extra return is just extra exposure at lower quality.
 Findings: the reversal-bar pattern carries no edge by itself (PF ~1.0 standalone); the live setup's edge comes from multi-day washout + vol + breadth, not a single reversal candle.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
+
+## 2026-11-20 (run 49) - structural stops (signal-day low / 5d low) and weekend-avoidance (Friday) exits on the vol60>=1.75% LIVE setup (own idea; no earlier run tested a price-structure stop or a weekend exit; no web source this run, run 48 was web). Script: lab_stop.py
+Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, exit close>prior high, hold 7, 10% x 12, 4/day, data through 2026-10-29. Variants replace the 4 ATR stop with max(entry-4ATR, low[signal day or 5d]-k ATR), or add a Friday-close exit (any Friday, or only if in profit). 6 variants tried (discount winners).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| stop = signal-day low - 0 ATR | 377 | 34.2 | 1.68 | 22.5 | 3.1 | 122 / 1.47 | 1.04/.69/1.53/2.68/2.17/1.18 |
+| stop = signal-day low - 0.5 ATR | 345 | 55.9 | 1.68 | 30.8 | 4.3 | 113 / 1.86 | 1.2/.36/1.41/2.43/1.64/1.67 |
+| stop = signal-day low - 1 ATR | 324 | 67.3 | 1.86 | 38.7 | 5.7 | 105 / 1.74 | 2.3/.43/1.26/2.93/1.61/1.71 |
+| stop = 5d low - 0.5 ATR | 345 | 55.9 | 1.66 | 29.9 | 4.3 | 113 / 1.85 | 1.16/.36/1.41/2.35/1.62/1.65 |
+| exit any Friday close | 333 | 61.3 | 1.83 | 30.9 | 5.3 | 105 / 1.78 | 3.14/.69/1.25/2.11/1.58/1.95 |
+| exit Friday close only if in profit | 312 | 76.9 | 2.93 | 54.5 | 4.5 | 101 / 3.17 | 4.13/.87/1.58/4.73/2.46/3.32 |
+Findings: tight structural stops destroy the edge (the reversion needs room to retrace below the signal-day low before it bounces; win rate 34-56% vs 74%). Forced weekend flattening also hurts (PF 1.83). Friday-exit-if-profitable is the only near-neutral variant: PF 2.93 vs 2.83 (2021 4.13 vs 2.41) but return 54.5 vs 60.6, L12 PF 3.17 vs 3.37, 2023 and 2025 lower; it fails the return and last-12-months tests and the PF gain is within noise. The existing 4 ATR stop and prior-high exit look well placed.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
+Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data), mean-reversion half-life per stock as selector, next run should be web.
