@@ -1291,3 +1291,21 @@ Question: run 41 showed the edge is concentrated in correlated high-beta semis/t
 
 Findings: every threshold lowers PF, return, Sharpe and last-12m PF; max drawdown does not improve except at the harshest mean-corr cut (4.3 -> 3.7%, bought with -15 points of return). Trades skipped for being correlated were as good as the ones kept: the clustered high-beta signals are where the edge is, and diversification-by-correlation just removes edge. Consistent with run 23 (sector caps) and run 23-hedge (market-neutralising lowers PF).
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Closes the "concentration risk" thread (sector cap, SPY hedge, correlation filter all fail). Remaining untested: TLT/HYG filters (not in cache), true PEAD (no earnings history).
+
+## 2026-11-20 (run 43) - 3-bar linear-regression-slope "hook" reversal sleeve (web idea). Script: lab_linreg.py
+Source: https://algomatictrading.substack.com/p/strategy-4-a-mean-reversion-strategy (fetched; index futures, 2000-2025, claims ~69% win rate, no profit factor; exit variants shown only as images). Also read the intro of https://delphicalpha.substack.com/p/us-equity-cross-sectional-mean-reversion (cross-sectional N-bar loser/winner long-short; results paywalled, unusable). Scale-in second tranche was already tested earlier (lab_scalein.py), so removed from the follow-up list.
+Rules (daily stock bars, cached universe): slope = (typical price[i] - typical price[i-2])/2 with typical = (H+L+C)/3; signal when slope[i] > slope[i-1] and slope[i-1] < slope[i-2], red candle (close<open), close > SMA200, SPY>200d gate, ATR/close <= 6%, 3-day cooldown. Entry at close, stop 4 ATR, hold 7, exit close>SMA5 or close>prior high. Same portfolio simulator (10% x 12, 4/day; data through 2026-10-29). 5 variants (+4 combo rows) tried.
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| hook, SMA5 exit | 2811 | 64.0 | 1.02 | 4.6 | 17.7 | 627 / 1.07 | .89/.37/1.27/1.11/.98/1.10 |
+| hook, prior-high exit | 2634 | 64.5 | 1.08 | 24.6 | 18.2 | 587 / 1.18 | 1.01/.38/1.20/1.13/1.09/1.19 |
+| hook + vol60>=1.75, SMA5 exit | 1665 | 65.5 | 1.20 | 42.5 | 12.2 | 464 / 1.13 | 1.57/.41/1.34/1.43/1.02/1.19 |
+| hook + vol60>=1.75, prior-high exit | 1589 | 67.0 | 1.24 | 65.3 | 13.6 | 446 / 1.20 | 1.41/.44/1.26/1.52/1.16/1.24 |
+| hook, no trend, vol60>=1.75, prior-high | 2086 | 65.2 | 1.16 | 55.1 | 14.7 | 569 / 1.04 | 1.27/.44/1.43/1.14/1.26/1.07 |
+| LIVE + hook vol60 prior-high | 1662 | 67.5 | 1.29 | 87.6 | 13.4 | 464 / 1.29 | 1.56/.45/1.24/1.56/1.14/1.34 |
+| LIVE + hook vol60 prior-high, breadth>=10% | 959 | 70.3 | 1.61 | 95.1 | 8.0 | 301 / 1.42 | 3.56/.55/1.41/2.15/1.37/1.42 |
+
+Findings: the slope hook is essentially a "second day of a bounce" tick with no oversold requirement; on stocks it gives PF 1.02-1.24 with 12-18% drawdowns, near the placebo level of run 39. The 69% win rate in the source does not survive on stocks (64-67%, PF barely >1), consistent with the expectation that web backtests are optimistic. Combined with LIVE it adds return only by filling slots with lower-quality trades, which cuts PF to 1.3-1.6 and drawdown to 8-13% versus 4.3%; the sleeve crowds out live signals. 2022 is below 1 everywhere. Nothing in the hook beats the live RSI2/IBS pullback selection.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Open follow-ups: TLT/HYG filters (not in cache), true PEAD (no earnings history), semis-exposure cap under vol60 base.
