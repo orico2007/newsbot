@@ -1327,3 +1327,17 @@ Rules: LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.7
 
 Findings: no price tier lifts return; every filter shrinks the trade count and return (60.6 -> 55.6 best case) for at most a modest PF gain. Price >= 50 (PF 3.04, DD 3.1) mostly removes cheap-stock noise but its gain is a 2021 artifact (3.14 vs 2.41) and 2024 is slightly worse. "Far above the 52w low >= 50%" lifts PF (3.22) and L12 PF (4.73) but 2022 has zero PF (all trades lost) and return falls to 46.8; the >=100% bucket is the same effect with 92 trades. Stocks that have run far from their lows pull back better recently, but this is the same high-beta/semis concentration shown in run 41, not new information. Nothing passes the beat-on-return, last-12m and all-but-one-non-2022-year test.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Remaining untested: TLT/HYG filters (not in cache), true PEAD (no earnings history), semis-exposure cap under vol60 base.
+
+## 2026-11-20 (run 45) - depth of the regression-residual z inside the live zreg20<-1.5 setup, and a size tilt on it (own idea). Script: lab_zdepth.py
+Rules: LIVE trades incl. zreg20<-1.5 (238 trades, data through 2026-10-29); bucket by z depth and test size x1.25/x1.5 when z<-2 (optionally x0.75 otherwise). 6 variants tried (multiple-comparison discount).
+| Variant | Trades | Win % | PF | Ret % | Max DD % |
+|---|---|---|---|---|---|
+| LIVE | 238 | 78.6 | 4.41 | 63.6 | 2.5 |
+| z in [-2.0,-1.5) | 125 | 79.2 | 3.97 | 26.3 | 2.0 |
+| z in [-2.5,-2.0) | 95 | 74.7 | 3.33 | 18.6 | 1.7 |
+| z < -2.5 | 56 | 75.0 | 3.24 | 10.4 | 2.5 |
+| x1.25 if z<-2 | 238 | 78.6 | 4.38 | 74.5 | 2.8 |
+| x1.5 if z<-2 | 238 | 78.6 | 4.36 | 86.1 | 3.2 |
+| x1.25 if z<-2 else x0.75 | 238 | 78.6 | 4.35 | 64.7 | 2.6 |
+Findings: deeper z is NOT better; PF and win rate fall with depth (3.97 -> 3.33 -> 3.24), so the filter is a threshold effect, not a dose-response. Tilting toward deeper z leaves PF flat/slightly lower; extra return is just extra exposure. Early (2021-23) and late (2024-26) halves agree (z<-2 PF 2.74 / 4.05 vs ref 2.99 / 5.25).
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
