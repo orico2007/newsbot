@@ -1357,3 +1357,21 @@ Rules: LIVE trades (data through 2026-10-29); keep a signal only if the signal-d
 | Keltner depth >= 2.5 ATR | 15 | 53.3 | 0.77 | -0.6 | 1.3 | 7 / 0.55 | too few |
 Findings: deeper oscillator readings raise PF slightly (CCI<-100 3.39) but cut return by a third (60.6 -> 41.4) and the last-12-month PF falls (3.37 -> 2.67), so it fails the beat-on-return and last-12m tests; the PF gain is mostly a 2021 artifact (12.1). Williams %R adds nothing beyond the live IBS/RSI2 selection. Extreme Keltner depth (>=2.5 ATR) is a falling knife (PF 0.77, n=15), consistent with the run 45 finding that deeper is not better. The web claim of high win rates for Williams %R is not reproduced as an edge over the live setup.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
+
+## 2026-11-20 (run 47) - 1-day idiosyncratic drop (stock return minus 60d-beta x SPY return on the signal day) and stock-vs-market divergence as conditioners of the vol60>=1.75% LIVE setup (own idea; run 30 tested only the 5d residual, run 32 only SPY direction; no web source this run, run 46 was web). Script: lab_idio1.py
+Rules: LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12, 4/day; data through 2026-10-29); keep a signal only if the signal-day feature passes. idio1 quartiles of live trades -2.59 / -1.51 / -0.55 %. 8 variants tried (multiple-comparison discount applies).
+
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| idio1 < -2% | 128 | 67.2 | 2.19 | 19.0 | 3.0 | 50 / 4.5 | 1.62/.22/.77/4.4/.82/5.15 |
+| idio1 < -4% | 36 | 72.2 | 3.69 | 9.4 | 0.9 | 15 / 4.59 | too few |
+| idio1 >= -2% (market-driven) | 211 | 76.3 | 3.05 | 36.8 | 3.7 | 57 / 2.64 | 6.25/1.63/1.69/4.76/3.42/2.19 |
+| idio1 >= -1% | 123 | 79.7 | 4.24 | 22.9 | 1.9 | 24 / 5.3 | 8.16/-/2.16/5.42/8.36/2.76 |
+| stock<0 & SPY>0 (divergence) | 91 | 67.0 | 1.67 | 7.3 | 3.0 | 31 / 4.04 | .55/0/.58/3.47/.57/4.83 |
+| SPY 1d < -0.5% (market-led) | 160 | 79.4 | 4.40 | 41.5 | 2.3 | 54 / 4.04 | 229.7/-/3.12/5.77/2.51/4.31 |
+| stock 1d < -3% | 114 | 76.3 | 4.11 | 32.3 | 2.5 | 44 / 5.24 | 25.8/-/1.02/9.24/1.62/5.48 |
+| stock 1d >= -1% | 75 | 74.7 | 2.23 | 6.6 | 1.6 | 20 / 3.59 | 1.37/-/.68/3.43/4.26/3.31 |
+
+Findings: the weak side is clear: stock-specific (idiosyncratic) and divergence drops (stock down while SPY up) are the worst trades (PF 1.67-2.19, 2022/2023/2025 at or below 1) - consistent with news-driven drops continuing while market-wide washouts revert. The strong side (SPY down >0.5% on the signal day, PF 4.40, win 79.4%, DD 2.3) is the same information as run 30's SPY-day-IBS size tilt and the market-state timing of run 32, so it is not independent evidence. Every PF-raising filter cuts return by 30-60% (60.6 -> 41.5 best) and the 2021 PF values are artifacts of tiny samples; none passes beat-on-return. The only usable form would be a size tilt (up on SPY-down days, down on divergence days), which overlaps the existing run 30 PROMOTION CANDIDATE.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Possible follow-up: check whether the divergence-day size-down adds anything on top of run 30's tilt.
