@@ -1375,3 +1375,19 @@ Rules: LIVE trades (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.7
 
 Findings: the weak side is clear: stock-specific (idiosyncratic) and divergence drops (stock down while SPY up) are the worst trades (PF 1.67-2.19, 2022/2023/2025 at or below 1) - consistent with news-driven drops continuing while market-wide washouts revert. The strong side (SPY down >0.5% on the signal day, PF 4.40, win 79.4%, DD 2.3) is the same information as run 30's SPY-day-IBS size tilt and the market-state timing of run 32, so it is not independent evidence. Every PF-raising filter cuts return by 30-60% (60.6 -> 41.5 best) and the 2021 PF values are artifacts of tiny samples; none passes beat-on-return. The only usable form would be a size tilt (up on SPY-down days, down on divergence days), which overlaps the existing run 30 PROMOTION CANDIDATE.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Possible follow-up: check whether the divergence-day size-down adds anything on top of run 30's tilt.
+
+## 2026-11-20 (run 48) - bullish outside / key reversal-day sleeve (web idea). Script: lab_revday.py
+Source: https://www.pulse.bot/stock-trading/news/reversal-day-strategy-for-the-markets-1fbb2118-59a3-415b-8f16-28b75dbc8c47/ (search snippet only, not fetched; marketed backtest, unverified).
+Rules: long at close when low < prior low AND close > prior high (outside reversal) [or key reversal: low<prior low, close>prior close and >open]; close>SMA200, SPY>200d, ATR%<6%, 3-day cooldown; exit close>SMA5 (or >prior high), hold 7, stop 4 ATR; simulator 10% x 12, 4/day. 6 variants tried (discount applies). Data through 2026-10-29.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| outside rev, s200 | 1637 | 54.3 | 0.99 | -1.8 | 9.1 | 345 / 0.96 | 1.38/.62/.95/1.06/.87/.99 |
+| + prior 3 down closes | 467 | 57.4 | 0.99 | -0.7 | 5.9 | 103 / 1.07 | 1.51/.51/.96/.96/.85/.99 |
+| + vol60>=1.75 | 767 | 53.7 | 1.01 | 0.4 | 7.8 | 217 / 0.86 | 1.35/.72/1.61/.63/.95/.94 |
+| + vol60>=1.75, exit prev high | 751 | 68.6 | 1.21 | 19.1 | 7.3 | 211 / 1.15 | 1.37/.77/1.68/.79/1.3/1.24 |
+| + down3 + vol60>=1.75 | 194 | 59.3 | 1.39 | 6.1 | 3.1 | 55 / 0.91 | 1.51/.71/3.02/1.23/1.18/.94 |
+| key reversal, vol60>=1.75 | 1989 | 61.4 | 1.12 | 25.3 | 12.6 | 549 / 1.29 | .91/.59/1.26/1.06/1.25/1.22 |
+Combined with LIVE: every combination lowers PF (best: LIVE + down3 sleeve PF 2.26 vs 2.83, return 66.1 vs 60.6, L12 PF 2.26 vs 3.37) - the extra return is just extra exposure at lower quality.
+Findings: the reversal-bar pattern carries no edge by itself (PF ~1.0 standalone); the live setup's edge comes from multi-day washout + vol + breadth, not a single reversal candle.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
