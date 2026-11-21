@@ -1484,3 +1484,9 @@ Rules: live setup without the zreg step (ref PF 2.96, 289 trades), split on 12-1
 | mom <= 0 | 46 | 80.4 | 3.97 | 7.4 | 0.8 | 11 / 2.02 | -/-/4.22/4.27/5.68/2.11 |
 Findings: mild direction (winners-of-last-year dips revert better, PF 3.89 vs 2.14) but the filter halves trades and return (37.6 vs 58.6), 2021 and 2023 do not improve, 2022 has no trades; same pattern as runs 16/52. Not a candidate; nothing added to challenger.py.
 Follow-ups untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be own idea.
+
+## 2026-11-21 (run 56) - web fetch: "5-day mean reversion" (washout after a cascade of lower lows). Source (fetched): https://algomatictrading.substack.com/p/strategy-9-the-5-day-mean-reversion ; other search hits not fetched: https://quantifiedstrategies.substack.com/p/new-low-trading-strategy , https://strategyquant.com/blog/tuesday-reversal-strategy-tested-on-nasdaq-100-and-sp-500-stocks/
+Result: page is paywalled after the overview, so no exact rules. Entry is "a close after a quick cascade of lower lows", exit is "signs of recovery" plus a hard time stop, with no thresholds given. Claimed (unverified) on Nasdaq-100 futures 2000-2025: 436 trades, win 67%, PF 1.58, max DD -10.7%, CAGR 4.95%.
+Verdict: untestable as published. The cascade and new-low parts were already tested in run 33 (consecutive lower lows, N-day closing low) and run 54 (N-day low filter); the live setup has PF 2.83 against the claimed 1.58. No new backtest this run, nothing added to challenger.py.
+Housekeeping: lab_lown.py crashes on the 40d/60d rows (empty subsets), lab-only and not fixed.
+Next run: own idea, or a web page that is not paywalled (Quantpedia free pages, arXiv).
