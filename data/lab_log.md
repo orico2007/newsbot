@@ -1472,3 +1472,15 @@ Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no ea
 
 ## 2026-11-21 (run 54) - "signal-day close is the lowest close of N days" filter on the vol60>=1.75% live setup (lab_lown.py). Own idea.
 Results (n / PF / return): close=10d low 254 / 3.01 / 50.1%; not 10d low 72 / 1.59 / 5.2%; close=20d low 97 / 2.07 / 11.4%; not 20d low 234 / 3.23 / 46.9%. The 40d/60d sets were too small and crashed the row printer (empty set, no 'alpha' key; not fixed, lab-only). Result: extra-deep new lows are not better (20d low is worse); 10d low is mostly the existing set. Return falls in every subset. Verdict: NOT a candidate; nothing added to challenger.py.
+
+## 2026-11-21 (run 55) - 12-1 month momentum (close[i-21]/close[i-252]-1) as conditioner of the vol60>=1.75% live setup (web-seeded by search hits only, not fetched, unverified: https://mysimon.rochester.edu/novy-marx/research/RRLP.pdf , https://www.quantconnect.com/research/15367/short-term-reversal/). Script: lab_mom121.py
+Rules: live setup without the zreg step (ref PF 2.96, 289 trades), split on 12-1 momentum at the median (0.379) and at 0. 4 variants tried.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| ref | 289 | 74.4 | 2.96 | 58.6 | 4.3 | 100 / 3.37 | 3.69/.87/1.62/4.74/2.51/3.41 |
+| mom >= median | 156 | 76.3 | 3.89 | 37.6 | 1.9 | 56 / 4.18 | 2.84/0/1.61/7.62/4.52/3.64 |
+| mom < median | 151 | 72.2 | 2.14 | 17.2 | 3.3 | 48 / 2.79 | 44.9/-/1.55/2.11/1.53/3.44 |
+| mom > 0 | 249 | 73.1 | 2.83 | 48.1 | 4.5 | 91 / 3.63 | 3.26/.87/1.22/4.64/2.36/3.64 |
+| mom <= 0 | 46 | 80.4 | 3.97 | 7.4 | 0.8 | 11 / 2.02 | -/-/4.22/4.27/5.68/2.11 |
+Findings: mild direction (winners-of-last-year dips revert better, PF 3.89 vs 2.14) but the filter halves trades and return (37.6 vs 58.6), 2021 and 2023 do not improve, 2022 has no trades; same pattern as runs 16/52. Not a candidate; nothing added to challenger.py.
+Follow-ups untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be own idea.
