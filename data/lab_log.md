@@ -1490,3 +1490,20 @@ Result: page is paywalled after the overview, so no exact rules. Entry is "a clo
 Verdict: untestable as published. The cascade and new-low parts were already tested in run 33 (consecutive lower lows, N-day closing low) and run 54 (N-day low filter); the live setup has PF 2.83 against the claimed 1.58. No new backtest this run, nothing added to challenger.py.
 Housekeeping: lab_lown.py crashes on the 40d/60d rows (empty subsets), lab-only and not fixed.
 Next run: own idea, or a web page that is not paywalled (Quantpedia free pages, arXiv).
+
+## 2026-11-21 (run 57) - SPY signal-day volume ratio (SPY vol / prior-20d avg) as filter and size tilt of the vol60>=1.75% live setup (own idea; no market-volume conditioner in runs 1-56, run 56 was web). Script: lab_spyvol.py
+Rules: live setup (before zreg step), data through 2026-10-29. Median ratio on signal days 1.08. 8 variants tried (4 filters + 4 tilts; all correlated, same direction, so discount modestly). Tilt = PF-size-weighted like runs 30/31/53.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| filter ratio>=1.08 | 163 | 76.1 | 3.27 | 32.3 | 2.4 | 53 / 3.27 | 6.75/-/2.36/4.09/2.21/3.65 |
+| filter ratio<1.08 | 170 | 68.8 | 1.94 | 18.7 | 4.1 | 54 / 3.01 | 1.22/.12/.86/4.03/1.68/2.81 |
+| filter ratio>=1.2 | 123 | 77.2 | 3.95 | 29.1 | 2.2 | 32 / 3.15 | 91/-/4.34/4.64/1.8/3.95 |
+| tilt 1.25x if >=1.08 else 0.75x | 308 | 74.4 | 3.16 | 66.7 | 3.6 | 100 / 3.45 | 2.97/1.37/1.98/4.99/2.68/3.63 |
+| tilt 1.5x/0.5x | 308 | 74.4 | 3.56 | 73.0 | 2.9 | 100 / 3.53 | 3.75/2.37/2.51/5.28/2.84/3.88 |
+| tilt 1.5x if >=1.2 else 1.0x | 308 | 74.4 | 3.12 | 84.3 | 4.4 | 100 / 3.40 | 3.13/1.24/1.9/4.96/2.54/3.60 |
+| tilt 1.0x/0.5x | 308 | 74.4 | 2.83->3.28 | 48.2 | 2.5 | 100 / 3.48 | 3.2/1.62/2.14/5.08/2.73/3.71 |
+Split (1.5/0.5 tilt, threshold fixed from full-sample median): <=2023 PF 3.00 vs live 1.89 (ret 15.6 vs 9.8); >=2024 PF 3.84 vs 3.48 (ret 49.6 vs 46.4). Unlike run 53, the gain is present in the early years too, and every single year improves (2022 included).
+Findings: dips taken on heavier-than-normal market volume (capitulation days) revert better. Dropping the low-volume signals cuts return, so use it as a size tilt, not a filter. Challenger (1.25x/0.75x, fixed threshold 1.1): PF 3.17, ret 66.2%, DD 3.6%, L12 PF 3.48, beats champion in 6/6 years (2.95/1.37/1.98/5.03/2.74/3.59). Caveats: scaled-pnl approximation ignoring position caps; 2026 not sealed in this framework; threshold near the in-sample median; overlaps in spirit with the SPY-IBS and dispersion tilts (market-stress proxies), so stacking probably adds little: not tested.
+Verdict: PROMOTION CANDIDATE (as a size rule, same class as runs 30/52). Added to challenger.py as "lab run57". Live files untouched.
+Follow-ups: correlation with run30/52 tilts and stack of all three; true PEAD / TLT/HYG still impossible (no data). Next run should be web (fetch a non-paywalled page).

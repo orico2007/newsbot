@@ -38,8 +38,11 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab: live setup + vol60>=1.75%, size 15% x 8 | 308 | 74.4 | 2.83 | 103.2 | 6.4 | 2.28 | 100 | 75.0 | 3.37 | better in 0/5 years |
 | lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted) | 308 | 74.4 | 3.14 | 70.3 | 3.9 | 2.33 | 100 | 75.0 | 3.76 | PROMOTE-CANDIDATE |
 | lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted) | 308 | 74.4 | 3.25 | 67.5 | 3.3 | 2.35 | 100 | 75.0 | 3.7 | PROMOTE-CANDIDATE |
+| lab run57: live vol60>=1.75% setup, size 1.25x if SPY day volume >=1.1x its 20d avg else 0.75x (PF size-weighted) | 308 | 74.4 | 3.17 | 66.2 | 3.6 | 2.4 | 100 | 75.0 | 3.48 | PROMOTE-CANDIDATE |
 | lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted) | 308 | 74.4 | 3.63 | 79.2 | 3.0 | 2.34 | 100 | 75.0 | 4.17 | PROMOTE-CANDIDATE |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 256 | 76.2 | 3.29 | 57.9 | 3.4 | 2.39 | 84 | 77.4 | 4.51 | better in 4/5 years |
+| lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5 | 238 | 78.6 | 4.41 | 63.6 | 2.5 | 2.7 | 78 | 76.9 | 5.03 | PROMOTE-CANDIDATE |
+| lab run52b: live vol60>=1.75% setup + contraction D20 breakout sleeve (r10<=0.8*r60, vol>1.5x, hold 10) | 429 | 69.0 | 2.32 | 92.9 | 4.4 | 2.22 | 125 | 68.8 | 2.36 | better in 1/5 years |
 
 ## Profit factor by year
 
@@ -79,5 +82,8 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab: live setup + vol60>=1.75%, size 15% x 8 | 2.41 | 0.87 | 1.62 | 4.74 | 2.51 | 3.41 |
 | lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted) | 2.93 | 0.87 | 1.78 | 5.3 | 2.58 | 3.73 |
 | lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted) | 2.96 | 0.95 | 2.18 | 5.2 | 2.87 | 3.49 |
+| lab run57: live vol60>=1.75% setup, size 1.25x if SPY day volume >=1.1x its 20d avg else 0.75x (PF size-weighted) | 2.95 | 1.37 | 1.98 | 5.03 | 2.74 | 3.59 |
 | lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted) | 3.74 | 0.95 | 2.44 | 5.85 | 2.9 | 3.94 |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 2.71 | 0.87 | 2.04 | 5.41 | 2.4 | 5.09 |
+| lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5 | 4.11 | 0.12 | 2.7 | 11.74 | 3.1 | 4.75 |
+| lab run52b: live vol60>=1.75% setup + contraction D20 breakout sleeve (r10<=0.8*r60, vol>1.5x, hold 10) | 2.33 | 1.25 | 2.08 | 2.8 | 2.31 | 2.29 |

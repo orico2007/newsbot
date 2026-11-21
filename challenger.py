@@ -81,6 +81,24 @@ def spyibs_tilt(trades, thr=0.3, hi=1.25, lo=0.75):
         out.append(u)
     return out
 
+def spy_volratio():
+    """date -> SPY volume / mean of previous 20 sessions' volume; known at the close (lab run 57)."""
+    S = lab.load_bars()["SPY"]; out = {}
+    for k in range(20, len(S)):
+        a = [S[j].get("v") for j in range(k - 20, k)]
+        if all(a) and S[k].get("v"): out[S[k]["t"][:10]] = S[k]["v"] / (sum(a) / 20)
+    return out
+
+def spyvol_tilt(trades, thr=1.1, hi=1.25, lo=0.75):
+    """Scale trade size by hi when SPY signal-day volume ratio >= thr else lo (PF is size-weighted; lab run 57)."""
+    vr = spy_volratio(); out = []
+    for t in trades:
+        x = vr.get(t["t"][:10]); m = hi if (x is not None and x >= thr) else lo
+        u = dict(t); u["pnl_pct"] = t["pnl_pct"] * m
+        if "R" in u: u["R"] = t["R"] * m
+        out.append(u)
+    return out
+
 VARIANTS = [   # name, rules, portfolio kwargs
     ("CHAMPION (live): A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, hold 7, stop 4 ATR, 10% x 12", ruleset(), DEF_PORT, "live_vol175"),
     ("previous champion: live setup without the volatility filter", ruleset(), DEF_PORT, "live"),
@@ -127,6 +145,8 @@ VARIANTS = [   # name, rules, portfolio kwargs
     ("lab run52: live vol60>=1.75% setup, size 1.25x if dispersion pct>=0.5 else 0.75x (PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_disp"),
     # lab run 30: live vol60>=1.75% setup with size tilt by SPY signal-day IBS (PROMOTION CANDIDATE as a size rule; see data/lab_log.md)
     ("lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_spyibs"),
+    # lab run 57: SPY signal-day volume ratio size tilt (PROMOTION CANDIDATE as a size rule; see data/lab_log.md)
+    ("lab run57: live vol60>=1.75% setup, size 1.25x if SPY day volume >=1.1x its 20d avg else 0.75x (PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_spyvol"),
     # lab run 31: both tilts stacked multiplicatively (see data/lab_log.md)
     ("lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted)", ruleset(), DEF_PORT, "live_vol175_stack"),
     ("lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume", ruleset(), DEF_PORT, "live_vol175_dvol"),
@@ -183,6 +203,15 @@ def run():
                 v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
                 return v_ is not None and v_ >= 1.75
             T0 = disp_tilt([dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
+                  for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)])
+        elif len(v) > 3 and v[3] == "live_vol175_spyvol":
+            import lab_breadth, lab_sector
+            B = lab_breadth.breadth_series(AS); F = lab_sector.feats(AS)
+            IX = {s_: {d: i for i, d in enumerate(A["t"])} for s_, A in AS.items()}
+            def hv(t):
+                v_ = vol60(AS[t["sym"]], IX[t["sym"]].get(t["t"][:10]))
+                return v_ is not None and v_ >= 1.75
+            T0 = spyvol_tilt([dict(t, score=-F[(t["sym"], t["t"])]["m3"]) if (t["sym"], t["t"]) in F else t
                   for t in T0 if B.get(t["t"][:10], (0, 0))[0] >= 0.10 and hv(t)])
         elif len(v) > 3 and v[3] == "live_vol175_spyibs":
             import lab_breadth, lab_sector
