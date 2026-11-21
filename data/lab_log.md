@@ -1437,3 +1437,21 @@ Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, ex
 | mx20 spread over days | 175 | 73.1 | 2.50 | 26.1 | 2.9 | 56 / 2.20 | 3.08/-/1.67/6.3/1.82/2.43 |
 Findings: the paper's prediction (discrete-information drops revert more) is not supported by the ID measure: id10 and id20 point in opposite directions, so it is noise. The only consistent pattern is mx10: when one big down day dominates the 10-day drop, PF 3.47 vs 2.18 (spread-out slides), L12 8.7 vs 1.9 - plausibly the same "capitulation/shock day" information as the earlier ATR-drop/gap runs. But it halves return (35.6 vs 60.6), 2021 and 2023 are no better than live, and it is one of 8 variants tried.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Possible low-priority follow-up: mx10 as a size tilt (up when one day dominates), overlapping run 28/33 shock-day findings.
+
+## 2026-11-21 (run 52) - per-stock mean-reversion half-life and variance ratio as selectors of the vol60>=1.75% LIVE setup (web-seeded by search hits only, not fetched, unverified: https://medium.com/@constandinou.antonio/quant-post-3-1-a-guided-path-into-mean-reversion-8b33b3c279e4 , https://arxiv.org/html/2412.12458v1). Script: lab_halflife.py
+Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, exit close>prior high, hold 7, stop 4 ATR, 10% x 12, 4/day, data through 2026-10-29. Half-life = AR(1) on log-price deviation from 20d SMA over the 252 days before the signal; variance ratio VR(q) = Var(q-day returns)/(q*Var(1-day)) over 252 days (VR<1 = stock historically mean-reverting). Pure filters on live signals. First pass 6 tertile variants; robustness pass 10 more (16 total, discount winners).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| half-life low third | 112 | 75.9 | 3.67 | 23.0 | 2.3 | 45 / 4.1 | 2.03/-/1.17/23.2/2.78/4.2 |
+| half-life mid third | 103 | 69.9 | 1.73 | 8.4 | 3.9 | 35 / 1.97 | 52.6/0/.71/5.16/1.75/1.37 |
+| half-life high third | 103 | 71.8 | 2.90 | 18.9 | 1.9 | 27 / 4.9 | -/1.63/2.01/2.36/1.58/6.45 |
+| VR(5) low third | 103 | 81.6 | 5.14 | 22.2 | 1.0 | 41 / 6.56 | 2.45/-/2.75/43.9/3.74/6.56 |
+| VR(5) < 1.0 | 185 | 75.7 | 3.48 | 39.7 | 2.9 | 73 / 3.38 | 2.84/-/2.51/16.7/1.87/3.82 |
+| VR(5) >= 1.0 | 124 | 71.0 | 2.03 | 13.9 | 3.3 | 30 / 3.59 | -/0/.85/2.54/2.38/3.07 |
+| VR(3) < 1.0 | 154 | 74.7 | 2.92 | 23.2 | 2.6 | 56 / 4.5 | 2.46/1.89/1.53/6.21/1.71/4.31 |
+| VR(10) < 1.0 | 200 | 73.5 | 2.56 | 31.9 | 4.5 | 75 / 2.89 | 2.78/-/1.25/6.93/1.89/2.94 |
+| VR(5, 120d) < 1.0 | 200 | 75.5 | 2.86 | 35.5 | 2.2 | 65 / 2.88 | 1.73/-/2.41/10.61/1.82/3.44 |
+Findings: half-life is non-monotonic (low 3.67 / mid 1.73 / high 2.90), i.e. noise. VR(5) low third (PF 5.14) looks striking but does not replicate across windows/horizons (VR(3)<0.95 PF 2.8, VR(10)<0.95 PF 2.64, 120d window PF 2.8); every filtered subset is dominated by 2024 (PF 7-44, tiny n), 2022 has no trades, and in every case total return falls (22-40% vs 60.6%) because capacity goes unused. VR>=1 is weaker (PF 2.03), so a mild direction exists (historically mean-reverting stocks revert a bit better) but it never beats the champion on return, and 1 winner of 16 variants is what chance alone produces.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
+Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data), mx10 one-day-dominates as size tilt (run 51). Next run should be own idea.
