@@ -1541,3 +1541,18 @@ Placebo (2000 shuffles of the multipliers across trades, same normalisation): me
 Findings: capping keeps most of the gain (PF 3.70 vs 4.05, return 73.5 vs 87.8, DD 2.7) and still beats the live setup in all six years, including 2022 (1.45). Max size 1.5x of a 10% slot is 15%, within a plausible cap. Same caveats as run 58: in-sample thresholds, scaled-PnL approximation, 2026 not sealed.
 Verdict: PROMOTION CANDIDATE (the more deployable form of the run-58 stack; prefer this over the uncapped one). Added to challenger.py as "lab run59" (verified through challenger.py: PF 3.7 / ret 73.5). Live files untouched. Real position-cap simulation remains untested.
 Next run: web (fetch a non-paywalled page, e.g. Quantpedia free page or arXiv).
+
+## 2026-11-21 (run 60) - web check (no testable rules) + run-59 capped size stack through an exposure-cap simulator. Script: lab_capsim.py
+Web: fetched https://alphaarchitect.com/what-drives-momentum-and-reversal/ (Barardehi/Bogousslavsky/Muravyev, day vs night signals). Summary page only: no lookbacks, breakpoints or returns given, and it contradicts itself on overnight reversal. Intraday reversal / overnight-no-reversal was already tested in runs 18 and 30 (lab_ovnintra.py). Nothing new to backtest; unverified.
+Own test (follow-up named in runs 58/59): take the 308 live vol60>=1.75% trades actually selected by the portfolio simulator (10% x 12, 4/day), size each by base 10% x multiplier, compounding at exit, with a total-exposure cap (entries scaled down to the remaining room, skipped if <2%). 15 variants (5 sizings x 3 caps), all on the same trades.
+| Sizing | Cap | Ret % | Max DD % | PF | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|
+| flat 10% (live) | any | 60.6 | 4.3 | 2.83 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| clip 0.5-1.5 | none/120/100 | 73.5 | 2.7 | 3.70 | 4.10 | 3.79/1.45/2.53/5.69/3.05/3.94 |
+| clip 0.5-1.5 normalised to mean 1 | none/120/100 | 81.3 | 2.9 | 3.70 | 4.10 | same |
+| clip 0.75-1.25 | any | 67.7 | 3.4 | 3.29 | 3.84 | 3.08/1.36/1.99/5.09/2.91/3.74 |
+| uncapped stack | 120 / 100 | 87.8 / 86.1 | 2.8 | 4.05 / 4.00 | 4.33 / 4.21 | 4.37/1.45/3.08/6.24/3.05/4.23 |
+Peak concurrent exposure: flat 80% of equity; clip 0.5-1.5 90.5%. Extra caps at 80% (ret 71.7, PF 3.65) and 60% (ret 69.0, PF 3.57, 4 trades skipped) cost little.
+Findings: position/exposure caps do not bind (a 120% or 100% cap changes nothing for the clipped stack), so the run-59 approximation holds in a cap-aware simulator: clip 0.5-1.5 gives PF 3.70, return 73.5 vs 60.6, DD 2.7 vs 4.3, better in all six years incl. 2022. Remaining caveats unchanged: the three thresholds were chosen in-sample on these trades (runs 30/52/57), 2026 not sealed, and the sizer ignores real cash/margin and fill effects.
+Verdict: confirms the run-59 PROMOTION CANDIDATE (clip 0.5-1.5); already in challenger.py as "lab run59", no change. Live files untouched.
+Next run: own idea (this one was web + validation), or a non-paywalled web page with explicit rules.
