@@ -1469,3 +1469,6 @@ Split check (1.5/0.5 tilt): <=2023 PF 1.84 vs live 1.89 (return 8.9 vs 9.8): no 
 Findings: the tilt lifts PF, return and L12 on the full sample, but the whole gain sits in 2024-2026; in the early years (2021-2023) it is neutral to slightly negative and 2021 gets worse. That fails the choose-early/confirm-late discipline, the mx10 signal was selected from a run-51 median split on the same data, and it is a scaled-pnl approximation that ignores position-size caps. Same shock-day information as runs 28/33.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
 Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be web (actually fetched pages, not search snippets).
+
+## 2026-11-21 (run 54) - "signal-day close is the lowest close of N days" filter on the vol60>=1.75% live setup (lab_lown.py). Own idea.
+Results (n / PF / return): close=10d low 254 / 3.01 / 50.1%; not 10d low 72 / 1.59 / 5.2%; close=20d low 97 / 2.07 / 11.4%; not 20d low 234 / 3.23 / 46.9%. The 40d/60d sets were too small and crashed the row printer (empty set, no 'alpha' key; not fixed, lab-only). Result: extra-deep new lows are not better (20d low is worse); 10d low is mostly the existing set. Return falls in every subset. Verdict: NOT a candidate; nothing added to challenger.py.
