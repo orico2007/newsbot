@@ -1525,3 +1525,19 @@ Split, stack all three normalised to mean 1: <=2023 PF 3.52 vs live 1.89 (ret 18
 Findings: the three flags are different views of the same thing (a washed-out, high-volume, wide-dispersion market day) but they are not redundant: stacking beats every single tilt in every year, including 2022 (PF 1.45, the first time that year clears 1). Caveats: all three thresholds were picked in-sample on this same trade set (runs 30, 52, 57), so the stack carries three rounds of selection; flags correlate; the scaled-PnL approximation ignores caps and a 1.25^3 = 1.95x top size is above what 10% x 12 sizing could hold (3 flags = 108 trades get 1.95x, 0 flags = 124 get 0.42x); 2026 is not sealed. Treat as direction (more market stress -> bigger size), not as a precise PF of 4.
 Verdict: PROMOTION CANDIDATE (size rule, strongest of the tilt family; the vote version 0.5+0.25k is the more conservative form, PF 3.48 / DD 2.7%). Added to challenger.py as "lab run58" (multiplied stack). Live files untouched. The daily improvement task should prefer a capped version (e.g. 0.5x to 1.5x) if it ever promotes this.
 Follow-ups: a capped stack (clip multiplier 0.5-1.5) through the real portfolio simulator with position caps; true PEAD / TLT/HYG still impossible (no data). Next run should be own idea.
+
+## 2026-11-21 (run 59) - CAPPED version of the run-58 three-tilt stack (multiplier clipped), follow-up to run 58. Own idea (no web this run; runs 56-58 were web-seeded). Script: lab_tiltcap.py
+Rules: live vol60>=1.75% setup before zreg (308 trades). Multiplier = product of three 1.25x/0.75x flags (disp pct>=0.5, SPY IBS<0.3, SPY vol ratio>=1.1), clipped. PF-size-weighted approximation (not the real simulator with position caps). 4 variants tried; thresholds were chosen in-sample in runs 30/52/57, so selection bias remains.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| uncapped stack (run 58) | 308 | 74.4 | 4.05 | 87.8 | 2.8 | 4.33 | 4.37/1.45/3.08/6.24/3.05/4.23 |
+| clip 0.5-1.5 | 308 | 74.4 | 3.70 | 73.5 | 2.7 | 4.10 | 3.79/1.45/2.53/5.69/3.05/3.94 |
+| clip 0.6-1.6 | 308 | 74.4 | 3.65 | 77.1 | 2.9 | 4.10 | 3.63/1.45/2.45/5.62/2.99/4.01 |
+| clip 0.75-1.25 | 308 | 74.4 | 3.29 | 67.7 | 3.4 | 3.84 | 3.08/1.36/1.99/5.09/2.91/3.74 |
+| 3-level 0.75/1.0/1.5 by flag count | 308 | 74.4 | 3.26 | 74.7 | 3.7 | 3.65 | 3.02/.87/2.13/5.46/2.62/3.69 |
+Split (clip 0.5-1.5, normalised to mean 1): <=2023 PF 2.98 vs live 1.89 (ret 16.1 vs 9.8); >=2024 PF 4.08 vs 3.48 (ret 54.4 vs 46.4).
+Placebo (2000 shuffles of the multipliers across trades, same normalisation): median PF 2.86, p95 3.09, p99 3.18, real 3.31 (live 2.86), so the ordering of the multipliers beats random assignment at >99%, though this does not remove the in-sample threshold selection.
+Findings: capping keeps most of the gain (PF 3.70 vs 4.05, return 73.5 vs 87.8, DD 2.7) and still beats the live setup in all six years, including 2022 (1.45). Max size 1.5x of a 10% slot is 15%, within a plausible cap. Same caveats as run 58: in-sample thresholds, scaled-PnL approximation, 2026 not sealed.
+Verdict: PROMOTION CANDIDATE (the more deployable form of the run-58 stack; prefer this over the uncapped one). Added to challenger.py as "lab run59" (verified through challenger.py: PF 3.7 / ret 73.5). Live files untouched. Real position-cap simulation remains untested.
+Next run: web (fetch a non-paywalled page, e.g. Quantpedia free page or arXiv).

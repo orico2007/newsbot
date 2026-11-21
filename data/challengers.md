@@ -40,6 +40,7 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted) | 308 | 74.4 | 3.25 | 67.5 | 3.3 | 2.35 | 100 | 75.0 | 3.7 | PROMOTE-CANDIDATE |
 | lab run57: live vol60>=1.75% setup, size 1.25x if SPY day volume >=1.1x its 20d avg else 0.75x (PF size-weighted) | 308 | 74.4 | 3.17 | 66.2 | 3.6 | 2.4 | 100 | 75.0 | 3.48 | PROMOTE-CANDIDATE |
 | lab run58: live vol60>=1.75% setup, STACKED 3 tilts (disp pct>=0.5, SPY IBS<0.3, SPY vol ratio>=1.1; each 1.25x/0.75x, multiplied; PF size-weighted) | 308 | 74.4 | 4.05 | 87.8 | 2.8 | 2.31 | 100 | 75.0 | 4.33 | PROMOTE-CANDIDATE |
+| lab run59: live vol60>=1.75% setup, STACKED 3 tilts with multiplier CLIPPED to 0.5-1.5x (PF size-weighted) | 308 | 74.4 | 3.7 | 73.5 | 2.7 | 2.4 | 100 | 75.0 | 4.1 | PROMOTE-CANDIDATE |
 | lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted) | 308 | 74.4 | 3.63 | 79.2 | 3.0 | 2.34 | 100 | 75.0 | 4.17 | PROMOTE-CANDIDATE |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 256 | 76.2 | 3.29 | 57.9 | 3.4 | 2.39 | 84 | 77.4 | 4.51 | better in 4/5 years |
 | lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5 | 238 | 78.6 | 4.41 | 63.6 | 2.5 | 2.7 | 78 | 76.9 | 5.03 | PROMOTE-CANDIDATE |
@@ -85,6 +86,7 @@ Backtests only. The live bot is **not** changed by this file. A challenger marke
 | lab run30: live vol60>=1.75% setup, size 1.25x if SPY day IBS<0.3 else 0.75x (PF size-weighted) | 2.96 | 0.95 | 2.18 | 5.2 | 2.87 | 3.49 |
 | lab run57: live vol60>=1.75% setup, size 1.25x if SPY day volume >=1.1x its 20d avg else 0.75x (PF size-weighted) | 2.95 | 1.37 | 1.98 | 5.03 | 2.74 | 3.59 |
 | lab run58: live vol60>=1.75% setup, STACKED 3 tilts (disp pct>=0.5, SPY IBS<0.3, SPY vol ratio>=1.1; each 1.25x/0.75x, multiplied; PF size-weighted) | 4.37 | 1.45 | 3.08 | 6.24 | 3.05 | 4.23 |
+| lab run59: live vol60>=1.75% setup, STACKED 3 tilts with multiplier CLIPPED to 0.5-1.5x (PF size-weighted) | 3.79 | 1.45 | 2.53 | 5.69 | 3.05 | 3.94 |
 | lab run31: live vol60>=1.75% setup, STACKED tilts (disp pct>=0.5 and SPY IBS<0.3, each 1.25x/0.75x, multiplied; PF size-weighted) | 3.74 | 0.95 | 2.44 | 5.85 | 2.9 | 3.94 |
 | lab run36: vol60>=1.75% setup, skip bottom-third 20d dollar volume | 2.71 | 0.87 | 2.04 | 5.41 | 2.4 | 5.09 |
 | lab run44: vol60>=1.75% setup, 20d regression-residual z < -1.5 | 4.11 | 0.12 | 2.7 | 11.74 | 3.1 | 4.75 |
