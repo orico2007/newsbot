@@ -1455,3 +1455,17 @@ Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, ex
 Findings: half-life is non-monotonic (low 3.67 / mid 1.73 / high 2.90), i.e. noise. VR(5) low third (PF 5.14) looks striking but does not replicate across windows/horizons (VR(3)<0.95 PF 2.8, VR(10)<0.95 PF 2.64, 120d window PF 2.8); every filtered subset is dominated by 2024 (PF 7-44, tiny n), 2022 has no trades, and in every case total return falls (22-40% vs 60.6%) because capacity goes unused. VR>=1 is weaker (PF 2.03), so a mild direction exists (historically mean-reverting stocks revert a bit better) but it never beats the champion on return, and 1 winner of 16 variants is what chance alone produces.
 Verdict: NOT a promotion candidate; nothing added to challenger.py.
 Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data), mx10 one-day-dominates as size tilt (run 51). Next run should be own idea.
+
+## 2026-11-21 (run 53) - size tilt on mx10 (share of the 10-day drop caused by the single largest down day), follow-up of run 51 (own idea, no web source). Script: lab_mxtilt.py
+Rules: LIVE = A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, exit close>prior high, hold 7, stop 4 ATR, 10% x 12, 4/day, data through 2026-10-29. Size multiplier hi if mx10 >= threshold else lo (PF is size-weighted, same method as runs 30/31). Median mx10 = 0.36, p75 = 0.44. 4 variants tried (discount winners).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| 1.25x if mx>=med else 0.75x | 308 | 74.4 | 3.00 | 64.7 | 4.2 | 100 / 4.12 | 2.2/.87/1.7/5.03/2.65/4.01 |
+| 1.5x if mx>=med else 0.5x | 308 | 74.4 | 3.19 | 68.7 | 4.0 | 100 / 5.2 | 2.01/.87/1.8/5.33/2.79/4.8 |
+| 1.5x if mx>=p75 else 1.0x | 308 | 74.4 | 2.86 | 71.1 | 5.1 | 100 / 3.77 | 2.22/.98/1.51/5.0/2.45/3.86 |
+| 1.0x if mx>=med else 0.5x | 308 | 74.4 | 3.06 | 46.4 | 3.1 | 100 / 4.44 | 2.13/.87/1.73/5.13/2.7/4.24 |
+Split check (1.5/0.5 tilt): <=2023 PF 1.84 vs live 1.89 (return 8.9 vs 9.8): no help early. >=2024 PF 4.19 vs 3.48 (return 55.0 vs 46.4).
+Findings: the tilt lifts PF, return and L12 on the full sample, but the whole gain sits in 2024-2026; in the early years (2021-2023) it is neutral to slightly negative and 2021 gets worse. That fails the choose-early/confirm-late discipline, the mx10 signal was selected from a run-51 median split on the same data, and it is a scaled-pnl approximation that ignores position-size caps. Same shock-day information as runs 28/33.
+Verdict: NOT a promotion candidate; nothing added to challenger.py.
+Follow-ups still untested: TLT/IEF/GLD/HYG (not in bars cache), true PEAD (no earnings data). Next run should be web (actually fetched pages, not search snippets).
