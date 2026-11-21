@@ -1507,3 +1507,21 @@ Split (1.5/0.5 tilt, threshold fixed from full-sample median): <=2023 PF 3.00 vs
 Findings: dips taken on heavier-than-normal market volume (capitulation days) revert better. Dropping the low-volume signals cuts return, so use it as a size tilt, not a filter. Challenger (1.25x/0.75x, fixed threshold 1.1): PF 3.17, ret 66.2%, DD 3.6%, L12 PF 3.48, beats champion in 6/6 years (2.95/1.37/1.98/5.03/2.74/3.59). Caveats: scaled-pnl approximation ignoring position caps; 2026 not sealed in this framework; threshold near the in-sample median; overlaps in spirit with the SPY-IBS and dispersion tilts (market-stress proxies), so stacking probably adds little: not tested.
 Verdict: PROMOTION CANDIDATE (as a size rule, same class as runs 30/52). Added to challenger.py as "lab run57". Live files untouched.
 Follow-ups: correlation with run30/52 tilts and stack of all three; true PEAD / TLT/HYG still impossible (no data). Next run should be web (fetch a non-paywalled page).
+
+## 2026-11-21 (run 58) - stack / vote of the three market-state size tilts (dispersion pct>=0.5, SPY IBS<0.3, SPY volume ratio>=1.1) on the vol60>=1.75% live setup. Web seed: search hit only, not fetched, unverified: https://alphaarchitect.com/how-volatility-and-turnover-affect-return-reversals/ . Script: lab_tiltstack.py
+Rules: live setup before the zreg step (308 trades); each trade gets a 1.25x/0.75x multiplier per flag; flags count per trade: 0 flags 124, 1 flag 210, 2 flags 196, 3 flags 108. 8 variants tried (each also shown normalised to mean multiplier 1 so extra leverage is not mistaken for edge). Tilts are PF-size-weighted approximations ignoring position caps.
+| Variant | Mean mult | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 1.00 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| disp only (run52) | 1.00 | 74.4 | 3.14 | 70.3 | 3.9 | 3.76 | 2.93/.87/1.78/5.30/2.58/3.73 |
+| SPY IBS only (run30) | 1.00 | 74.4 | 3.25 | 67.5 | 3.3 | 3.70 | 2.96/.95/2.18/5.20/2.87/3.49 |
+| SPY vol only (run57) | 0.97 | 74.4 | 3.17 | 66.2 | 3.6 | 3.48 | 2.95/1.37/1.98/5.03/2.74/3.59 |
+| stack disp x ibs (run31) | 1.01 | 74.4 | 3.63 | 79.2 | 3.0 | 4.17 | 3.74/.95/2.44/5.85/2.90/3.94 |
+| stack all three (multiplied) | 1.00 | 74.4 | 4.05 | 87.8 | 2.8 | 4.33 | 4.37/1.45/3.08/6.24/3.05/4.23 |
+| vote 0.5+0.25k | 0.86 | 74.4 | 3.48 | 62.0 (74.8 normalised) | 2.7 | 3.86 | 3.45/1.16/2.31/5.55/2.89/3.76 |
+| vote 0.75+0.25k | 1.11 | 74.4 | 3.32 | 82.2 (71.5 norm.) | 3.8 | 3.74 | 3.17/1.08/2.12/5.35/2.80/3.68 |
+| 1.5x if >=2 flags else 0.75x | 1.11 | 74.4 | 3.49 | 85.3 (74.6 norm.) | 3.4 | 4.05 | 3.42/1.74/2.15/5.18/3.15/3.85 |
+Split, stack all three normalised to mean 1: <=2023 PF 3.52 vs live 1.89 (ret 18.7 vs 9.8); >=2024 PF 4.29 vs 3.48 (ret 57.7 vs 46.4). Every year improves and the stack is monotonic in the number of flags, with normalisation changing almost nothing (so it is not just leverage).
+Findings: the three flags are different views of the same thing (a washed-out, high-volume, wide-dispersion market day) but they are not redundant: stacking beats every single tilt in every year, including 2022 (PF 1.45, the first time that year clears 1). Caveats: all three thresholds were picked in-sample on this same trade set (runs 30, 52, 57), so the stack carries three rounds of selection; flags correlate; the scaled-PnL approximation ignores caps and a 1.25^3 = 1.95x top size is above what 10% x 12 sizing could hold (3 flags = 108 trades get 1.95x, 0 flags = 124 get 0.42x); 2026 is not sealed. Treat as direction (more market stress -> bigger size), not as a precise PF of 4.
+Verdict: PROMOTION CANDIDATE (size rule, strongest of the tilt family; the vote version 0.5+0.25k is the more conservative form, PF 3.48 / DD 2.7%). Added to challenger.py as "lab run58" (multiplied stack). Live files untouched. The daily improvement task should prefer a capped version (e.g. 0.5x to 1.5x) if it ever promotes this.
+Follow-ups: a capped stack (clip multiplier 0.5-1.5) through the real portfolio simulator with position caps; true PEAD / TLT/HYG still impossible (no data). Next run should be own idea.
