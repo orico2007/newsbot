@@ -1569,3 +1569,18 @@ Chosen thresholds (disp, ibs, vol) per test year: 2023 (.3,.4,1.2); 2024 (.3,.2,
 Findings: with thresholds chosen only from the past, the stack still beats flat sizing in every test year (PF 3.67 vs 3.00, DD 2.9 vs 4.3, last-12m PF 3.65 vs 3.39), and gives up only a little to the in-sample thresholds (3.83). The fitted thresholds are stable in direction (dispersion low-to-mid, IBS low, volume ratio 1.2 every year), so the effect is not a product of the exact in-sample cut-offs. Weaknesses: the 2023 fit window holds only ~89 trades (2022 has 7), so 2023's gain (1.72 -> 2.93) comes from a weakly fitted model; return gain is modest (60.0 vs 53.0) because the clip limits upside; 2022 (the weak year) cannot be audited this way; 2026 is not sealed. The three market-state flags remain correlated, so treat the size rule as direction, not a precise PF of ~3.7.
 Verdict: supports the existing run-59 PROMOTION CANDIDATE (clip 0.5-1.5 stack); nothing new added to challenger.py (already tracked as "lab run59"). Live files untouched.
 Follow-ups: true PEAD / TLT / HYG still impossible (no data). Next run should be web (fetch a non-paywalled page with explicit rules).
+
+## 2026-11-22 (run 62) - SPY drawdown from its N-day closing high as filter / size tilt of the vol60>=1.75% live setup (own idea; web search this run returned only Quantified Strategies SPY-index pages with no stock-level rules: https://quantifiedstrategies.substack.com/p/the-classical-mean-reversion-strategy, unfetched, unverified). Script: lab_spydd.py
+Rules: live vol60>=1.75% setup before zreg (308 trades); signal-day SPY close / max(SPY close, last N days) - 1 for N = 20, 60, 120; filter at -2/-4/-6% and 1.25x/0.75x size tilt. 19 variants tried (discount lucky ones).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| only SPY dd20 <= -2% | 127 | 74.8 | 3.56 | 29.8 | 3.0 | 4.46 | n/a(few)/-/1.47/6.12/1.90/7.53 |
+| only SPY dd20 <= -4% | 36 | 77.8 | 4.16 | 6.6 | 0.6 | 4.34 (n=7) | 36.5/-/4.56/5.45/1.73/3.92 |
+| only SPY dd120 <= -4% | 41 | 80.5 | 4.70 | 7.7 | 0.6 | 4.34 (n=7) | 36.5/-/5.16/7.09/2.23/3.92 |
+| complement dd20 > -2% | 194 | 73.2 | 2.28 | 25.2 | 3.5 | 2.74 | 1.59/0/1.56/4.15/2.53/2.32 |
+| size tilt dd20<=-2% 1.25/.75 | 308 | 74.4 | 3.11 | 63.3 | 3.7 | 3.63 | 2.94/1.45/1.78/4.90/2.51/4.00 |
+| size tilt dd60<=-4% 1.25/.75 | 308 | 74.4 | 2.95 | 48.1 | 3.2 | 3.49 | 2.69/.87/1.80/4.79/2.46/3.47 |
+Findings: signals taken when SPY is already down >=2% from its 20d high have higher PF (3.56 vs 2.28) in every year with enough trades, but filtering halves the return (29.8 vs 61.7), and the deep-drawdown buckets are tiny (36-41 trades, 7 in the last 12 months). As a size tilt it (PF 3.11) is no better than the existing single tilts (disp 3.14, SPY IBS 3.25, vol ratio 3.17) and well below the run-59 stack, and 2022 is only fixed by dd20 (1.45), likely because it overlaps the same washed-out-market information as those flags (not tested for overlap this run). Treat as a fourth view of the same market-stress effect, not a new edge.
+Verdict: no promotion, not added to challenger.py (redundant with run 58/59 flags; only direction confirmed: more market stress -> better reversion). Live files untouched.
+Next run: web (fetch a page with explicit stock-level rules); optionally test whether dd20 adds anything on top of the run-59 stack.
