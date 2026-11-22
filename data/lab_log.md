@@ -1661,3 +1661,19 @@ Rules: live setup before zreg (308 trades, same simulator 10% x 12, 4/day). 17 v
 Findings: the web claim (small gaps recover, big gaps keep falling) is NOT supported on daily signal-day gaps: the deeper the signal-day gap-down in vol units, the HIGHER the PF (gap z<=-0.5: PF 3.96 vs 2.14 for the rest), the opposite direction of the source, but returns halve and the deep buckets are small (15-44 trades) and erratic by year (2022 PF 0, 2023 0.43-1.33). Other splits flip sign between full sample and last 12 months (gap>=0: PF 2.09 full, 15.2 L12; open<prior low: 3.0 full, 2.3 L12), the signature of noise. Nothing beats live on PF, return, L12 and all-but-one year together. The effect, if any, is another view of "sharp, capitulating drop reverts better", already captured by zreg/vol60.
 Verdict: no promotion, not added to challenger.py. Live files untouched.
 Next run: own idea (stock/market cross-section not yet tried: e.g. exit timing by days-in-trade pnl, or a non-reversion family).
+
+## 2026-11-22 (run 68) - stock relative strength vs SPY (20d/60d/120d) and 60d up-day share as conditioners of the vol60>=1.75% live setup (own idea; no web this run, run 67 was web). Script: lab_rs60.py
+Rules: live setup before zreg (308 trades, same simulator 10% x 12, 4/day); signal-day stock N-day return minus SPY's N-day return (N = 20, 60, 120), and share of up-closes in the last 60 days; split into terciles of the 308 trades, plus rs60 > 0 / > -5%. 21 variants tried (discount lucky ones). Terciles overlap-free per metric but not additive across metrics.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| rs20 top third | 123 | 74.8 | 3.14 | 23.2 | 2.3 | 41 / 5.31 | 4.75/.26/1.30/5.18/1.20/10.1 |
+| rs60 top third | 123 | 77.2 | 3.83 | 33.5 | 2.6 | 46 / 5.27 | n/a/-/1.90/3.83/1.94/7.91 |
+| rs60 bottom third | 116 | 69.8 | 1.57 | 7.2 | 3.0 | 24 / 1.49 | .53/0/1.11/3.71/3.94/1.56 |
+| rs120 top third | 122 | 76.2 | 3.78 | 36.1 | 2.0 | 47 / 5.15 | 3.41/.22/2.42/7.52/1.94/7.26 |
+| up-day share top third (>0.55) | 92 | 75.0 | 4.89 | 23.0 | 0.9 | 30 / 6.07 | 4.41/-/2.79/5.26/6.06/4.85 |
+| up-day share bottom third (<=0.50) | 129 | 70.5 | 1.71 | 11.1 | 3.4 | 41 / 1.97 | 1.82/0/1.49/2.97/.71/2.64 |
+| rs60 > 0 (removes 45) | 263 | 74.5 | 2.84 | 53.4 | 4.2 | 85 / 3.48 | ~live |
+Findings: dip-buys in stocks that have been stronger than SPY over 60-120 days, and whose last 60 days had many up-closes (steady uptrend, sharp dip), revert better (PF 3.8-4.9 vs 1.6-1.7 for the weakest third). This agrees with runs 64/66 (slow-bleed names are the weak ones) rather than adding a new edge, and run 16 already tested 126d momentum. Caveats: terciles of ~120 trades, thresholds chosen from the sample; as filters each keeps only 30-40% of the return (23-36% vs 61.7%) so the PF gain is bought by dropping trades; the best-looking cut (up-share top third, PF 4.89, DD 0.9) is the max over 21 variants and 2022 has no trades there; rs60 > 0 alone does nothing (PF 2.84). 2026 not sealed.
+Verdict: no promotion, not added to challenger.py. Direction (prefer steady-uptrend names) is consistent with runs 64/66; could be tested as a size tilt on the run-59 stack once forward data accumulates. Live files untouched.
+Next run: web (fetch a page with explicit stock-level rules).
