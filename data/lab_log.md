@@ -1640,3 +1640,24 @@ Rules: live vol60>=1.75% setup before zreg (308 trades); multiplier = product of
 Findings: r20 flag overlaps the others 43-51%. As a 4th tilt: PF flat (3.82 vs 3.79), return up (85.6 vs 74.8) mostly from larger average size (mean mult 1.06 vs 0.94; normalised return 78.8 vs 80.8 is no better), 2021/2023 slightly worse. As a hard filter on the stack: PF 4.40, Sharpe 2.69, L12 PF 5.25, better than the 3-tilt stack in every year, but un-normalised return falls (66.0 vs 74.8) because 49 trades are removed; the normalised figure (86.4) is just leverage. Gain rests on the in-sample -5% cut.
 Verdict: no promotion, not added to challenger.py. Mildly supportive evidence that avoiding slow-bleed names is real, but wait for forward data (2026 not sealed). Live files untouched.
 Next run: web (fetch a page with explicit stock-level rules).
+
+## 2026-11-22 (run 67) - signal-day opening gap (vs prior close / prior low, scaled by vol60) and "open above SMA20" as conditioners of the vol60>=1.75% live setup (web-seeded). Script: lab_gapday.py
+Source (fetched): https://www.quantrocket.com/blog/buy-or-sell-down-gaps/ (Sep 2020, 2014-2020 minute data, Zipline): buying gap-downs (open < prior low - 1 std, top-decile dollar volume, prior close > SMA20) loses intraday; small gaps with the open still above SMA20 recover, large gaps break the trend; claims are chart-only, no costs, unverified, different horizon (intraday). Also searched, paywalled/not testable: https://concretumgroup.substack.com/p/identifying-stocks-to-fade . Translation to daily bars: gap = open[i]/close[i-1]-1 on the SIGNAL day, z = gap/vol60.
+Rules: live setup before zreg (308 trades, same simulator 10% x 12, 4/day). 17 variants tried (discount lucky ones).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| gap z <= -1.0 | 44 | 77.3 | 4.65 | 9.9 | 0.8 | 16 / 10.27 | -/-/.43/10.6/1.19/13.8 |
+| gap z <= -0.5 | 118 | 78.0 | 3.96 | 26.4 | 2.0 | 39 / 4.57 | -/0/1.33/7.63/2.00/4.67 |
+| gap z > -0.5 | 222 | 70.7 | 2.14 | 28.9 | 3.7 | 67 / 2.61 | 1.65/1.89/1.59/3.51/1.82/2.44 |
+| gap z > -1.0 (drop deepest gaps) | 281 | 73.3 | 2.56 | 48.0 | 4.9 | 89 / 2.93 | worse than live |
+| open < prior low | 152 | 74.3 | 3.00 | 25.8 | 2.4 | 50 / 2.33 | 22.0/-/1.34/8.88/1.42/2.79 |
+| open >= prior low | 189 | 73.0 | 2.45 | 30.5 | 3.7 | 55 / 5.20 | 1.65/.12/1.52/3.12/2.82/4.51 |
+| open > SMA20 (trend intact) | 108 | 75.0 | 3.35 | 23.8 | 2.4 | 34 / 8.35 | 1.38/0/1.61/9.63/1.60/18.7 |
+| open <= SMA20 | 228 | 73.7 | 2.48 | 33.8 | 3.2 | 69 / 2.36 | 4.50/-/1.42/3.31/2.71/2.05 |
+| gap >= 0 | 106 | 71.7 | 2.09 | 13.3 | 2.3 | 34 / 15.15 | 1.03/.28/1.72/1.48/3.15/8.34 |
+| intraday o->c < 0 | 277 | 73.6 | 2.80 | 55.0 | 4.2 | 92 / 3.36 | ~live |
+(buckets overlap/partition the same 308 trades; subsets are not additive in the simulator.)
+Findings: the web claim (small gaps recover, big gaps keep falling) is NOT supported on daily signal-day gaps: the deeper the signal-day gap-down in vol units, the HIGHER the PF (gap z<=-0.5: PF 3.96 vs 2.14 for the rest), the opposite direction of the source, but returns halve and the deep buckets are small (15-44 trades) and erratic by year (2022 PF 0, 2023 0.43-1.33). Other splits flip sign between full sample and last 12 months (gap>=0: PF 2.09 full, 15.2 L12; open<prior low: 3.0 full, 2.3 L12), the signature of noise. Nothing beats live on PF, return, L12 and all-but-one year together. The effect, if any, is another view of "sharp, capitulating drop reverts better", already captured by zreg/vol60.
+Verdict: no promotion, not added to challenger.py. Live files untouched.
+Next run: own idea (stock/market cross-section not yet tried: e.g. exit timing by days-in-trade pnl, or a non-reversion family).
