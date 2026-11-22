@@ -1628,3 +1628,15 @@ Rules: live trade list WITHOUT the vol filter (A+E+F, SPY>200d, breadth>=10%, we
 (other rows: EWMA.94>=2.25 n155 PF3.35 ret39.7; EWMA.97>=2.25 n179 PF3.41 ret44.8; vol60&EWMA94>=1.5/2.0 n296/213 PF2.87/3.20.)
 Findings: EWMA.97>=1.75 is essentially the same filter as vol60>=1.75 (303 vs 308 trades, PF 3.00 vs 2.88, return 63.6 vs 61.7) and is worse in 2023 and 2025, better in 2021 and 2026; a rewording, not a new edge. Higher thresholds raise PF only by cutting return (51 vs 62), the same trade-off as the vol60 threshold walk-forward (run 36). Rising vs falling vol split is erratic across years (2021 14.3 vs 1.2; 2024 2.6 vs 6.6). Nothing beats live on PF, return, L12 and all-but-one year together.
 Verdict: no promotion, not added to challenger.py. Live files untouched. Next: web run should fetch a page with explicit rules (Algomatic/Quantified Strategies pages with numbered strategies), or test whether the run-64 20d-return flag adds to the run-59 clipped stack.
+
+## 2026-11-22 (run 66) - run-64 "20d return > -5%" flag stacked on the run-59 clipped 3-tilt stack (own idea; no web this run, run 65 was web). Script: lab_ret20stack.py
+Rules: live vol60>=1.75% setup before zreg (308 trades); multiplier = product of 1.25/0.75 per flag (disp rank>=.5, SPY IBS<.3, SPY vol ratio>=1.1, optional 4th: stock 20d ret > -5%), clipped 0.5-1.5. 3 variants (x2 normalisation). The -5% cut was itself picked among 21 variants in run 64, so every gain here is optimistic.
+| Variant | Trades | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 2.88 | 61.7 | 4.3 | 2.32 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| 3-tilt clip | 308 | 3.79 | 74.8 | 2.7 | 2.45 | 4.13 | 3.79/1.45/2.86/5.63/3.05/3.98 |
+| 4-tilt (+r20>-5%) | 308 | 3.82 | 85.6 | 3.1 | 2.54 | 4.44 | 3.53/1.45/2.68/5.84/3.14/4.31 |
+| 3-tilt, zero size if r20<=-5% | ~259 effective | 4.40 | 66.0 | 2.3 | 2.69 | 5.25 | 3.96/1.45/3.07/6.25/3.70/5.63 |
+Findings: r20 flag overlaps the others 43-51%. As a 4th tilt: PF flat (3.82 vs 3.79), return up (85.6 vs 74.8) mostly from larger average size (mean mult 1.06 vs 0.94; normalised return 78.8 vs 80.8 is no better), 2021/2023 slightly worse. As a hard filter on the stack: PF 4.40, Sharpe 2.69, L12 PF 5.25, better than the 3-tilt stack in every year, but un-normalised return falls (66.0 vs 74.8) because 49 trades are removed; the normalised figure (86.4) is just leverage. Gain rests on the in-sample -5% cut.
+Verdict: no promotion, not added to challenger.py. Mildly supportive evidence that avoiding slow-bleed names is real, but wait for forward data (2026 not sealed). Live files untouched.
+Next run: web (fetch a page with explicit stock-level rules).
