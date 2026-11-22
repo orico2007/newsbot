@@ -1677,3 +1677,20 @@ Rules: live setup before zreg (308 trades, same simulator 10% x 12, 4/day); sign
 Findings: dip-buys in stocks that have been stronger than SPY over 60-120 days, and whose last 60 days had many up-closes (steady uptrend, sharp dip), revert better (PF 3.8-4.9 vs 1.6-1.7 for the weakest third). This agrees with runs 64/66 (slow-bleed names are the weak ones) rather than adding a new edge, and run 16 already tested 126d momentum. Caveats: terciles of ~120 trades, thresholds chosen from the sample; as filters each keeps only 30-40% of the return (23-36% vs 61.7%) so the PF gain is bought by dropping trades; the best-looking cut (up-share top third, PF 4.89, DD 0.9) is the max over 21 variants and 2022 has no trades there; rs60 > 0 alone does nothing (PF 2.84). 2026 not sealed.
 Verdict: no promotion, not added to challenger.py. Direction (prefer steady-uptrend names) is consistent with runs 64/66; could be tested as a size tilt on the run-59 stack once forward data accumulates. Live files untouched.
 Next run: web (fetch a page with explicit stock-level rules).
+
+## 2026-11-22 (run 69) - "Capitulation Stretch Reversion" sleeve (web idea). Script: lab_capstretch.py
+Source: https://in.tradingview.com/script/WWuTjyDx-Capitulation-Stretch-Reversion-Jayadev-Rana/ (fetched; claimed SPY daily PF ~1.67, ~67% win, in-sample, unverified). A second page (quantifiedstrategies 3-days-down overnight) was paywalled, rules not readable.
+Rules: close>SMA200, SPY>200d, ATR%<6%; bar i-1 closed >= k ATR below EMA5 after N consecutive lower closes; enter at close of bar i if it closes up; exit close>SMA5 (EMA5 proxy), stop 3 ATR, hold 10 (last two variants: prior-high exit, hold 7, stop 4 ATR); 3-day cooldown; simulator 10% x 12, 4/day; data through 2026-10-29. 6 variants x (standalone, +breadth>=10%, combined with LIVE) tried; discount winners.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 100 / 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| k0.5 nd2 (paper defaults) | 2236 | 63.2 | 1.06 | 11.5 | 18.9 | 553 / 1.28 | 1.3/.35/.87/.96/1.14/1.38 |
+| k1.0 nd2 | 870 | 62.1 | 1.04 | 3.1 | 13.2 | 198 / 1.37 | 1.77/.14/1.01/.92/.83/1.55 |
+| k1.5 nd3 | 130 | 65.4 | 1.40 | 4.5 | 4.5 | 22 / 1.99 | 4.73/.34/.17/3.76/.56/1.98 |
+| k1.0 nd2 + vol60>=1.75 | 398 | 64.6 | 1.39 | 18.5 | 7.3 | 117 / 1.82 | 3.49/.26/1.12/1.57/.87/2.19 |
+| k1.0 nd2 + vol60>=1.75, prevhl, hold7, stop4 | 396 | 73.0 | 1.54 | 27.8 | 9.3 | 116 / 2.22 | 3.32/.37/1.29/1.88/.78/2.64 |
+| + breadth>=10% (same) | 220 | 74.1 | 1.70 | 18.9 | 6.4 | 68 / 3.84 | 4.32/.37/.85/3.81/.67/8.53 |
+| LIVE + k1.0 vol60 sleeve (breadth>=10%) | 453 | 72.6 | 2.01 | 60.3 | 7.5 | 144 / 3.04 | 2.21/.34/1.10/3.85/1.27/3.59 |
+| LIVE + k1.5 nd3 vol60 sleeve | 328 | 73.5 | 2.63 | 61.1 | 5.2 | 106 / 3.42 | 2.41/2.08/1.41/4.66/1.85/3.5 |
+Verdict: NOT a promotion candidate. As published (PF ~1.06, 19% drawdown, 2022 0.35) the rule has no edge on daily stocks; the paper's SPY result does not transfer. Vol60 + breadth + live-style exit lift it to PF 1.5-1.7 but that is the live filters doing the work, and the sleeve is overlapping with LIVE (combined PF falls 2.83 -> 2.0, 2025 and 2023 worse). Nothing added to challenger.py. Live files untouched.
+Next run: own idea.
