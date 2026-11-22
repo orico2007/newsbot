@@ -1594,3 +1594,20 @@ Rules: live vol60>=1.75% setup before zreg (308 trades); multiplier = product of
 | 4-tilt (+dd20) clip | 308 | 74.4 | 3.95 | 73.1 | 2.4 | 2.41 | 4.33 | 3.99/2.41/2.98/5.49/3.19/4.35 |
 Findings: the dd20 flag overlaps the other three (53-65% co-occurrence), PF +0.16 but return and Sharpe are slightly lower, 2022 gain (1.45 -> 2.41) rests on few trades; 2024 is worse. Not an independent improvement.
 Verdict: no promotion, not added to challenger.py. Live files untouched.
+
+## 2026-11-22 (run 64) - "falling knife" conditioners: stock's 20d return and age of the decline (days since 60d closing high) on the vol60>=1.75% live setup (own idea; web search for stock-level pullback rules returned only generic pages, e.g. https://www.pulse.bot/stock-trading/news/buy-weakness-win-big-the-5-day-low-trading-strategy-89cc6501-8f84-4450-99be-3ca7240658ad/ and https://quantpedia.com/testing-an-ai-assisted-research-workflow-for-multi-asset-pullback-strategy-discovery/, unfetched, no testable rules). Script: lab_age.py
+Rules: live setup before zreg (308 trades). Filters on signal day: age = days since 60d closing high (<=5/10/20/30); 20d return (> -3/-5/-7.5/-10%); size tilts. 21 variants tried (discount lucky ones).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| 20d ret > -5% | 275 | 75.6 | 3.35 | 57.8 | 3.6 | 4.56 | 2.81/.87/1.76/5.28/2.78/5.44 |
+| 20d ret <= -5% (removed) | 49 | 61.2 | 1.33 | 2.6 | 2.2 | 1.36 | 1.53/-/.77/1.96/.56/1.36 |
+| age <= 20 | 276 | 75.0 | 3.18 | 61.4 | 3.6 | 3.63 | 3.33/.87/1.85/5.51/2.39/3.79 |
+| age > 20 (removed) | 37 | 67.6 | 0.85 | -0.8 | 2.5 | 0.98 | .42/-/.27/2.13/-/.96 |
+| 20d > -5% & age <= 20 | 253 | 75.1 | 3.36 | 54.4 | 2.9 | 4.42 | 2.67/.87/1.92/5.45/2.66/5.22 |
+| size 1.25x if 20d > -5% else 0.5x | 308 | 74.4 | 3.14 | 78.6 | 4.9 | 3.97 | 2.61/.87/1.81/4.92/2.66/4.34 |
+| size 0.5x if 20d <= -5% else 1x | 308 | 74.4 | 3.09 | 59.6 | 4.0 | 3.85 | 2.57/.87/1.79/4.88/2.64/4.15 |
+Split: <=2023 PF 2.06 vs 1.96 live; >=2024 PF 4.30 vs 3.48.
+Findings: signals on stocks already down >5% over 20 days (49 trades) or whose high is >20 days old (37 trades) are the weak ones (PF 1.33 / 0.85): the reversion works on sharp dips inside an intact short-term trend, not on slow bleeds. The filter is better than live in every year with data (2022 unchanged), but as a filter total return falls slightly (57.8 vs 61.7), and the effect rests on ~50 trades chosen from 21 variants, so the exact -5% cut is probably lucky; 2026 not sealed. As a size tilt it (PF 3.14) is on par with the existing single tilts (3.14-3.25) and was not stacked with the run-59 stack.
+Verdict: no promotion, not added to challenger.py. Direction (avoid slow-bleed names) is the only takeaway. Live files untouched.
+Next run: optionally test whether the 20d-return flag adds to the run-59 clipped stack; otherwise web with a fetchable rule page (WebFetch not directly available this run, search only).
