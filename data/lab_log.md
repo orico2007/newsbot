@@ -1556,3 +1556,16 @@ Peak concurrent exposure: flat 80% of equity; clip 0.5-1.5 90.5%. Extra caps at 
 Findings: position/exposure caps do not bind (a 120% or 100% cap changes nothing for the clipped stack), so the run-59 approximation holds in a cap-aware simulator: clip 0.5-1.5 gives PF 3.70, return 73.5 vs 60.6, DD 2.7 vs 4.3, better in all six years incl. 2022. Remaining caveats unchanged: the three thresholds were chosen in-sample on these trades (runs 30/52/57), 2026 not sealed, and the sizer ignores real cash/margin and fill effects.
 Verdict: confirms the run-59 PROMOTION CANDIDATE (clip 0.5-1.5); already in challenger.py as "lab run59", no change. Live files untouched.
 Next run: own idea (this one was web + validation), or a non-paywalled web page with explicit rules.
+
+## 2026-11-22 (run 61) - WALK-FORWARD audit of the run-58/59 three-tilt size stack (own idea; web was run 60). Script: lab_wftilt.py
+Rules: live vol60>=1.75% setup before zreg (638 trades in the raw generator list incl. pre-simulator overlap, 261 in 2023-26). Each test year 2023..2026, the three flag thresholds (dispersion pct {.3-.7}, SPY IBS {.2-.5}, SPY vol ratio {.9-1.3}) are re-fitted on ONLY earlier years (objective: single-tilt PF, 1.25x/0.75x), then applied as the clip 0.5-1.5 stack to that year. Chained out-of-sample path. Trials: 14 grid cells x 4 folds, one reported path. PF/return from the scaled-PnL approximation (caps shown not to bind in run 60).
+| Variant (2023-26 only) | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2023/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE flat | 261 | 74.7 | 3.00 | 53.0 | 4.3 | 3.39 | 1.72/4.70/2.51/3.44 |
+| walk-forward clip 0.5-1.5 | 261 | 74.7 | 3.67 | 60.0 | 2.9 | 3.65 | 2.93/5.91/2.61/3.95 |
+| walk-forward, normalised to mean multiplier 1 | 261 | 74.7 | 3.67 | 62.9 | 3.0 | 3.65 | same |
+| fixed in-sample thresholds (.5/.3/1.1) clip 0.5-1.5 | 261 | 74.7 | 3.83 | 61.6 | 2.7 | 4.13 | 2.86/5.63/3.05/3.98 |
+Chosen thresholds (disp, ibs, vol) per test year: 2023 (.3,.4,1.2); 2024 (.3,.2,1.2); 2025 (.3,.4,1.2); 2026 (.6,.2,1.2). Mean multiplier 0.96.
+Findings: with thresholds chosen only from the past, the stack still beats flat sizing in every test year (PF 3.67 vs 3.00, DD 2.9 vs 4.3, last-12m PF 3.65 vs 3.39), and gives up only a little to the in-sample thresholds (3.83). The fitted thresholds are stable in direction (dispersion low-to-mid, IBS low, volume ratio 1.2 every year), so the effect is not a product of the exact in-sample cut-offs. Weaknesses: the 2023 fit window holds only ~89 trades (2022 has 7), so 2023's gain (1.72 -> 2.93) comes from a weakly fitted model; return gain is modest (60.0 vs 53.0) because the clip limits upside; 2022 (the weak year) cannot be audited this way; 2026 is not sealed. The three market-state flags remain correlated, so treat the size rule as direction, not a precise PF of ~3.7.
+Verdict: supports the existing run-59 PROMOTION CANDIDATE (clip 0.5-1.5 stack); nothing new added to challenger.py (already tracked as "lab run59"). Live files untouched.
+Follow-ups: true PEAD / TLT / HYG still impossible (no data). Next run should be web (fetch a non-paywalled page with explicit rules).
