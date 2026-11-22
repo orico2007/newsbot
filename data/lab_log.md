@@ -1584,3 +1584,13 @@ Rules: live vol60>=1.75% setup before zreg (308 trades); signal-day SPY close / 
 Findings: signals taken when SPY is already down >=2% from its 20d high have higher PF (3.56 vs 2.28) in every year with enough trades, but filtering halves the return (29.8 vs 61.7), and the deep-drawdown buckets are tiny (36-41 trades, 7 in the last 12 months). As a size tilt it (PF 3.11) is no better than the existing single tilts (disp 3.14, SPY IBS 3.25, vol ratio 3.17) and well below the run-59 stack, and 2022 is only fixed by dd20 (1.45), likely because it overlaps the same washed-out-market information as those flags (not tested for overlap this run). Treat as a fourth view of the same market-stress effect, not a new edge.
 Verdict: no promotion, not added to challenger.py (redundant with run 58/59 flags; only direction confirmed: more market stress -> better reversion). Live files untouched.
 Next run: web (fetch a page with explicit stock-level rules); optionally test whether dd20 adds anything on top of the run-59 stack.
+
+## 2026-11-22 (run 63) - SPY 20d drawdown (<=-2%) as a 4th flag on the run-59 clipped 3-tilt stack (own idea; follow-up to run 62). Script: lab_ddstack.py
+Rules: live vol60>=1.75% setup before zreg (308 trades); multiplier = product of 1.25/0.75 per flag, clipped 0.5-1.5. 2 variants (x2 normalisation).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | Sharpe | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 2.32 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| 3-tilt clip | 308 | 74.4 | 3.79 | 74.8 | 2.7 | 2.45 | 4.13 | 3.79/1.45/2.86/5.63/3.05/3.98 |
+| 4-tilt (+dd20) clip | 308 | 74.4 | 3.95 | 73.1 | 2.4 | 2.41 | 4.33 | 3.99/2.41/2.98/5.49/3.19/4.35 |
+Findings: the dd20 flag overlaps the other three (53-65% co-occurrence), PF +0.16 but return and Sharpe are slightly lower, 2022 gain (1.45 -> 2.41) rests on few trades; 2024 is worse. Not an independent improvement.
+Verdict: no promotion, not added to challenger.py. Live files untouched.

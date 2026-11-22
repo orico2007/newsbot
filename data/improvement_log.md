@@ -113,3 +113,8 @@ Decision: no change to live rules.
 Checked: stock sessions through 11-21 00:47 UTC success, no failed runs in the last 100; two runs on 11-20 (19:34, 20:00 UTC) were cancelled by concurrency, a manual dispatch followed. The first 11-20 daytime session started 14:51 UTC, ~21 min AFTER the 14:30 UTC open (GitHub cron delay; known issue, no earlier run covers the open). Report 2026-11-20: 0 errors, equity $99,361, bear regime, 8 open longs, 0 entries. trades.csv: 11 closed rows, no duplicates; too few mr trades to compare live win/PF with backtest (win ~74-78%, PF ~3-4). Tests: 219 passed. challengers.md: last update 11-17; no variant has 3 consecutive weekly wins.
 Tested (8 subsets): close = 10/20/40/60-day low vs complement. 20d-low PF 2.07 (worse), 10d-low PF 3.01 with return 50% vs 60.6%; no subset beats the live setup on return. Details in data/lab_log.md.
 Decision: no change to live rules.
+
+## 2026-11-22 (UTC, Sunday) - round: SPY 20d drawdown as 4th flag of the clipped tilt stack (lab_ddstack.py)
+Checked: stock sessions through run 237 (11-21) success, run 238 in progress, no errors; no market-open session to time (weekend). Report 2026-11-20: 0 errors, equity $99,361, bear regime, 8 open longs, 0 entries. trades.csv has 11 closed rows, too few mr trades to compare live win/PF with backtest (win ~74-78%, PF ~3-4). Tests: 219 passed. challengers.md: tilt variants are PROMOTE-CANDIDATE but only on 1-2 weekly runs on the current baseline (need 3 consecutive); none promoted.
+Tested (2 variants): adding SPY dd20<=-2% to the 3-tilt stack: PF 3.95 vs 3.79, return 73.1 vs 74.8%, Sharpe 2.41 vs 2.45. Marginal, flags overlap; no edge beyond the existing stack.
+Decision: no change to live rules; not added to challenger.py.
