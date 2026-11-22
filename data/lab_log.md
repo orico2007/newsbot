@@ -1611,3 +1611,20 @@ Split: <=2023 PF 2.06 vs 1.96 live; >=2024 PF 4.30 vs 3.48.
 Findings: signals on stocks already down >5% over 20 days (49 trades) or whose high is >20 days old (37 trades) are the weak ones (PF 1.33 / 0.85): the reversion works on sharp dips inside an intact short-term trend, not on slow bleeds. The filter is better than live in every year with data (2022 unchanged), but as a filter total return falls slightly (57.8 vs 61.7), and the effect rests on ~50 trades chosen from 21 variants, so the exact -5% cut is probably lucky; 2026 not sealed. As a size tilt it (PF 3.14) is on par with the existing single tilts (3.14-3.25) and was not stacked with the run-59 stack.
 Verdict: no promotion, not added to challenger.py. Direction (avoid slow-bleed names) is the only takeaway. Live files untouched.
 Next run: optionally test whether the 20d-return flag adds to the run-59 clipped stack; otherwise web with a fetchable rule page (WebFetch not directly available this run, search only).
+
+## 2026-11-22 (run 65) - EWMA (RiskMetrics) volatility forecast as replacement/addition for the vol60>=1.75% filter (web-seeded). Script: lab_ewma.py
+Source (fetched): https://setup4alpha.substack.com/p/low-drawdown-nasdaq-mean-reversion - says only "EWMA-based volatility forecast" + close>SMA200 + a Connors/Alvarez condition + limit entries; no parameters, results only in images, paid rules; unverified. Other search hits not fetched (low-volume pullback pages, Quantified Strategies new-low/RSI-drop pages; volume and N-day-low ideas already tested in runs 6, 54).
+Rules: live trade list WITHOUT the vol filter (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, hold 7, stop 4 ATR, 10% x 12, 4/day); filter by EWMA vol of daily returns (lambda .94 / .97, 250d seed) at the signal close. 13 variants tried (discount lucky ones).
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref vol60>=1.75 | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 100 / 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| EWMA.94 >=1.75 | 284 | 74.6 | 2.95 | 57.1 | 4.6 | 93 / 4.02 | 3.54/.57/1.69/3.82/2.17/4.52 |
+| EWMA.94 >=2.0 | 218 | 74.8 | 3.23 | 51.2 | 4.2 | 72 / 4.13 | 6.89/.87/1.41/4.36/2.31/4.96 |
+| EWMA.97 >=1.75 | 303 | 75.9 | 3.00 | 63.6 | 4.4 | 98 / 3.63 | 3.88/.87/1.60/4.83/2.21/3.78 |
+| EWMA.97 >=2.0 | 226 | 74.8 | 3.18 | 51.7 | 4.7 | 71 / 3.95 | 3.63/.87/1.56/4.44/2.76/4.66 |
+| EWMA.94 >=1.5 | 368 | 71.7 | 2.37 | 58.2 | 4.8 | 112 / 2.98 | 2.65/.31/1.67/2.90/1.98/2.92 |
+| vol60>=1.75 & vol falling (EWMA94<vol60) | 218 | 74.8 | 2.75 | 36.0 | 3.4 | 64 / 2.91 | 1.23/-/1.63/6.62/4.89/2.30 |
+| vol60>=1.75 & vol rising | 112 | 71.4 | 2.90 | 21.1 | 2.2 | 40 / 4.40 | 14.3/.12/1.17/2.62/1.52/7.14 |
+(other rows: EWMA.94>=2.25 n155 PF3.35 ret39.7; EWMA.97>=2.25 n179 PF3.41 ret44.8; vol60&EWMA94>=1.5/2.0 n296/213 PF2.87/3.20.)
+Findings: EWMA.97>=1.75 is essentially the same filter as vol60>=1.75 (303 vs 308 trades, PF 3.00 vs 2.88, return 63.6 vs 61.7) and is worse in 2023 and 2025, better in 2021 and 2026; a rewording, not a new edge. Higher thresholds raise PF only by cutting return (51 vs 62), the same trade-off as the vol60 threshold walk-forward (run 36). Rising vs falling vol split is erratic across years (2021 14.3 vs 1.2; 2024 2.6 vs 6.6). Nothing beats live on PF, return, L12 and all-but-one year together.
+Verdict: no promotion, not added to challenger.py. Live files untouched. Next: web run should fetch a page with explicit rules (Algomatic/Quantified Strategies pages with numbered strategies), or test whether the run-64 20d-return flag adds to the run-59 clipped stack.
