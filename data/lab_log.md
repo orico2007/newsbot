@@ -1777,3 +1777,17 @@ Rules: long, close > SMA50 > SMA200, SPY>200d gate, ATR/price<6%, 10-day cooldow
 Findings: breakouts give 32-40% win rate with 16-24% drawdowns and PF 1.2-1.5; early/late halves differ (D55 1.34 vs 1.73), 2022 loses in every variant. Adding any sleeve to LIVE cuts PF from 2.83 to ~1.3-1.5 and raises max DD 4x for extra return; 2026 is ~1.0 combined. Consistent with earlier runs (gap-up, 52wh, xsmom): this universe pays for reversion, not continuation.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea (exit-side or position-management); continuation families are now exhausted (6 forms).
+
+## 2026-11-23 (run 76) - tail-proneness (60d excess kurtosis; worst day in 60d / sigma) as conditioner of the live vol60+zreg setup (own idea, no web this run; run 75 was web). Script: lab_kurt.py
+Rules: live setup (238 trades, 10% x 12, 4/day); split trades into terciles by 60d excess kurtosis or by worst-day z; tested each tercile, skip-high, skip-low, early (2021-23) vs late (2024-26) halves. 10 variants + splits tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| kurtosis low / mid / high third | 88/86/85 | 79.5/76.7/76.5 | 4.42/3.59/3.83 | 20.9/16.7/16.8 | 6.45/6.04/3.00 | non-monotonic |
+| kurtosis skip high third | 163 | 79.8 | 4.24 | 40.8 | 6.48 | 4.0/.22/1.47/11.7/3.98/5.28 |
+| worst-day z low / mid / high | 90/89/88 | 77.8/74.2/78.4 | 3.55/3.42/4.40 | 18.2/17.3/19.7 | 5.82/6.89/3.17 | non-monotonic |
+| worst-day z skip high third | 166 | 77.7 | 4.20 | 39.3 | 7.54 | 3.09/.12/1.30/18.9/2.69/7.96 |
+Split: skip-high (worst-day z) early PF 1.83 vs ref 2.99 (worse), late 6.51 vs 5.25 (better); kurtosis early 2.25 vs 2.99, late 5.95 vs 5.25. Sign flips across halves.
+Findings: no stable edge. The last-12-month improvement from skipping tail-prone names is offset by worse early years and a ~40% cut in total return (63.6 -> 39-41). Tercile PFs are non-monotonic, so this looks like noise.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: web (find fetchable page with concrete daily-bar rules); conditioner family on the live setup is thoroughly saturated, prefer an uncorrelated sleeve or portfolio-construction idea.
