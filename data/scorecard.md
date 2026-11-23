@@ -2,18 +2,19 @@
 
 | | Trades | Win % | Avg P&L % | Avg win / loss % | Profit factor | Avg R | Entry slippage % |
 |---|---|---|---|---|---|---|---|
-| ALL | 11 | 27.3 | -3.593 | 3.64 / -6.3 | 0.22 | -0.38 | 0.096 |
+| ALL | 12 | 33.3 | 2.89 | 21.28 / -6.3 | 1.69 | 2.43 | 0.084 |
 
 ## By strategy
 | | Trades | Win % | Avg P&L % | Avg win / loss % | Profit factor | Avg R | Entry slippage % |
 |---|---|---|---|---|---|---|---|
 | crypto | 4 | 25.0 | -4.974 | 2.92 / -7.61 | 0.13 | -0.66 | None |
 | day | 2 | 50.0 | 0.023 | 0.44 / -0.39 | 1.12 | 0.3 | 0.006 |
-| swing | 5 | 20.0 | -3.933 | 7.54 / -6.8 | 0.28 | -0.43 | 0.131 |
+| swing | 6 | 33.3 | 9.088 | 40.87 / -6.8 | 3.0 | 5.21 | 0.11 |
 
 ## By pattern / signal
 | | Trades | Win % | Avg P&L % | Avg win / loss % | Profit factor | Avg R | Entry slippage % |
 |---|---|---|---|---|---|---|---|
+| avwap_reclaim | 1 | 100.0 | 74.196 | 74.2 / 0 | None | 33.39 | 0.0 |
 | ema9_pullback_5m | 2 | 50.0 | 0.023 | 0.44 / -0.39 | 1.12 | 0.3 | 0.006 |
 | trend_pullback | 2 | 50.0 | -0.409 | 7.54 / -8.36 | 0.9 | 0.03 | 0.023 |
 | cum_rsi2 | 2 | 50.0 | -1.208 | 2.92 / -5.34 | 0.55 | -0.25 | 0.019 |

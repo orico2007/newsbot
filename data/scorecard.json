@@ -1,14 +1,14 @@
 {
  "stats": {
   "ALL": {
-   "n": 11,
-   "win_rate": 27.3,
-   "avg_pnl_pct": -3.593,
-   "avg_win": 3.64,
+   "n": 12,
+   "win_rate": 33.3,
+   "avg_pnl_pct": 2.89,
+   "avg_win": 21.28,
    "avg_loss": -6.3,
-   "profit_factor": 0.22,
-   "avg_R": -0.38,
-   "avg_slippage_pct": 0.096
+   "profit_factor": 1.69,
+   "avg_R": 2.43,
+   "avg_slippage_pct": 0.084
   },
   "strategy": {
    "crypto": {
@@ -22,14 +22,14 @@
     "avg_slippage_pct": null
    },
    "swing": {
-    "n": 5,
-    "win_rate": 20.0,
-    "avg_pnl_pct": -3.933,
-    "avg_win": 7.54,
+    "n": 6,
+    "win_rate": 33.3,
+    "avg_pnl_pct": 9.088,
+    "avg_win": 40.87,
     "avg_loss": -6.8,
-    "profit_factor": 0.28,
-    "avg_R": -0.43,
-    "avg_slippage_pct": 0.131
+    "profit_factor": 3.0,
+    "avg_R": 5.21,
+    "avg_slippage_pct": 0.11
    },
    "day": {
     "n": 2,
@@ -112,6 +112,16 @@
     "profit_factor": 0.0,
     "avg_R": -1.0,
     "avg_slippage_pct": 0.014
+   },
+   "avwap_reclaim": {
+    "n": 1,
+    "win_rate": 100.0,
+    "avg_pnl_pct": 74.196,
+    "avg_win": 74.2,
+    "avg_loss": 0,
+    "profit_factor": null,
+    "avg_R": 33.39,
+    "avg_slippage_pct": 0.0
    }
   }
  },
