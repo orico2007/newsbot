@@ -1694,3 +1694,19 @@ Rules: close>SMA200, SPY>200d, ATR%<6%; bar i-1 closed >= k ATR below EMA5 after
 | LIVE + k1.5 nd3 vol60 sleeve | 328 | 73.5 | 2.63 | 61.1 | 5.2 | 106 / 3.42 | 2.41/2.08/1.41/4.66/1.85/3.5 |
 Verdict: NOT a promotion candidate. As published (PF ~1.06, 19% drawdown, 2022 0.35) the rule has no edge on daily stocks; the paper's SPY result does not transfer. Vol60 + breadth + live-style exit lift it to PF 1.5-1.7 but that is the live filters doing the work, and the sleeve is overlapping with LIVE (combined PF falls 2.83 -> 2.0, 2025 and 2023 worse). Nothing added to challenger.py. Live files untouched.
 Next run: own idea.
+
+## 2026-11-23 (run 70) - steady-uptrend SIZE tilt (60d up-day share > 0.55; rs60 vs SPY > 0) as extra flag on the run-59 clipped stack (own idea; follow-up of run 68; no web this run, run 69 was web). Script: lab_uptilt.py
+Rules: live vol60>=1.75% setup before zreg (308 trades, 10% x 12, 4/day). Flags: up-share>0.55, rs60>0. Multiplier 1.25x/0.75x per flag, product clipped to 0.5-1.5x, normalised to mean 1 (PF is size-weighted). 6 variants + 3x2 split-sample + 2000-shuffle placebo. Data through 2026-10-29 cache.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.88 | 61.7 | 4.3 | 3.39 | 2.41/.87/1.72/4.70/2.51/3.44 |
+| run-59 stack (3 flags) | 308 | 74.4 | 3.79 | 80.8 | 2.8 | 4.13 | 3.79/1.45/2.86/5.63/3.05/3.98 |
+| up-share tilt alone | 308 | 74.4 | 3.13 | 68.0 | 3.9 | 3.66 | 2.61/.95/1.76/4.85/2.87/3.63 |
+| rs60 tilt alone | 308 | 74.4 | 2.85 | 62.4 | 4.5 | 3.42 | ~live |
+| 3 flags + up-share | 308 | 74.4 | 3.98 | 85.7 | 2.7 | 4.33 | 4.09/1.58/2.99/5.90/2.92/4.29 |
+| 3 flags + rs60 | 308 | 74.4 | 3.71 | 78.5 | 2.9 | 4.12 | 3.62/1.45/2.74/5.37/3.20/3.90 |
+| 3 flags + up + rs60 | 308 | 74.4 | 3.84 | 82.2 | 2.8 | 4.24 | 3.75/1.52/2.86/5.59/3.07/4.12 |
+Split: <=2023 up-share alone PF 2.07 vs live 1.96 (stack+up 3.41 vs stack 3.19); >=2024 3.77 vs 3.48 (stack+up 4.24 vs 4.08). Placebo (shuffled up-share multipliers): median 2.85, p95 3.00, p99 3.07; real 3.09 - only just above p99, from one of ~6 variants.
+Findings: rs60 adds nothing. Up-share tilt gives a small, same-direction gain in both halves (+0.1-0.25 PF), but 2025 is slightly worse inside the stack (3.05 -> 2.92) and the stack's gain over the run-59 reference is only +5%, within noise given the variants tried and that the three run-59 flags are themselves unproven forward. 2026 not sealed.
+Verdict: no promotion, nothing added to challenger.py. Possible forward-data re-check only. Live files untouched.
+Next run: web (find stock-level rules with a fetchable page; avoid more conditioners on the live setup - this family is saturated).
