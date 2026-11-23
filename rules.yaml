@@ -42,6 +42,7 @@ swing:
     universe: watchlist+sectors  # scan the watchlist plus sector constituents (~125 stocks, as in the backtest); 'watchlist' = only the 40 watchlist stocks
     zreg_max: -1.5               # lab runs 44-45: close must be >= 1.5 residual std devs below its 20d regression line (walk-forward PF ~3.4-3.7 vs 2.83, DD 2.4% vs 4.3%)
     zreg_window: 20
+    tilt: true                   # market-state size tilt (dispersion / SPY IBS / SPY volume), multiplier clipped 0.5-1.5x; lab runs 58-61: PF 3.7 vs 3.0, DD 2.9% vs 4.3% walk-forward
     vol_min: 1.75                # only stocks whose 60d daily-return stdev >= 1.75% (backtest runs 8-12: PF 2.83 vs 1.88, same return, lower DD, better in every year)
     breadth_min: 0.10            # only buy dips when >= 10% of the universe has RSI2 < 10 (backtest: PF 1.79 vs 1.40, return 52% vs 37%); dips of lone stocks lose
     gate: spy200                 # SPY above its 200-day average (backtest PF 1.44-1.5); 'bull' = stricter regime (fewer trades)

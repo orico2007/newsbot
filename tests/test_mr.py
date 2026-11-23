@@ -35,8 +35,9 @@ import pytest
 def _calm_stocks_allowed():
     """The synthetic fixtures are calm stocks; the volatility filter has its own tests below."""
     old = R["swing"]["mr"].get("vol_min", 0); R["swing"]["mr"]["vol_min"] = 0
-    oz = R["swing"]["mr"].pop("zreg_max", None)
+    oz = R["swing"]["mr"].pop("zreg_max", None); ot = R["swing"]["mr"].pop("tilt", None)
     yield
+    if ot is not None: R["swing"]["mr"]["tilt"] = ot
     R["swing"]["mr"]["vol_min"] = old
     if oz is not None: R["swing"]["mr"]["zreg_max"] = oz
 
@@ -200,3 +201,45 @@ def test_live_rules_have_zreg_filter():
     import yaml, pathlib
     live = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / "rules.yaml").read_text())["swing"]["mr"]
     assert live["zreg_max"] == -1.5 and live["zreg_window"] == 20
+
+def _spy(ibs_low=True, vol_hi=True):
+    out = []
+    for i in range(30):
+        out.append({"t": f"2026-10-{i+1:02d}T00:00:00Z" if i < 30 else "", "o": 100, "h": 101, "l": 99, "c": 100, "v": 1_000_000})
+    out[-1].update(c=99.2 if ibs_low else 100.8, v=1_500_000 if vol_hi else 900_000)
+    return out
+
+def test_tilt_multiplier_flags_and_clip():
+    m, d = mr.tilt_multiplier({}, _spy(True, True))          # dispersion unknown -> 0.75, IBS<0.3 -> 1.25, volume high -> 1.25
+    assert abs(m - 0.75 * 1.25 * 1.25) < 1e-3 and "SPY IBS hi" in d
+    m, _ = mr.tilt_multiplier({}, _spy(False, False))        # 0.75 ** 3 = 0.42 -> clipped to 0.5
+    assert m == 0.5
+    m, _ = mr.tilt_multiplier({}, [])                        # no SPY data: all low, still defined
+    assert m == 0.5
+
+def test_disp_pct_needs_history_and_ranks_today():
+    import random
+    random.seed(3)
+    def series(vol):
+        c = [100.0]; 
+        for i in range(300): c.append(c[-1] * (1 + random.gauss(0, vol)))
+        return [{"t": f"d{i:04d}", "c": x} for i, x in enumerate(c)]
+    uni = {f"S{k}": series(0.01) for k in range(40)}
+    assert 0 <= mr.disp_pct(uni) <= 1
+    assert mr.disp_pct({"A": series(0.01)}) is None         # fewer than 30 stocks per day
+
+def test_engine_scales_mr_size_by_tilt(mk3):
+    b, e = mk3(); _setup(b, e); e.mkt.regime = "neutral"; e.mkt.spy_above200 = True
+    e.r["swing"]["mr"]["tilt"] = True
+    b.bar_data[("SPY", "1Day")] = _spy(False, False)         # multiplier 0.5
+    assert e._mr_scan(NOW) == 1
+    low = b.orders[0][3] if len(b.orders[0]) > 3 else None
+    b2, e2 = mk3(); _setup(b2, e2); e2.mkt.regime = "neutral"; e2.mkt.spy_above200 = True
+    e2.r["swing"]["mr"]["tilt"] = False
+    assert e2._mr_scan(NOW) == 1
+    assert e._mr_tilt == 0.5 and b.orders[0][1] < b2.orders[0][1]       # smaller quantity with the tilt on
+
+def test_live_rules_have_tilt_on():
+    import yaml, pathlib
+    live = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / "rules.yaml").read_text())["swing"]["mr"]
+    assert live["tilt"] is True

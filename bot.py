@@ -391,6 +391,13 @@ class Engine:
             for sym, sig in sigs.items():
                 self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: only {breadth * 100:.0f}% of the market is oversold (need {cfg.get('breadth_min', 0.10) * 100:.0f}%) - lone dips lose")
             return 0
+        self._mr_tilt = 1.0; tilt_desc = ""
+        if cfg.get("tilt"):
+            try:
+                spy = self.b.bars("SPY", "1Day", daily_start_iso(now))
+                self._mr_tilt, tilt_desc = mr.tilt_multiplier(bars, spy)
+            except Exception as e:
+                log.warning("mr tilt failed: %s", e)
         def peer3(sym):
             sec = SECTOR_OF.get(sym); xs = []
             for p, b in bars.items():
@@ -415,7 +422,7 @@ class Engine:
                     if z is None or z >= zmax:
                         self._j(now, sym, sig.notes, None, "swing", "long", "blocked", f"{sig.name}: not clearly below its 20d trend line (z {z if z is None else round(z, 2)} >= {zmax}) - weak edge"); continue
                 p3 = peer3(sym)
-                extra = f"market {breadth * 100:.0f}% oversold; sector 3d {p3:+.1f}%" if p3 != 99.0 else f"market {breadth * 100:.0f}% oversold"
+                extra = (f"market {breadth * 100:.0f}% oversold; sector 3d {p3:+.1f}%" if p3 != 99.0 else f"market {breadth * 100:.0f}% oversold") + (f"; size tilt x{self._mr_tilt} ({tilt_desc})" if cfg.get("tilt") else "")
                 cands.append((p3, -(mr.RULES[sig.name]["rank"] + bonus), sym, sig, f"{why}; {extra}" + (f"; {nwhy}" if nwhy else ""), bars[sym]))
             except Exception as e:
                 log.warning("mr candidate failed %s: %s", sym, e)
@@ -537,7 +544,7 @@ class Engine:
             if sig.side == "short":
                 a = self.b.asset(sym); shortable = bool(a.get("shortable") and a.get("easy_to_borrow") and a.get("tradable", True))
             mult = size_mult(sc, self.r["signals"]["size_multiplier"]["min"], self.r["signals"]["size_multiplier"]["max"])
-            if sig.name.startswith("mr_"): mult = self.r["swing"].get("mr", {}).get("size_mult", 2.5)
+            if sig.name.startswith("mr_"): mult = round(self.r["swing"].get("mr", {}).get("size_mult", 2.5) * getattr(self, "_mr_tilt", 1.0), 2)
             if strategy == "swing" and self.r.get("research", {}).get("enforce"):
                 ve = self._research()["validated"].get(f"{sig.name.replace('_W', '')}:{sig.side}")
                 if ve: mult = round(max(self.r["signals"]["size_multiplier"]["min"], min(self.r["signals"]["size_multiplier"]["max"], mult * ve.get("mult", 1.0))), 2)

@@ -67,3 +67,41 @@ def zreg(daily, n=20):
     res = [y - (my + slope * (a - mx)) for a, y in zip(range(n), c)]
     mean = sum(res) / n; sd = (sum((r - mean) ** 2 for r in res) / n) ** 0.5
     return res[-1] / sd if sd else 0.0
+
+
+def disp_pct(bars_by_sym, window=250):
+    """Trailing percentile of today's cross-sectional stdev of 1d returns versus the previous `window` days (None if < 60 days of history)."""
+    R = {}
+    for daily in bars_by_sym.values():
+        for i in range(1, len(daily)):
+            R.setdefault(daily[i]["t"][:10], []).append(daily[i]["c"] / daily[i - 1]["c"] - 1)
+    D = {d: _pstdev(v) * 100 for d, v in R.items() if len(v) >= 30}
+    ds = sorted(D)
+    if len(ds) < 61: return None
+    w = [D[x] for x in ds[-1 - window:-1]]
+    return sum(1 for x in w if x < D[ds[-1]]) / len(w)
+
+def _pstdev(v):
+    m = sum(v) / len(v)
+    return (sum((x - m) ** 2 for x in v) / len(v)) ** 0.5
+
+def tilt_multiplier(bars_by_sym, spy, hi=1.25, lo=0.75, clip=(0.5, 1.5)):
+    """Market-state size tilt (lab runs 58-61, walk-forward audited): product of three 1.25x/0.75x flags, clipped to 0.5-1.5.
+    flags: cross-stock dispersion percentile >= 0.5; SPY close location in its day range (IBS) < 0.3; SPY volume >= 1.1 x its prior-20-day mean.
+    Returns (multiplier, description). Missing data counts as a False flag (0.75x)."""
+    flags = []
+    p = disp_pct(bars_by_sym); flags.append(("dispersion", p is not None and p >= 0.5, p))
+    ibs = None
+    if spy:
+        r = spy[-1]["h"] - spy[-1]["l"]; ibs = (spy[-1]["c"] - spy[-1]["l"]) / r if r else 0.5
+    flags.append(("SPY IBS", ibs is not None and ibs < 0.3, ibs))
+    vr = None
+    if spy and len(spy) > 20:
+        a = [b.get("v") for b in spy[-21:-1]]
+        if all(a) and spy[-1].get("v"): vr = spy[-1]["v"] / (sum(a) / 20)
+    flags.append(("SPY volume ratio", vr is not None and vr >= 1.1, vr))
+    m = 1.0
+    for _, on, _ in flags: m *= hi if on else lo
+    m = max(clip[0], min(clip[1], m))
+    desc = ", ".join(f"{n} {'hi' if on else 'lo'}" + (f" {v:.2f}" if v is not None else "") for n, on, v in flags)
+    return round(m, 3), desc
