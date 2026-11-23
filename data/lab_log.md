@@ -1728,3 +1728,7 @@ Rules: monthly (first trading day), hold 21 bars, buy top-N of cached universe a
 Findings: residual momentum is worse than plain momentum here (PF 1.15 vs 1.64, 2021-22 near zero) - the Blitz improvement does not appear on this small survivor universe. Low-vol/low-beta sleeves are near-zero-correlated with LIVE and keep max DD ~5%, but their standalone PF is 1.0-1.2 and L12 ~1.0, so combining only dilutes LIVE (PF 2.83 -> 1.93) for +10 points of return; the gain in 2022 (0.87 -> 1.17) comes from the sleeve being roughly flat that year, not an edge. Raw momentum adds return but with 15-21% drawdowns and a dead 2022.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea; avoid more factor sleeves (momentum / low-vol are now tested in 5 forms). Untested: quarter-end/window-dressing calendar, Amihud illiquidity as selector.
+
+## 2026-11-23 (run 72) - Amihud illiquidity conditioner on live vol60+zreg setup. Script: lab_amihud.py
+LIVE n=238 PF 4.41 ret 63.6%. Liquid third PF 6.13 (ret 27.2), middle 3.74 (16.4), illiquid 2.51 (11.9; 2025 PF 0.48). Skip-illiquid: PF 5.01, ret 47.4%, DD 0.8, L12 PF 5.57 vs 5.03; early PF 4.10 vs 2.99, late 5.36 vs 5.25 (2024 weaker 9.2 vs 11.7). 4 variants tried, discount applies. Verdict: fails total-return bar; not a candidate; nothing added to challenger.py. Live files untouched.
+Next run: quarter-end/window-dressing calendar, or earnings-proximity proxy.

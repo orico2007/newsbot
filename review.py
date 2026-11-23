@@ -21,8 +21,15 @@ def gather(data="data", n_reports=5):
 def run_claude(prompt):
     exe = shutil.which("claude")
     if not exe: raise RuntimeError("claude CLI not found")
-    out = subprocess.run([exe, "-p", "--tools", ""], input=prompt, capture_output=True, text=True, encoding="utf-8", timeout=300)
-    return out.stdout.strip()
+    last = None
+    for _ in range(2):  # one retry: the CLI occasionally hangs past the timeout
+        try:
+            out = subprocess.run([exe, "-p", "--tools", ""], input=prompt, capture_output=True, text=True, encoding="utf-8", timeout=300)
+            if out.stdout.strip(): return out.stdout.strip()
+            last = "empty output"
+        except subprocess.TimeoutExpired:
+            last = "timed out"
+    return f"Review unavailable this week (claude CLI {last}); previous scorecard and backtest remain in data/."
 
 def main():
     material = gather()
