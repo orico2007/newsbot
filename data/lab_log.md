@@ -1732,3 +1732,18 @@ Next run: own idea; avoid more factor sleeves (momentum / low-vol are now tested
 ## 2026-11-23 (run 72) - Amihud illiquidity conditioner on live vol60+zreg setup. Script: lab_amihud.py
 LIVE n=238 PF 4.41 ret 63.6%. Liquid third PF 6.13 (ret 27.2), middle 3.74 (16.4), illiquid 2.51 (11.9; 2025 PF 0.48). Skip-illiquid: PF 5.01, ret 47.4%, DD 0.8, L12 PF 5.57 vs 5.03; early PF 4.10 vs 2.99, late 5.36 vs 5.25 (2024 weaker 9.2 vs 11.7). 4 variants tried, discount applies. Verdict: fails total-return bar; not a candidate; nothing added to challenger.py. Live files untouched.
 Next run: quarter-end/window-dressing calendar, or earnings-proximity proxy.
+
+## 2026-11-23 (run 73) - quarter-end / window-dressing calendar as conditioner of the live vol60+zreg setup (web seed: search hit only, not fetched, unverified: https://www.quantifiedstrategies.com/end-of-quarter-effect-strategy/ ). Script: lab_qend.py
+Rules: live vol60>=1.75% + zreg20<-1.5 setup (238 trades, 10% x 12, 4/day); entries split by trading-day position inside the calendar quarter (last 5 / last 10 / first 5 / window / middle). 7 variants tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| last 5 days of quarter | 10 | 80.0 | 7.57 | 1.8 | 5.14 (n=5) | 6.9/-/-/-/-/2.09 |
+| last 10 days of quarter | 39 | 79.5 | 4.50 | 7.3 | 18.29 (n=12) | 29.9/-/1.07/6.68/16.58/6.63 |
+| first 5 days of quarter | 26 | 84.6 | 6.40 | 4.8 | n=2 | 2022 0.12, 2024 26.6, 2025 2.28 |
+| window last5+first5 | 35 | 82.9 | 6.54 | 6.5 | 8.19 (n=7) | 16.0/.12/-/26.6/4.23/5.15 |
+| NOT window | 203 | 77.8 | 4.23 | 53.6 | 4.87 | 3.77/-/2.41/10.56/2.98/4.73 |
+Split: <=2023 last5 PF 18.5 (n=5) vs rest 2.87; >=2024 last5 PF 5.14 (n=5) vs 5.25. 
+Findings: window entries look slightly better (PF 6.5 vs 4.2) but n=35 total, 7 in the last 12 months, and the split halves have n=5 each; the gain is concentrated in single years (2024 first-5 PF 26.6). Excluding the window would cut return from 63.6% to 53.6%. No evidence of a calendar edge beyond noise, and no usable size-tilt (too few trades to fill 12 positions differently).
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: own idea; earnings-proximity proxy (abnormal-volume gap days in the prior 10 days as an earnings-event flag) or exit-side ideas.
