@@ -1747,3 +1747,16 @@ Split: <=2023 last5 PF 18.5 (n=5) vs rest 2.87; >=2024 last5 PF 5.14 (n=5) vs 5.
 Findings: window entries look slightly better (PF 6.5 vs 4.2) but n=35 total, 7 in the last 12 months, and the split halves have n=5 each; the gain is concentrated in single years (2024 first-5 PF 26.6). Excluding the window would cut return from 63.6% to 53.6%. No evidence of a calendar edge beyond noise, and no usable size-tilt (too few trades to fill 12 positions differently).
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea; earnings-proximity proxy (abnormal-volume gap days in the prior 10 days as an earnings-event flag) or exit-side ideas.
+
+## 2026-11-23 (run 74) - news-driven-decline flag (volume>=2.5x avg20 AND gap<=-3% or day<=-5% inside the prior 5/10/20 sessions) on the live vol60+zreg setup (own idea; backward-looking earnings/news proxy, distinct from run 29's forward-looking earnings-window proxy). Script: lab_newsdrop.py
+Rules: live setup (238 trades, 10% x 12, 4/day); flag = such a spike-down day within N sessions before the signal. 8 variants planned (3 windows x flag-only/skip, 2 tilts); tilts were no-ops (size key not applied, n too small to matter).
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| flagged 5d / 10d | 5 | - | - | - | none in L12 | - |
+| skip flag 5d / 10d | 233 | 78.1 | 4.27 | 60.2 | 4.66 | 4.11/.12/2.70/11.71/2.73/4.59 |
+| flagged 20d | 10 | 90.0 | 19.5 | 3.9 | n=4 | 2023 only |
+| skip flag 20d | 228 | 77.6 | 4.12 | 56.9 | 4.35 | slightly worse every year |
+Findings: the live vol60 + zreg20 setup already screens out news-driven declines: only 5 of 238 trades (2%) have a spike-down day in the last 10 sessions, 10 (4%) in 20. Skipping them lowers return and PF; the flagged trades are too few (and, at 20d, are winners) to support any rule. No evidence that news-driven drops revert worse here.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: web (find a fetchable page with concrete daily-bar rules; family of conditioners on the live setup is saturated, prefer an uncorrelated sleeve or exit-side idea).
