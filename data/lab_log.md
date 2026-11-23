@@ -1810,3 +1810,18 @@ Rules: seasonal score = mean return of the stock in the same calendar month of a
 Findings: no stock-level calendar-month seasonality in this universe: the top quintile sleeve earns PF 0.99 and the bottom quintile PF 1.17 (wrong sign), so the premise fails here (only 2-7 prior years per stock, very noisy score). As a conditioner, "seasonal > 0" lifts PF 4.6 to 5.97 but on a shorter sample (2021-22 lost for lack of history), cuts return 55 to 42, high third is worse than ref in 2023 and 2025, and the sleeve showing no effect means the lift is most likely selection noise (stocks with positive mean month are partly just stocks in uptrends). 8 comparisons, no clean monotone signal.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea. Seasonality/calendar families (month of year, quarter-end, turn of month, opex, FOMC, same-month stock) are now all exhausted; try portfolio-construction (slot-recycling when positions exit early, or capital reserved for high-conviction days).
+
+## 2026-11-23 (run 78) - long-term trend strength (distance above SMA200, SMA200 60d slope, trend age = days above SMA200 in last 252) as conditioners of the live vol60+zreg setup (own idea; run 77 was web). Script: lab_s200.py
+Rules: live setup entries (breadth>=10%, vol60>=1.75%, zreg20<-1.5, hold 7, stop 4 ATR, 10% x 12, 4/day); needs 265 bars of history so the ref here is 221 trades (2021 thinned). Terciles by feature, skip-high / skip-low, early (2021-23) vs late (2024-26) halves. 15 variants + splits tried, discount any winner. Slot-recycling was also considered first but dropped: earlier runs (portcap, dipsize) show slots almost never bind, so there is nothing to recycle.
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref (n=221) | 221 | 78.7 | 4.77 | 61.2 | 5.03 | 52/.12/2.70/11.74/3.10/4.75 |
+| dist>SMA200 low / mid / high third | 78/76/91 | 79.5/75.0/79.1 | 4.23/2.61/5.33 | 13.1/8.3/33.3 | 1.56/12.11/9.73 | non-monotonic |
+| dist skip low third | 157 | 77.1 | 4.81 | 44.9 | 10.22 | early 2.18 vs ref 3.55 (worse), late 6.8 vs 5.25 |
+| SMA200 slope low / mid / high | 77/70/89 | 81.8/71.4/78.7 | 4.63/2.67/5.32 | 15.5/8.9/29.3 | 3.63/3.28/10.91 | non-monotonic |
+| slope skip low third | 150 | 77.3 | 4.81 | 40.4 | 6.40 | early 2.32 (worse), late 6.22 |
+| trend age low / mid / high | 78/79/81 | 84.6/70.9/80.2 | 10.19/2.97/4.74 | 21.4/14.9/18.8 | 6.7/7.3/2.52 | U-shaped |
+| trend age skip high | 154 | 78.6 | 4.71 | 39.2 | 6.91 | early 4.01 vs 3.55, late 5.13 vs 5.25 |
+Findings: all three features give middle-third PF ~2.6-3.0 and outer thirds 4-10, a U-shape that is the signature of noise (and the middle tercile always loses in 2023). Every "skip" filter cuts return 61 -> 39-45 and sign-flips between early and late halves, except trend-age skip-high, which is flat in late (5.13 vs 5.25) and only +0.5 PF early on 55 trades; not enough to act on.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: web (find a fetchable page with concrete daily-bar rules). Conditioner family on the live setup is saturated (15+ features checked since run 44); prefer an uncorrelated sleeve or an exit-side idea.
