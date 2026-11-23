@@ -1760,3 +1760,20 @@ Rules: live setup (238 trades, 10% x 12, 4/day); flag = such a spike-down day wi
 Findings: the live vol60 + zreg20 setup already screens out news-driven declines: only 5 of 238 trades (2%) have a spike-down day in the last 10 sessions, 10 (4%) in 20. Skipping them lowers return and PF; the flagged trades are too few (and, at 20d, are winners) to support any rule. No evidence that news-driven drops revert worse here.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: web (find a fetchable page with concrete daily-bar rules; family of conditioners on the live setup is saturated, prefer an uncorrelated sleeve or exit-side idea).
+
+## 2026-11-23 (run 75) - Donchian / Turtle-style long breakout sleeve (web idea). Script: lab_donch.py
+Sources: https://strategyquant.com/blog/from-the-turtles-to-today-how-a-40-year-old-strategy-still-works/ (fetched; video-transcript demo, no rigorous numbers; 20d-high entry/10d-low exit, 55d/20d for stock baskets, trend filter) ; https://quantifiedstrategies.substack.com/p/donchian-channels-do-they-work-backtest (preview only: says channels work in commodities "but not in stocks"). Treated as unverified.
+Rules: long, close > SMA50 > SMA200, SPY>200d gate, ATR/price<6%, 10-day cooldown, enter at close, stop 3 ATR, exit on close below prior M-day closing low, max hold 60; own slots 10% x 12, 4/day. 6 variants tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 |
+|---|---|---|---|---|---|---|---|
+| LIVE ref (vol60>=1.75) | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 |
+| D20/exit10 | 722 | 38.0 | 1.24 | 47.0 | 23.7 | 1.30 | 1.64/.29/1.42/1.17/1.44/1.25 |
+| D55/exit20 | 434 | 36.2 | 1.51 | 90.7 | 17.0 | 1.33 | 2.2/.53/1.48/1.88/2.11/1.21 |
+| D20/exit10 vol>=1.5x | 586 | 40.6 | 1.41 | 76.7 | 22.0 | 1.46 | 1.85/.18/1.15/1.79/2.08/1.32 |
+| D55 mom-ranked | 454 | 32.6 | 1.17 | 24.4 | 18.2 | 1.30 | - |
+| D100/exit20 | 445 | 32.1 | 1.16 | 22.3 | 16.5 | 0.90 | - |
+| LIVE + D55/exit20 | 552 | 43.1 | 1.45 | 88.4 | 15.4 | 1.26 | 1.89/.49/1.44/1.56/2.49/1.01 |
+| LIVE + D20 vol>=1.5x | 784 | 50.1 | 1.46 | 108.4 | 17.8 | 1.26 | - |
+Findings: breakouts give 32-40% win rate with 16-24% drawdowns and PF 1.2-1.5; early/late halves differ (D55 1.34 vs 1.73), 2022 loses in every variant. Adding any sleeve to LIVE cuts PF from 2.83 to ~1.3-1.5 and raises max DD 4x for extra return; 2026 is ~1.0 combined. Consistent with earlier runs (gap-up, 52wh, xsmom): this universe pays for reversion, not continuation.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: own idea (exit-side or position-management); continuation families are now exhausted (6 forms).
