@@ -1791,3 +1791,22 @@ Split: skip-high (worst-day z) early PF 1.83 vs ref 2.99 (worse), late 6.51 vs 5
 Findings: no stable edge. The last-12-month improvement from skipping tail-prone names is offset by worse early years and a ~40% cut in total return (63.6 -> 39-41). Tercile PFs are non-monotonic, so this looks like noise.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: web (find fetchable page with concrete daily-bar rules); conditioner family on the live setup is thoroughly saturated, prefer an uncorrelated sleeve or portfolio-construction idea.
+
+## 2026-11-23 (run 77) - Heston-Sadka same-calendar-month stock seasonality: monthly sleeve and conditioner of the live vol60+zreg setup (web idea). Script: lab_seasmo.py
+Source: https://www.nber.org/papers/w20815 (Common Factors in Return Seasonalities; found by search, abstract level only, not fetched; claim = a stock's average return in the same calendar month of past years predicts its return that month; unverified, other markets/eras). Related search hits: https://www.nber.org/papers/w20815 , https://www.aqr.com/-/media/AQR/Documents/AQR-Insight-Award/2015/AllSeasons20141219pdf.pdf .
+Rules: seasonal score = mean return of the stock in the same calendar month of all prior cached years (history starts 2018-11, so >=2 prior years means scores exist only from 2020/2023 on). (a) Sleeve: first trading day of each month from 2021, stocks with close>SMA50>SMA200 and SPY>200d, long top (or bottom) quintile by score, hold 21 days, stop 4 ATR, 10% x 12, 4/day. (b) Conditioner: split live setup entries (238 trades) by tercile of the seasonal score of the entry month. 8 variants tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 n / PF | PF by year |
+|---|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 2.5 | 78 / 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| LIVE with seasonal data (2023+) | 203 | 78.8 | 4.60 | 55.0 | 2.5 | 78 / 5.03 | -/-/2.7/11.74/3.10/4.75 |
+| seasonal low third | 68 | 77.9 | 3.23 | 11.0 | 1.7 | 17 / 5.59 | 2.47/12.13/.99/4.96 (2023-26) |
+| seasonal mid third | 77 | 75.3 | 3.99 | 14.9 | 1.2 | 32 / 6.90 | 3.60/3.11/3.62/5.48 |
+| seasonal high third | 78 | 79.5 | 5.02 | 23.3 | 1.5 | 32 / 4.08 | 1.57/34.97/2.28/4.36 |
+| seasonal skip low third | 147 | 78.9 | 4.65 | 41.0 | 2.3 | 62 / 4.95 | 3.12/12.74/2.67/4.75 |
+| seasonal > 0 | 133 | 81.2 | 5.97 | 42.2 | 1.5 | 57 / 6.11 | 3.54/13.11/3.78/6.40 |
+| sleeve top quintile, hold 21 | 163 | 46.0 | 0.99 | -2.0 | 11.3 | 42 / 0.68 | 2022 0/1.07/1.36/.83/.91 |
+| sleeve bottom quintile, hold 21 (control) | 167 | 55.7 | 1.17 | 8.3 | 14.2 | 44 / 0.65 | 2022 0/1.10/2.39/1.89/.51 |
+| live + top sleeve | 353 | 64.9 | 1.48 | 44.0 | 10.4 | 99 / 1.22 | PF falls vs live every year |
+Findings: no stock-level calendar-month seasonality in this universe: the top quintile sleeve earns PF 0.99 and the bottom quintile PF 1.17 (wrong sign), so the premise fails here (only 2-7 prior years per stock, very noisy score). As a conditioner, "seasonal > 0" lifts PF 4.6 to 5.97 but on a shorter sample (2021-22 lost for lack of history), cuts return 55 to 42, high third is worse than ref in 2023 and 2025, and the sleeve showing no effect means the lift is most likely selection noise (stocks with positive mean month are partly just stocks in uptrends). 8 comparisons, no clean monotone signal.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: own idea. Seasonality/calendar families (month of year, quarter-end, turn of month, opex, FOMC, same-month stock) are now all exhausted; try portfolio-construction (slot-recycling when positions exit early, or capital reserved for high-conviction days).
