@@ -1710,3 +1710,21 @@ Split: <=2023 up-share alone PF 2.07 vs live 1.96 (stack+up 3.41 vs stack 3.19);
 Findings: rs60 adds nothing. Up-share tilt gives a small, same-direction gain in both halves (+0.1-0.25 PF), but 2025 is slightly worse inside the stack (3.05 -> 2.92) and the stack's gain over the run-59 reference is only +5%, within noise given the variants tried and that the three run-59 flags are themselves unproven forward. 2026 not sealed.
 Verdict: no promotion, nothing added to challenger.py. Possible forward-data re-check only. Live files untouched.
 Next run: web (find stock-level rules with a fetchable page; avoid more conditioners on the live setup - this family is saturated).
+
+## 2026-11-23 (run 71) - residual (beta-adjusted) 12-1m momentum and low-volatility / low-beta monthly sleeves (web idea). Script: lab_resmom.py
+Sources: https://quantpedia.com/strategies/residual-momentum-factor , https://quantpedia.com/strategies/low-volatility-factor-effect-in-stocks (search hits only, pages not fetched; published results are other eras/markets, treated as unverified).
+Rules: monthly (first trading day), hold 21 bars, buy top-N of cached universe at close, 0.05% slip; SPY>200d gate where stated. resmom = sum of 12-1m residual returns (252d regression on SPY) / residual stdev; lowvol = lowest 60d return stdev; lowbeta = lowest 60d beta. Simulator 10% x 12; LIVE ref = vol60>=1.75% live setup (308 trades). 6 variants tried, each standalone and combined; discount any winner.
+| Variant | Trades | Win % | PF | Ret % | Max DD % | L12 PF | PF 2021/22/23/24/25/26 | corr vs LIVE |
+|---|---|---|---|---|---|---|---|---|
+| LIVE ref | 308 | 74.4 | 2.83 | 60.6 | 4.3 | 3.37 | 2.41/.87/1.62/4.74/2.51/3.41 | - |
+| resmom top10 gate | 190 | 47.4 | 1.15 | 10.4 | 22.3 | 1.75 | .25/.05/1.38/1.23/2.51/2.09 | 0.03 |
+| rawmom 12-1 top10 gate (control) | 182 | 49.5 | 1.64 | 69.9 | 21.0 | 2.72 | 1.01/.10/1.03/3.02/1.19/3.18 | 0.27 |
+| lowvol60 top10 gate | 192 | 49.0 | 1.18 | 6.4 | 4.5 | 1.04 | 1.36/.96/1.27/.79/1.86/1.13 | -0.10 |
+| lowvol60 top20 no gate | 244 | 52.9 | 1.19 | 11.0 | 7.9 | 0.97 | 1.36/.98/.91/2.46/1.02/1.08 | 0.10 |
+| lowbeta60 top10 gate | 185 | 45.9 | 0.98 | -1.7 | 10.2 | 1.03 | 1.97/.43/.68/.92/1.27/1.10 | -0.03 |
+| LIVE + resmom top10 | 444 | 62.8 | 1.51 | 60.8 | 18.6 | 2.21 | .82/.05/1.46/1.8/2.4/2.43 | |
+| LIVE + rawmom top10 | 434 | 64.1 | 1.82 | 129.0 | 15.4 | 2.79 | 1.39/.11/1.19/3.25/1.41/3.0 | |
+| LIVE + lowvol60 top10 gate | 474 | 65.4 | 1.93 | 70.7 | 5.4 | 2.44 | 1.7/1.17/1.42/2.08/2.15/2.53 | |
+Findings: residual momentum is worse than plain momentum here (PF 1.15 vs 1.64, 2021-22 near zero) - the Blitz improvement does not appear on this small survivor universe. Low-vol/low-beta sleeves are near-zero-correlated with LIVE and keep max DD ~5%, but their standalone PF is 1.0-1.2 and L12 ~1.0, so combining only dilutes LIVE (PF 2.83 -> 1.93) for +10 points of return; the gain in 2022 (0.87 -> 1.17) comes from the sleeve being roughly flat that year, not an edge. Raw momentum adds return but with 15-21% drawdowns and a dead 2022.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: own idea; avoid more factor sleeves (momentum / low-vol are now tested in 5 forms). Untested: quarter-end/window-dressing calendar, Amihud illiquidity as selector.
