@@ -1854,3 +1854,5 @@ Rules: live setup (238 trades, 10% x 12, 4/day); entries bucketed by calendar da
 Findings: the only deviation is the second week (d8-14: PF 1.76, 63% win, 46 trades) and it has no mechanism; neighbouring buckets (d1-7, d15-21, d22-31) are all strong, the "payday" bucket is flat, and skipping d8-14 gains PF 4.4 -> 5.8 while cutting return 64.9 -> 57.3. Picking the worst of four arbitrary buckets post hoc is exactly the multiple-comparison trap. Last-12-month d8-14 PF is 2.71 (still >1), so even there the edge is positive, just smaller.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: web, and only if a page with concrete testable rules is fetchable via WebFetch; the conditioner and calendar families are saturated. Consider adding TLT/HYG to the bars cache job (needs the live workflow, so a note for Ori) to enable a credit-risk filter.
+
+## 2026-11-24 (run 81) - rank by z depth: deepest-first PF 4.13/ret 61.9, shallowest-first PF 4.23/ret 63.2 vs live PF 4.43/ret 64.9. No edge. Script: lab_zrank.py
