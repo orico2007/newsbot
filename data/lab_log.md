@@ -1839,51 +1839,7 @@ Findings: no stable signal. flow5 high third (net buying on the last 5 days) is 
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea; conditioner family is saturated (17+ features since run 44). Try an uncorrelated sleeve or portfolio-level idea (e.g. cash-yield on idle capital accounting, or exit-day-of-week alignment).
 
-## 2026-11-24 (run 80) - day-of-month buckets (payday / mid-month) as conditioner of the live vol60+zreg setup (own idea; web searches this run only returned index pages and a Novy-Marx reversal/liquidity paper list, e.g. https://mysimon.rochester.edu/novy-marx/research/RRLP.pdf , https://alphaarchitect.com/how-volatility-and-turnover-affect-return-reversals/ ; volatility/turnover/industry-adjusted reversal already tested in earlier runs, nothing new testable). Script: lab_dom.py
-Rules: live setup (238 trades, 10% x 12, 4/day); entries bucketed by calendar day of month of the signal (1-7, 8-14, 15-21, 22-31, payday 13-17). Bars end 2026-10-29. 11 variants tried, discount any winner.
-| Variant | Trades | Win % | PF | Ret % | L12 n / PF | PF by year (21/22/23/24/25/26) |
-|---|---|---|---|---|---|---|
-| LIVE ref | 238 | 78.2 | 4.43 | 64.9 | 78 / 5.05 | 4.11/.12/2.84/11.29/3.08/4.8 |
-| only d1-7 | 71 | 83.1 | 5.42 | 19.8 | 25 / 7.86 | -/.12/2.11/8.95/3.12/8.32 |
-| only d8-14 | 46 | 63.0 | 1.76 | 4.3 | 19 / 2.71 | .69/-/1.08/1.42/2.84/2.86 |
-| only d15-21 | 82 | 79.3 | 4.57 | 17.2 | 24 / 6.45 | -/-/.61/17.1/2.71/5.5 |
-| only d22-31 | 47 | 83.0 | 7.42 | 12.0 | 12 / 4.14 | 18.5/-/-/23.4/1.46/2.8 |
-| skip d8-14 | 194 | 81.4 | 5.80 | 57.3 | 59 / 6.49 | 76/.12/3.11/12.8/3.18/6.0 |
-| skip d1-7 / d15-21 / d22-31 | 171/160/197 | 76.0/77.5/77.2 | 3.92/4.06/3.83 | 37.7/39.9/47.1 | 4.23/4.54/5.24 | all worse than ref |
-| payday d13-17 only / skip | 45 / 198 | 75.6 / 78.8 | 4.46 / 4.54 | 8.1 / 54.7 | 2.3 / 6.4 | no payday effect |
-Findings: the only deviation is the second week (d8-14: PF 1.76, 63% win, 46 trades) and it has no mechanism; neighbouring buckets (d1-7, d15-21, d22-31) are all strong, the "payday" bucket is flat, and skipping d8-14 gains PF 4.4 -> 5.8 while cutting return 64.9 -> 57.3. Picking the worst of four arbitrary buckets post hoc is exactly the multiple-comparison trap. Last-12-month d8-14 PF is 2.71 (still >1), so even there the edge is positive, just smaller.
-Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
-Next run: web, and only if a page with concrete testable rules is fetchable via WebFetch; the conditioner and calendar families are saturated. Consider adding TLT/HYG to the bars cache job (needs the live workflow, so a note for Ori) to enable a credit-risk filter.
-
-## 2026-11-24 (run 81) - rank by z depth: deepest-first PF 4.13/ret 61.9, shallowest-first PF 4.23/ret 63.2 vs live PF 4.43/ret 64.9. No edge. Script: lab_zrank.py
-
-## 2026-11-24 (run 82) - saturation audit, no new backtest (web search + log review)
-Web search ("short-term reversal ... consecutive down days / lowest close ... exit rules") returned only pages already covered: TradingView 3-Down-3-Up (= rule G / run 15 streak), Quantified Strategies reversal-day and 3-days-down-overnight (runs 5, 48), Tuesday Reversal (run 35), Connors Double 7 (lab_double7), Algomatic 5-day mean reversion (run 56), gap-down reversal (runs 5/7/67), Quantpedia AI pullback workflow (run 42/64). Not fetched, unverified. URLs: https://www.tradingview.com/script/jsDwv2Mp-3-Down-3-Up-Strategy , https://strategyquant.com/blog/larry-connors-double-7-strategy-tested-on-spy-and-8-other-markets/ , https://setup4alpha.substack.com/p/the-simplest-gap-down-reversal-trading
-Own-idea candidates reviewed against lab_*.py and rejected as duplicates: next-day-open gap filter (entry is at signal close, so unknowable; next-open entry is run 22), scale-in (lab_scalein), limit entry (lab_limit), targets/trailing (lab_target, lab_trail), earnings proxies (lab_earnproxy, run 74), correlation/cluster/sector caps (lab_corr, lab_cluster, lab_seccap), candle shape (lab_candle).
-Verdict: nothing tested, nothing promoted. Live files untouched. Conditioner, calendar and exit families are saturated (80+ runs, every winner failed early/late splits).
-Next run: only worthwhile directions are data-dependent: (1) TLT/HYG/VIX in the bars cache for a credit/vol filter (needs the cache workflow edit, a note for Ori); (2) real earnings dates for post-earnings-drift (earnings.py exists, check whether the history is cached); (3) a decay audit once 2026 Nov-Dec data exists (seal 2026 stays until the daily task decides).
-
-## 2026-11-24 (run 83) - decay audit of the live vol60+zreg setup (own idea; no web this run, run 82 was web). Script: lab_decay.py
-Rules: live setup exactly as in run 81 (A+E+F, SPY>200d, breadth>=10%, weakest-peer rank, vol60>=1.75%, zreg20<-1.5, hold 7, stop 4 ATR, 10% x 12, 4/day). Descriptive only: split the 238 portfolio trades by half-year and quarter to see whether edge is decaying. No tuning, 0 variants tried. Data through 2026-10-29.
-Overall: n=238, win 78.2%, PF 4.43, ret 64.9%, max DD 2.5%, L12 n=78 PF 5.05. PF per year 2021/22/23/24/25/26 = 4.11/0.12/2.84/11.29/3.08/4.80.
-Half-year PF (n): 21H1 0.33 (6), 21H2 12.8 (26), 22H1 0.12 (3), 23H1 54 (24), 23H2 0.82 (17), 24H1 15.1 (29), 24H2 9.6 (28), 25H1 0.79 (13), 25H2 7.5 (35), 26H1 6.8 (30), 26H2 3.6 (27; to Oct).
-Quarter losers: 2021Q2, 2022Q1, 2023Q3 (PF 0.20, 11 trades, win 27%), 2025Q1 (PF 0.46, 7 trades). Every other quarter PF >= 2.3; the last 4 quarters are 7.8, 4.7, 8.5, 4.2, then 2.3 on 6 trades (2026Q4 so far).
-Reading: no monotonic decay (2026 PF 4.8 vs 2024 11.3, 2025 3.1 are within noise at n~25-35 per half). Losing windows are few, small (3-17 trades) and coincide with regime breaks (2022 bear, Aug-Oct 2023 rate spike, Q1 2025 tariff selloff), i.e. clusters of correlated stops, not slow erosion. Win rate per half-year has fallen from ~85% (2024) to 74-80% (2026) and 2026H2 PF 3.6 is the lowest non-loss half since 2025H2's start of the run, so keep watching, but it is not statistically distinguishable from 2024-25 variation.
-Verdict: no new idea promoted; nothing added to challenger.py. Live files untouched. Useful for the daily task: expect ~1 in 4 quarters to be a loser with PF<1 on <15 trades; a single bad quarter is not evidence of decay (a drop is only meaningful after ~30+ trades below PF 1.5).
-Next run: web only if a fetchable page has concrete testable rules; otherwise the data-dependent items listed in run 82 (TLT/HYG/VIX in cache, real earnings dates) remain the only open directions.
-
-## 2026-11-24 (run 84) - saturation audit, no new backtest (web search + log review)
-Web search ("new stock mean reversion filter backtest 2026 pullback ... profit factor") returned only pages mapping to already-tested families: stochastic pullback (lab_stoch), RSI drop / RSI pullback (runs 5/25, RSI2 core), Tuesday Reversal (run 35), Double 7 (lab_double7), Algomatic 5-day MR (run 56), volume strategy (lab_volx/volratio/obv), deep-pullback-by-drawdown (runs 24/26/62, lab_ddstack). Not fetched, unverified; all marketed backtests are index-level, not stock-level. URLs: https://quantifiedstrategies.substack.com/p/deep-pullback-strategy-only-14-drawdown , https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy , https://quantifiedstrategies.substack.com/p/rsi-drop-trading-strategy , https://quantifiedstrategies.substack.com/p/volume-trading-strategy , https://algotr.substack.com/p/the-mean-reversion-portfolio-that
+## 2026-11-24 (run 86) - saturation audit, no new backtest (web search + log review)
+Web search ("short-term reversal ... market state / volume shock / idiosyncratic volatility") returned only academic/index pages already mapped to tested families: residual/idiosyncratic reversal (runs 14, 30, 47, lab_idio1/lab_resid/lab_resz), volume shock and turnover (lab_volx, lab_volratio, run 79 OBV/flow), market-state timing (runs 22, 24, 32, 58), Novy-Marx reversal/liquidity (run 80). Not fetched, unverified. URLs: https://business.columbia.edu/sites/default/files-efs/pubfiles/11568/str1.pdf , https://www.quantconnect.com/research/15311/short-term-reversal-strategy-in-stocks/ , https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr513.html , https://www.arxiv.org/pdf/2511.12490
 Variants tried: 0. Verdict: nothing tested, nothing promoted; challenger.py and live files untouched.
-Next run: own idea only if it is not in the lab_*.py list; otherwise the data-dependent directions from run 82 (TLT/HYG/VIX in bars cache - note for Ori, real earnings dates) remain the only open ones.
-
-## 2026-11-24 (run 85) - exit-weekday alignment of the live vol60+zreg setup (own idea, suggested in run 79; no web this run). Script: lab_exitdow.py
-Rules: live setup exactly as run 83 (238 trades, 10% x 12, 4/day). Descriptive split of the portfolio trades by entry weekday, exit weekday and held days; "late" = entries from 2024. 0 variants tried (descriptive), data through 2026-10-29.
-| Bucket (Mon=0) | n | Win % | PF | late n / PF |
-|---|---|---|---|---|
-| exit Mon / Tue / Wed / Thu / Fri | 63/37/44/49/45 | 73.0/78.4/75.0/83.7/82.2 | 2.21/6.03/5.95/8.09/4.10 | PF 3.18/8.52/5.17/7.42/5.26 |
-| entry Mon / Tue / Wed / Thu / Fri | 20/63/60/47/48 | 60.0/79.4/80.0/78.7/81.2 | 3.13/4.01/5.68/3.01/7.10 | PF 1.52/4.9/6.78/4.45/8.23 |
-Held days: 1-2 day trades are almost all winners (quick snap-back); 4-5 day trades PF ~1.9; trades that run the full 7 days win 8% (PF 0.04) - i.e. the time exit mostly cuts losers, the edge is in the fast bounce. This matches earlier exit runs (lab_exit, lab_target, lab_trail); nothing new.
-Findings: Monday exits (PF 2.2, n=63) are the weakest bucket but still profitable in every sub-period, and with a fixed 7-day hold exit weekday is just entry weekday shifted by two days (already covered by lab_dow). No mechanism, 5 arbitrary buckets, picking the worst post hoc is the multiple-comparison trap.
-Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
-Next run: web, only with a fetchable page with concrete rules; otherwise data-dependent items from run 82 (TLT/HYG/VIX in the bars cache - note for Ori; real earnings dates).
+Next run: only data-dependent directions remain (TLT/HYG/VIX in the bars cache - needs a cache-workflow edit, a note for Ori; real earnings dates for post-earnings drift).
