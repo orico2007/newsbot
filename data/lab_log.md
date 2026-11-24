@@ -1843,3 +1843,17 @@ Next run: own idea; conditioner family is saturated (17+ features since run 44).
 Web search ("short-term reversal ... market state / volume shock / idiosyncratic volatility") returned only academic/index pages already mapped to tested families: residual/idiosyncratic reversal (runs 14, 30, 47, lab_idio1/lab_resid/lab_resz), volume shock and turnover (lab_volx, lab_volratio, run 79 OBV/flow), market-state timing (runs 22, 24, 32, 58), Novy-Marx reversal/liquidity (run 80). Not fetched, unverified. URLs: https://business.columbia.edu/sites/default/files-efs/pubfiles/11568/str1.pdf , https://www.quantconnect.com/research/15311/short-term-reversal-strategy-in-stocks/ , https://www.newyorkfed.org/medialibrary/media/research/staff_reports/sr513.html , https://www.arxiv.org/pdf/2511.12490
 Variants tried: 0. Verdict: nothing tested, nothing promoted; challenger.py and live files untouched.
 Next run: only data-dependent directions remain (TLT/HYG/VIX in the bars cache - needs a cache-workflow edit, a note for Ori; real earnings dates for post-earnings drift).
+
+## 2026-11-24 (run 87) - Parkinson range volatility (20d) and range-vol / close-vol ratio as conditioners of the live vol60+zreg setup (own idea; no range-based vol feature in the log before; run 86 was web). Script: lab_pk.py
+Rules: live setup (238 trades, 10% x 12, 4/day); pk20 = sqrt(mean(ln(H/L)^2)/(4 ln2)) over 20d; pkratio = pk20 / stdev of 20d log returns. Terciles, skip-low, skip-high, early (2021-23) vs late (2024-26). 10 variants + splits tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| pk20 low / mid / high third | 83/76/99 | 78.3/73.7/78.8 | 3.31/2.62/6.58 | 11.5/9.6/37.5 | 1.81/3.89/7.97 | non-monotonic (high third carries 2021 PF 133 on few trades) |
+| pk20 skip low third | 166 | 77.1 | 4.87 | 49.1 | 6.31 | early 2.88 vs 2.99 (flat), late 6.18 vs 5.25 |
+| pk20 skip high third | 152 | 77.6 | 3.01 | 21.3 | 2.77 | worse |
+| pkratio low / mid / high | 85/90/91 | 76.5/77.8/81.3 | 2.60/5.32/4.65 | 11.2/24.9/22.1 | 3.08/8.76/4.65 | low third weakest |
+| pkratio skip low third | 172 | 78.5 | 4.76 | 49.1 | 6.19 | early 3.09 vs 2.99, late 5.97 vs 5.25 |
+Findings: no stable edge. pk20 is U/non-monotone (mid third worst), and its skip-low variant is flat early and costs 23% of return. pkratio skip-low is directionally consistent (early +0.1, late +0.7 PF) but only +0.35 PF overall, return 63.6 -> 49.1, and the tercile pattern (low worst, mid best, high middle) is the usual noise shape. Same saturation signature as runs 76-79.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: only data-dependent directions remain (TLT/HYG/VIX in bars cache; real earnings dates). Conditioner family is saturated (19+ features since run 44).
