@@ -1825,3 +1825,16 @@ Rules: live setup entries (breadth>=10%, vol60>=1.75%, zreg20<-1.5, hold 7, stop
 Findings: all three features give middle-third PF ~2.6-3.0 and outer thirds 4-10, a U-shape that is the signature of noise (and the middle tercile always loses in 2023). Every "skip" filter cuts return 61 -> 39-45 and sign-flips between early and late halves, except trend-age skip-high, which is flat in late (5.13 vs 5.25) and only +0.5 PF early on 55 trades; not enough to act on.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: web (find a fetchable page with concrete daily-bar rules). Conditioner family on the live setup is saturated (15+ features checked since run 44); prefer an uncorrelated sleeve or an exit-side idea.
+
+## 2026-11-24 (run 79) - OBV / net volume-flow share (5d, 20d) as conditioner of the live vol60+zreg setup (web-seeded by search hits only: https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/on-balance-volume-obv , https://quantpedia.com/short-term-return-reversals-and-intraday-transactions/ ; not fetched, unverified). Script: lab_obv.py
+Rules: live setup (238 trades, 10% x 12, 4/day); flow_n = sum(sign(close change) x volume)/sum(volume) over the last n days (n=5, 20). Terciles, skip-low, skip-high, early (2021-23) vs late (2024-26) halves. 10 variants + splits tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | L12 PF | PF by year |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.6 | 4.41 | 63.6 | 5.03 | 4.11/.12/2.70/11.74/3.10/4.75 |
+| flow5 low / mid / high third | 92/93/93 | 81.5/76.3/74.2 | 4.08/4.90/2.52 | 19.9/22.9/12.9 | 8.45/5.56/2.71 | high third weakest |
+| flow5 skip high third | 170 | 77.6 | 4.45 | 43.7 | 6.62 | early 3.13 vs 2.99, late 5.25 vs 5.25 (flat) |
+| flow20 low / mid / high third | 94/90/88 | 81.9/73.3/77.3 | 5.35/2.99/3.71 | 23.9/17.4/15.8 | 4.43/7.99/5.03 | U-shaped |
+| flow20 skip low third | 165 | 75.2 | 3.61 | 35.1 | 6.20 | early 1.97 (worse), late 5.14 |
+Findings: no stable signal. flow5 high third (net buying on the last 5 days) is weakest in L12 but skipping it only matches ref in the late half and cuts return 64 -> 44; flow20 is U-shaped (middle tercile worst), the usual noise signature. Both skip filters cost ~30% of return for no PF gain beyond noise.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: own idea; conditioner family is saturated (17+ features since run 44). Try an uncorrelated sleeve or portfolio-level idea (e.g. cash-yield on idle capital accounting, or exit-day-of-week alignment).
