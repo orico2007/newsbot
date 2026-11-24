@@ -1876,3 +1876,14 @@ Next run: web only if a fetchable page has concrete testable rules; otherwise th
 Web search ("new stock mean reversion filter backtest 2026 pullback ... profit factor") returned only pages mapping to already-tested families: stochastic pullback (lab_stoch), RSI drop / RSI pullback (runs 5/25, RSI2 core), Tuesday Reversal (run 35), Double 7 (lab_double7), Algomatic 5-day MR (run 56), volume strategy (lab_volx/volratio/obv), deep-pullback-by-drawdown (runs 24/26/62, lab_ddstack). Not fetched, unverified; all marketed backtests are index-level, not stock-level. URLs: https://quantifiedstrategies.substack.com/p/deep-pullback-strategy-only-14-drawdown , https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy , https://quantifiedstrategies.substack.com/p/rsi-drop-trading-strategy , https://quantifiedstrategies.substack.com/p/volume-trading-strategy , https://algotr.substack.com/p/the-mean-reversion-portfolio-that
 Variants tried: 0. Verdict: nothing tested, nothing promoted; challenger.py and live files untouched.
 Next run: own idea only if it is not in the lab_*.py list; otherwise the data-dependent directions from run 82 (TLT/HYG/VIX in bars cache - note for Ori, real earnings dates) remain the only open ones.
+
+## 2026-11-24 (run 85) - exit-weekday alignment of the live vol60+zreg setup (own idea, suggested in run 79; no web this run). Script: lab_exitdow.py
+Rules: live setup exactly as run 83 (238 trades, 10% x 12, 4/day). Descriptive split of the portfolio trades by entry weekday, exit weekday and held days; "late" = entries from 2024. 0 variants tried (descriptive), data through 2026-10-29.
+| Bucket (Mon=0) | n | Win % | PF | late n / PF |
+|---|---|---|---|---|
+| exit Mon / Tue / Wed / Thu / Fri | 63/37/44/49/45 | 73.0/78.4/75.0/83.7/82.2 | 2.21/6.03/5.95/8.09/4.10 | PF 3.18/8.52/5.17/7.42/5.26 |
+| entry Mon / Tue / Wed / Thu / Fri | 20/63/60/47/48 | 60.0/79.4/80.0/78.7/81.2 | 3.13/4.01/5.68/3.01/7.10 | PF 1.52/4.9/6.78/4.45/8.23 |
+Held days: 1-2 day trades are almost all winners (quick snap-back); 4-5 day trades PF ~1.9; trades that run the full 7 days win 8% (PF 0.04) - i.e. the time exit mostly cuts losers, the edge is in the fast bounce. This matches earlier exit runs (lab_exit, lab_target, lab_trail); nothing new.
+Findings: Monday exits (PF 2.2, n=63) are the weakest bucket but still profitable in every sub-period, and with a fixed 7-day hold exit weekday is just entry weekday shifted by two days (already covered by lab_dow). No mechanism, 5 arbitrary buckets, picking the worst post hoc is the multiple-comparison trap.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: web, only with a fetchable page with concrete rules; otherwise data-dependent items from run 82 (TLT/HYG/VIX in the bars cache - note for Ori; real earnings dates).
