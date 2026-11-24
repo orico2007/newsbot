@@ -1838,3 +1838,19 @@ Rules: live setup (238 trades, 10% x 12, 4/day); flow_n = sum(sign(close change)
 Findings: no stable signal. flow5 high third (net buying on the last 5 days) is weakest in L12 but skipping it only matches ref in the late half and cuts return 64 -> 44; flow20 is U-shaped (middle tercile worst), the usual noise signature. Both skip filters cost ~30% of return for no PF gain beyond noise.
 Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
 Next run: own idea; conditioner family is saturated (17+ features since run 44). Try an uncorrelated sleeve or portfolio-level idea (e.g. cash-yield on idle capital accounting, or exit-day-of-week alignment).
+
+## 2026-11-24 (run 80) - day-of-month buckets (payday / mid-month) as conditioner of the live vol60+zreg setup (own idea; web searches this run only returned index pages and a Novy-Marx reversal/liquidity paper list, e.g. https://mysimon.rochester.edu/novy-marx/research/RRLP.pdf , https://alphaarchitect.com/how-volatility-and-turnover-affect-return-reversals/ ; volatility/turnover/industry-adjusted reversal already tested in earlier runs, nothing new testable). Script: lab_dom.py
+Rules: live setup (238 trades, 10% x 12, 4/day); entries bucketed by calendar day of month of the signal (1-7, 8-14, 15-21, 22-31, payday 13-17). Bars end 2026-10-29. 11 variants tried, discount any winner.
+| Variant | Trades | Win % | PF | Ret % | L12 n / PF | PF by year (21/22/23/24/25/26) |
+|---|---|---|---|---|---|---|
+| LIVE ref | 238 | 78.2 | 4.43 | 64.9 | 78 / 5.05 | 4.11/.12/2.84/11.29/3.08/4.8 |
+| only d1-7 | 71 | 83.1 | 5.42 | 19.8 | 25 / 7.86 | -/.12/2.11/8.95/3.12/8.32 |
+| only d8-14 | 46 | 63.0 | 1.76 | 4.3 | 19 / 2.71 | .69/-/1.08/1.42/2.84/2.86 |
+| only d15-21 | 82 | 79.3 | 4.57 | 17.2 | 24 / 6.45 | -/-/.61/17.1/2.71/5.5 |
+| only d22-31 | 47 | 83.0 | 7.42 | 12.0 | 12 / 4.14 | 18.5/-/-/23.4/1.46/2.8 |
+| skip d8-14 | 194 | 81.4 | 5.80 | 57.3 | 59 / 6.49 | 76/.12/3.11/12.8/3.18/6.0 |
+| skip d1-7 / d15-21 / d22-31 | 171/160/197 | 76.0/77.5/77.2 | 3.92/4.06/3.83 | 37.7/39.9/47.1 | 4.23/4.54/5.24 | all worse than ref |
+| payday d13-17 only / skip | 45 / 198 | 75.6 / 78.8 | 4.46 / 4.54 | 8.1 / 54.7 | 2.3 / 6.4 | no payday effect |
+Findings: the only deviation is the second week (d8-14: PF 1.76, 63% win, 46 trades) and it has no mechanism; neighbouring buckets (d1-7, d15-21, d22-31) are all strong, the "payday" bucket is flat, and skipping d8-14 gains PF 4.4 -> 5.8 while cutting return 64.9 -> 57.3. Picking the worst of four arbitrary buckets post hoc is exactly the multiple-comparison trap. Last-12-month d8-14 PF is 2.71 (still >1), so even there the edge is positive, just smaller.
+Verdict: NOT a promotion candidate; nothing added to challenger.py. Live files untouched.
+Next run: web, and only if a page with concrete testable rules is fetchable via WebFetch; the conditioner and calendar families are saturated. Consider adding TLT/HYG to the bars cache job (needs the live workflow, so a note for Ori) to enable a credit-risk filter.
