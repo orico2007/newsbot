@@ -11,3 +11,4 @@ closed,symbol,strategy,pattern,side,entry,exit,pnl_pct,R,held_days,entry_slip_pc
 2026-11-19T15:19:19.418820+00:00,JPM,swing,trend_pullback_W,long,351.63,323.4475,-8.015,-1.0,11,0.014,stop/target/other
 2026-11-19T19:50:54.483615+00:00,NVDA,day,ema9_pullback_5m,short,148.49,147.838,0.441,1.59,0,0.013,stop/target/other
 2026-11-23T17:20:30.192676+00:00,RWM,swing,avwap_reclaim,long,14.4,25.0842,74.196,33.39,7,0.0,stop/target/other
+2026-11-25T16:46:24.363776+00:00,ISRG,swing,trend_pullback,long,434.2,425.5975,-1.981,-1.71,1,0.014,stop/target/other

@@ -9727,3 +9727,240 @@ BioHarvest Sciences Lowers FY2026 Sales Guidance from $37.000M-$40.000M to $32.0
 2026-11-24T20:45:17.998969+00:00,ISRG,SWING trend_pullback: pullback to SMA20 candle=None,,,,,swing,long,ENTER,"buy qty=4 stop=429.17 tp=500.55 conf=64.8 x0.53 bear market; XLV leading; weekly agrees; 5 tools: signal, volume, trend",
 2026-11-24T20:47:31.037553+00:00,ISRG,,,,,,swing,long,FILL,wanted 434.14 got 434.20 slippage 0.014%,
 2026-11-24T20:47:31.037553+00:00,LLY,,,,,,swing,long,FILL,wanted 1409.94 got 1410.05 slippage 0.008%,
+2026-11-25T16:46:20.913853+00:00,SAP,SAP SE Voting Rights Notification,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SAP,SAP Employee Allegedly Involved in Misconduct Regarding Partner Confidential Information,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,BNP,European Central Bank Contacts BNP Paribas Regarding Hedge Fund Exposure,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,ARH,Archicom Partners with Visionnaire for 'Apartamenty Wronia' Luxury Residential Project,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,HNSA,Hansa Biopharma to Participate in Aktiespararnas Stora Aktiedagarna and SEB Healthcare Seminar 2026,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,VVVV,KKR Group Partnership L.P. Files Schedule 13G for vVARDIS Holding AG,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,DB,Deutsche Bank Raises Price Target on The Campbell's Company,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,ETG,Director Dealings: vLB GmbH & Co. KG Acquires EnviTec Biogas AG Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,CY4,Cy4Gate Secures New Orders Worth €7 Million,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,UL,JPMorgan Raises Unilever Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,GLE,European Central Bank Contacts Société Générale Regarding Hedge Fund Exposure,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,CDBOL,Cassa di Risparmio di Bolzano Participates in Amplifon Financing Pool,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,JCQ,Jacquet Metals SA Publishes Regulatory Disclosure,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,NWG,NatWest Group Announces Strategic Goal to Quadruple Retail and Affluent Clients by 2030,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,PBB,Deutsche Bank Research lowers price target for pbb Deutsche Pfandbriefbank,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,HFG,HelloFresh SE Reports Insider Share Purchase by Active Ownership Opportunities SCS,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,ACAG,"Dai Nippon Printing Co., Ltd. Increases Stake in AUSTRIACARD HOLDINGS AG to 96.55%",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,ACAG,Nikolaos Lykos Divests Entire Stake in AUSTRIACARD HOLDINGS AG,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SBB.B,SBB Reports Third Quarter 2026 Results,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,BOHUS,Bohus ASA: Mandatory notification of trade,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,PSNY,Polestar Reports Third-Quarter 2026 Financial Results,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,LAES,SEALSQ Receives Approval for Secondary Listing on Euronext Growth Paris,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SBO,SBO AG Supervisory Board Extends CEO Contract and Appoints New Executive Board Member,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,TFIN,Webuild's Acquisition of Trevi Highlighted for Industrial Complementarity,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,MTG,Meier Tobler Group AG Announces Extraordinary General Meeting Following Ahlsell AB Tender Offer,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,ABG,ABG Sundal Collier Holding ASA Publishes Financial Calendar,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,WIZZ,Coronation Fund Managers Increases Stake in Wizz Air Holdings,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,MPCC,MPC Container Ships ASA Reports Q3 2026 Results,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,LUXE,LuxExperience Bans Ostrich Feathers Across Online Platforms,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SKA,FFiL Śnieżka S.A. Publishes Financial Data via ESPI,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,IWS,Integrated Wind Solutions ASA: Ex dividend NOK 1.00 today,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,IG,InstallatørGruppen Completes Acquisition of Poul Sejr Nielsen Service A/S and Poul Sejr Nielsen EL A/S,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SFQ,SAF-HOLLAND SE Publishes Voting Rights Notification,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,TPE,PVA TePla AG: Voting Rights Announcement by PARAMETRIC SAS,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,INSTAL,Instalco Unit to Supply Industrial Scaffolding for Metsä Board's Swedish Mill,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,CASH,Prosegur Cash Announces Upcoming Ex-Dividend Date,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,DEZ,Universum Holding GmbH Disposes of Additional DEUTZ AG Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,DEZ,Akaroa Invest GmbH & Co. KG Acquires DEUTZ AG Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,INFRAC,Spital Wetzikon Rejects Infracore's Acquisition Offer,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,MOZN,mobilezone Receives 'Leading Company' Award for ESG Reporting,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,WIE,Wienerberger Expands Robotics and Exoskeleton Use in Italy,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,HHFA,Trading Suspension of Hamburger Hafen und Logistik AG,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,IPS,Ipsos and L'Oréal Paris Release Global Research on Street Harassment,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,SIE,Imaginostics Signs MOU with Siemens Healthineers,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T16:46:20.913853+00:00,RAYA,DAY intraday_flag: pole 12% flag 3d,,,,,day,short,blocked,not shortable / hard to borrow conf=64.8,
+2026-11-25T16:52:48.322535+00:00,GDHG,DAY intraday_flag: pole 36% flag 8d,,,,,day,short,blocked,not shortable / hard to borrow conf=64.8,
+2026-11-25T17:02:23.900952+00:00,LDO,Metlen and Leonardo S.p.A. Units Enter Military Vehicle Production Partnership in Greece,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,ALM,RBC Capital Markets Downgrades Almirall to Sector Perform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,COLR,AlphaValue/Baader Europe Downgrades Colruyt Group to Sell,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,PNDORA,UBS Adjusts Price Target for Pandora A/S,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,LEG,"BlackRock, Inc. Reports Change in Voting Rights in LEG Immobilien SE",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,SW,Sodexo Announces Preparatory Documents for December 2026 Combined Shareholders Meeting,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,VSURE,Banks Propose Up to €11 Billion in Debt Financing for Potential Verisure Take-Private Bid,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,DSFIR,dsm-firmenich Reaches Antitrust Settlement with EU and UK Regulators,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,BVI,Bureau Veritas Denies Takeover Discussions with Advent International,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,NDA,DZ Bank Lowers Fair Value for Aurubis,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,TUI1,TUI AG Releases Research on Summer 2027 Holiday Booking Trends,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,AMUN,Amundi ETF ICAV Announces Quarterly Dividend for S&P All World High Dividend Yield UCITS ETF,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,AMUN,Amundi Asset Management Announces Dividend for Dow Jones Industrial Average UCITS ETF,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,8TRA,TRATON Subsidiary VW Caminhões e Ônibus Implements Manufacturing Process Updates for VW Tempest Line,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,QGEN,QIAGEN and BenchSci Partner to Integrate Multi-Omics Evidence into BenchSci EMET,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,VOW3,Volkswagen Unveils ID. Polo GTI Clubsport Concept,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,BPE,BPER Banca Launches 'Gps Consulente' AI Tool for Affluent Clients,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,EMBJ,US Government Proposes 10% Tariff on Brazilian Aircraft,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,FRA,Fraport Greece Reports 2026 Passenger Traffic and 2027 Outlook,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,VONN,Vontobel Portfolio Manager Comments on Market Risks for Carry Trades,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,RHM,Rheinmetall's KF41 Lynx Infantry Fighting Vehicles Deployed for Testing in Ukraine,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,PKO,PKO Bank Polski Transaction Notification Regarding PGE,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,STM,STMicroelectronics Expands STripFET F8 Power MOSFET Family,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,ROCK.B,ROCKWOOL A/S Adjusts 2026 Full-Year Outlook Due to Higher Energy Costs,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,ABN,ABN AMRO Named New Main Sponsor of Ajax,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,TRI,Trigano Reports 2025-2026 Full-Year Results Below Analyst Expectations,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,KGH,KGHM Polska Miedź S.A. to Secure 1.7 Billion PLN Financing from European Investment Bank,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,KLAR,Klarna Launches One-Time Card in Canada,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,PGE,PGE S.A. Notification of Insider Transactions,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,UN0,Uniper to Expand Gas Storage Capacity in Bierwang,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,NEX,Nexans Collaborates with Schneider Electric on Hybrid AC/DC Distribution Study,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,VOE,Franz Kainersdorfer Awarded Honorary Senator Title by TU Graz,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,BN,Danone Canada Launches New OIKOS Brand Campaign and Visual Identity,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,GIVN,EU and UK Regulators Fine Givaudan for Fragrance Cartel Participation,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:02:23.900952+00:00,RI,JPMorgan Places Pernod Ricard on 'Negative Catalyst Watch',1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,SDZ,RBC Capital Markets Upgrades Sandoz to Outperform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,STLA,Stellantis Scales Back French Plant Operations,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,STLA,Stellantis Files Lawsuit Against Unifor Over Brampton Plant Access,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,DHER,Prosus Considers Acquiring Divested Delivery Hero Assets,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,SYENS,Moody's Maintains Syensqo's Rating with Stable Outlook,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,ORSTED,Progress Update on Baltica 2 Offshore Wind Farm Project,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,HM.B,Bernstein Lowers H&M Price Target and Reiterates Underperform Rating,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,PKN,Orlen's Supervisory Board Dismisses Two Management Board Members,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,RBREW,Deutsche Bank Research Downgrades Royal Unibrew to Sell Rating,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,SDF,Director Transaction: Dr. Jens Christian Keuthen Acquires K+S Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,HEI,AlphaValue/Baader Europe Downgrades Heidelberg Materials to Add,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,BRE,Banca Akros Upgrades Brembo to Buy,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,VIRP,Virbac Announces Acquisition of Axiota Animal Health,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:03:43.639752+00:00,NDX1,AlphaValue/Baader Europe Upgrades Nordex to Add,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:04:25.044227+00:00,AZM,Saudi Arabia's CMA Approves Azimut MENA for Asset Management,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,CVSG,CVS Group plc Reports Four-Month Trading Update and Holds AGM,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,YOU,YouGov Conducts 'Megapoll' for Victorian State Election,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,YOU,YouGov Poll Examines Consumer Sentiment Amid Stock Market Volatility,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,YOU,YouGov Survey Reveals Public Misconceptions About Aging and Memory Loss,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,CLIG,City of London Investment Group PLC Employee Benefit Trust Share Purchase,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,SUPR,Supermarket Income REIT plc Announces Results of Annual General Meeting,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,CLVT,Clarivate Announces Development Partners for IPOne AI Platform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,PETS,Pets at Home Group Plc Reports Financial Results for H1 2026,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,ENOG,Energean Advances Prinos CO2 Storage Project in Greece,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,ALVO,Alvotech Announces Participation in December Investor Conferences,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,WKP,Citigroup Inc. Voting Interest Notification,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,RFX,Form 8.3 Disclosure for Ramsdens Holdings PLC,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,NET,Netcall plc Announces Issue of Contingent Consideration Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,PTSB,Sand Grove Capital Management LLP Disclosure of Dealings in Permanent TSB Group Holdings plc,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,PTSB,Syquant Capital Disclosure of Dealings in Permanent TSB Group Holdings plc,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,MCG,Mobico Group PLC Announces Board Committee Appointment,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,BOOT,Henry Boot PLC Issues Trading Update and Profit Warning,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,SVS,Savills Reports Rising Prime Office Rents Across Europe,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,GPE,Great Portland Estates plc Announces Ex-Dividend Date,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,SVS,Savills Appointed to Manage Procurement for Residential-Led Scheme,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,C5H,Regal Partners Limited Reduces Stake in Cairn Homes plc,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,POLR,Polar Capital CEO Iain Evans Purchases Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,BORR,Borr Drilling Limited - Notification of PDMR Transaction,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,DEO,Deutsche Bank Research maintains 'Hold' rating on Diageo,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,OP,OpenPayd Appoints Three Senior Executives to Support Global Growth and US Market Entry,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,AO.,AO World plc: TR-1 Standard form for notification of major holdings,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:32:21.217037+00:00,CBG,FCA Issues Guidance to Motor Finance Customers as Kandoo Car Credit Enters Administration,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:33:14.917836+00:00,DOCS,Barclays Issues Sell Rating on Dr. Martens plc,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:33:14.917836+00:00,DOCS,Dr. Martens Announces Collaboration with Slipknot,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:33:14.917836+00:00,HLCL,Helical plc Reports Half-Year Earnings Results,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:34:01.951289+00:00,GBG,GB Group plc Announces CFO Departure,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:34:01.951289+00:00,VP.,Vp plc Reports Fiscal H1 2026 Earnings Results,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T17:39:12.601273+00:00,NXAT,DAY intraday_flag: pole 7% flag 4d,,,,,day,short,blocked,not shortable / hard to borrow conf=64.8,
+2026-11-25T18:02:06.222016+00:00,GRG,Greggs Executives Exercise Share Options,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,CNA,Centrica plc Director/PDMR Share Transaction,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,UBS,UBS to Present 'LA in MIA' at Art Basel Miami Beach,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,SU,Schneider Electric Launches 'Partnerships for Innovation' Initiative,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,SIE,Siemens Foundation Hosts Scientific and Cultural Exhibition in Brazil,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,FAB,First Abu Dhabi Bank Publishes Prospectus for $500 Million Tier 2 Capital Securities,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,RSW,Renishaw plc Announces Results of Annual General Meeting,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,NESN,Nestlé Testing Wearable Health-Tracking Technology for Humans and Pets,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,MKS,Marks & Spencer Integrates with Meta's Muse AI Agent,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:02:06.222016+00:00,ROP,Roche Implements AI-Driven Procurement Transformation,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:03:02.706688+00:00,HIK,RBC Downgrades Hikma Pharmaceuticals to Sector Perform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:03:02.706688+00:00,BEZ,Beazley Security Executives Discuss Rising Cyber Threats and AI Risks,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T18:05:20.514804+00:00,BPT,Morgan Stanley Boosts Bridgepoint Group Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,TOL,"Toll Brothers Announces Final Opportunity at Hawthorn Community in Alpharetta, Georgia",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,TENB,Piper Sandler Adjusts Tenable Holdings Rating and Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,TENB,Jefferies Report Highlights OT Security as Priority Area for Tenable,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,BE,Bloom Energy Supports Nashville Students and Families,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,IFF,International Flavors & Fragrances Fined by EU and UK Regulators for Antitrust Violations,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,GEHC,"GE HealthCare Advances Total Body PET/CT Innovation with Omni 128 cm, Now 510(k) Pending with the U.S. FDA",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,ARES,Ares Management Funds Participate in FORTNA Recapitalization,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,ARES,Ares Management Joins NBA European Infrastructure Initiative,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,SNX,AI Labs Expands Global Reach of Minsky™ Enterprise AI Solutions Through TD SYNNEX Partnership,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,KEY,"KeyBank Foundation Invests $750,000 in Chester County OIC",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,SSRM,Phenom Resources Reports Initial 2026 Drill Results from Dobbin Gold Project,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,DY,Dycom Industries Issues Weak Guidance and Forecasts Revenue Decline,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,MKL,AM Best Affirms Credit Ratings of Markel Group Inc. and Its Subsidiaries,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,ETSY,Chit Chats Integrates Shipping Services with Etsy Platform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,BPYPP,Brookfield Property Partners Declares Quarterly Distributions on Preferred Units,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,WBD,Warner Bros. Discovery Global Consumer Products and U.S. Mint Announce Robin Coin and Medal Program,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,FOX,Fox Sports to Broadcast Women's Champions Classic,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,OMC,Omnicom Media Group Adopts Adform MCP Server for AI-Driven Campaign Analytics,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,CBOE,Wedbush Expands Clearing Platform to Support Cboe KPI Binary Options,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,FNMA,VantageScore 4.0 Mortgage Securitization Market Share Exceeds 20% in October 2026,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,MGM,MGM Resorts International to Receive Approximately $200 Million from MGM China Special Dividend,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,BMNR,"Bitmine Immersion Technologies, Inc. Declares Cash Dividend",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,RKT,New York Regulators Fine Rocket Mortgage and Mr. Cooper $6.75 Million for Cybersecurity Violations,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,KYMR,Kymera Therapeutics Announces Closing of Upsized $1.75 Billion Public Offering,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,GS,"The Goldman Sachs Group, Inc. Discloses Increased Holding in ASOS PLC",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,GH,Guardant Health Independent Director Myrtle Potter Sells 45% of Holding,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,TRMB,allGeo Integration with Trimble Spectrum Now Available on Trimble Marketplace,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,MDLN,Securities Fraud Lawsuit Filed Against Medline Inc.,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,BX,Blackstone Joins NBA-Backed €10 Billion European Basketball Infrastructure Initiative,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,COIN,Coinbase Wallet Launches Direct Deposit Feature for USDC,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,BNP,BNP Paribas Confirmed as Global Systemically Important Bank (G-SIB),1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,ED,Upcoming Changes to Utility Service Line Charges for Oil-to-Gas Conversions,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,FTNT,Fortinet Releases 2027 Cybersecurity Predictions Report,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,SPCX,FCC Authorizes SpaceX to Deploy 1 Million Satellites for Space-Based Data Centers,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,TSLA,J.P. Morgan Analyzes Potential Tesla-SpaceX Merger Impact on S&P 500 Eligibility,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:02:18.579538+00:00,MAR,Delta Hotels by Marriott Edmonton South to Premiere 'The Magic Table' Immersive Dining Experience,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,BBIO,Wells Fargo Maintains Overweight Rating and Raises Price Target for BridgeBio Pharma,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,AXON,TD Cowen Initiates Coverage on Axon Enterprise with Buy Rating,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,BIPC,RBC Capital Resumes Coverage of Brookfield Infrastructure with Outperform Rating,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,EWBC,JRM Construction Management Completes New Office for East West Bank in New York City,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,DSG,RBC Analyst Commentary on Descartes Q3 Performance,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,CW,Curtiss-Wright Enhances AVDU Rugged LCD Touchscreen Displays with Software Upgrade,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,NBIX,"Neurocrine Biosciences' Vykat Positioned for Growth in PWS Market, Oppenheimer Says",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,CPAY,Corpay Officer Ronald Clarke Files Intent to Sell Shares,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,TVE,Desjardins Securities Maintains Buy Rating and Adjusts Price Target for Tamarack Valley Energy,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,FANG,Goldman Sachs Adjusts Diamondback Energy Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,HAS,Seaport Global Securities Adjusts Hasbro Price Target to $120,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,CRWV,CoreWeave's Banks to Sell $4.5 Billion Loan Secured by GPUs for Meta,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,RJF,Raymond James Reports Client Assets Under Administration Reached $1.95 Trillion,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,ARE,JPMorgan Adjusts Alexandria Real Estate Equities Price Target to $45 From $56,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,MA,Tigress Finance Raises Price Target on Mastercard,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,LH,Labcorp Holdings Insider Executes Stock Sale,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,JEF,Jefferies & Co Adjusts Dollar Tree Price Target to $150 From $135,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,EXLS,EXL Named a Leader in 2026 ISG Provider Lens Generative AI and Agentic AI Services Global Reports,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,DV,LG Ad Solutions Expands Home Screen Verification Capabilities with DoubleVerify,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,BNS,CIBC Analyst Adjusts Bank of Nova Scotia Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,EXTR,Extreme Networks to Demonstrate AI-Powered Networking at GITEX Global 2026,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,GLXY,Galaxy Digital Curates New StableEarn Prime PYUSD Vault on Morpho,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,BP,BP Capital Markets Announces Final Results of Tender Offers for Senior and Hybrid Notes,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,ENR,Siemens Energy Expands Global Power Plant Service Operations with New Mülheim Facility,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,H,Arbitrator Rules Against Hydro One in Employee Service Credit Grievance,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,FDX,Deutsche Bank Adjusts FedEx Price Target to $386 From $479,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,TOWN,TowneBank Declares Fourth-Quarter Cash Dividend,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,DUK,Duke Energy Prepares for Thanksgiving Week Storms in the Carolinas,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,OKTA,Okta Identifies Potential Links Between Inception and ShinyHunters Hackers,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,RL,Ralph Lauren Opens First Global Home-Dedicated Boutique in Milan,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,MRVL,Tradr ETFs Announces Upcoming Launch of Tradr 2X Short MRVL Daily ETF,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,PCG,CPUC Approves Interim Rate Hike for PG&E for 2027,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,APLD,Applied Digital Named as Featured Speaker for Data Center Americas 2027,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,UL,Fragrance Suppliers Fined for Antitrust Violations Involving Unilever,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:03:23.505804+00:00,APLD,Roth Capital Partners Adjusts Applied Digital Price Target Following Data Center Lease,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,TPL,KeyBanc Adjusts Texas Pacific Land Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,MAT,UBS Adjusts Mattel Price Target to $26,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,FRT,Stifel Adjusts Price Target on Federal Realty Investment Trust to $118 From $120,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,KSS,BofA Securities Adjusts Kohl's Price Target to $19,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,ZS,Scotiabank Downgrades Zscaler to Sector Perform,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,KSS,UBS Raises Kohl's Price Target to $13,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,MNST,BMO Capital Adjusts Monster Beverage Price Target to $47.50,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:04:26.660732+00:00,BIP,RBC Capital Resumes Coverage of Brookfield Infrastructure Partners with Outperform Rating,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T19:05:19.633605+00:00,BULL,Webull Canada Announces Integration Project with TradingView,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:02:16.604063+00:00,UNP,J.B. Hunt Files Opposition to Proposed Union Pacific-Norfolk Southern Merger,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:02:16.604063+00:00,COP,Kehewin Cree Nation Opposes Pathways CO2 Project,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:02:16.604063+00:00,COST,Supreme Court of British Columbia Rules in Class Action Regarding Supplement Labeling,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:02:16.604063+00:00,SHEL,Shell Announces Share Buyback Transactions,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:02:16.604063+00:00,BLK,"BlackRock, Inc. Discloses Change in Voting Rights in SAP SE",1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:03:06.963382+00:00,MS,Morgan Stanley Adjusts Best Buy Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:03:06.963382+00:00,MS,Morgan Stanley Adjusts Dell Technologies Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:03:06.963382+00:00,WDC,Analysts Adjust Price Targets for Western Digital Corporation,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:03:06.963382+00:00,MAR,Chinese Investor Signs Hotel Management Deals with Marriott International,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:03:06.963382+00:00,BMO,CIBC Analyst Adjusts Bank of Montreal Price Target,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:32:16.592793+00:00,INTR,UBS Adjusts Price Target on Inter & Co to $6.60,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:32:16.592793+00:00,GLOB,Globant Announces Converge 2026 Virtual Event,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:32:16.592793+00:00,PBR.A,Foresea Recognized in Petrobras Offshore Drilling Rig Operational Excellence Awards,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:33:03.781065+00:00,AGRO,Citigroup Upgrades Adecoagro S.A. to Buy,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
+2026-11-25T20:33:03.781065+00:00,LND,Insider Transaction Filing: Alejandro Gustavo Elsztain,1,neutral,other,intraday,,,skip,below threshold / neutral,unparseable
