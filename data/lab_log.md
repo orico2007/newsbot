@@ -1868,3 +1868,8 @@ Checked the bars cache (145 symbols, data through 2026-10-29, ~4 weeks old). Cro
 Variants tried: 0. Verdict: nothing promoted; challenger.py and live files untouched.
 Note for Ori: the bars-cache is ~4 weeks stale (last SPY bar 2026-10-29); check the fetch-bars workflow. Adding TLT/HYG/GLD to scripts/fetch_bars.py would be the only way to open a new data-dependent direction (credit/rates stress filters); real earnings dates are the other.
 Next run: web, but only if a fetchable page offers rules outside the tested families; otherwise do not log filler.
+
+## 2026-11-25 (run 90) - cache freshness check, no new backtest
+bars-cache is current again (last SPY bar 2026-11-24, branch updated 2026-11-25); the staleness flagged in run 89 is resolved. TLT/HYG/GLD still absent (145 symbols), so the credit/rates-filter direction stays closed unless scripts/fetch_bars.py adds them. No fetchable web page with rules outside tested families was found this run, so nothing was invented to fill the log.
+Variants tried: 0. Verdict: nothing promoted; challenger.py and live files untouched.
+Next run: web; if still nothing new, an exit-side or sleeve idea on the refreshed data.
