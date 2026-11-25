@@ -107,3 +107,17 @@ def test_swing_needs_atr():                  assert not ev("swing", atr=None).ok
 def test_disabled_strategy():
     import copy; r = copy.deepcopy(R); r["day"]["enabled"] = False
     assert not evaluate_entry(r, "day", "long", "A", 50, 49, 2e6, ACC, [], {}, True).ok
+
+
+def test_small_profile_overlay_and_default_unchanged(tmp_path):
+    import yaml, rules_loader, pathlib
+    live = pathlib.Path(__file__).resolve().parent.parent / "rules.yaml"
+    base = rules_loader.load_rules(str(live))
+    assert base["profile"] == "standard" and base["day"]["enabled"] is True and base["swing"]["mr"]["size_mult"] == 2.5
+    d = yaml.safe_load(live.read_text(encoding="utf-8")); d["profile"] = "small"
+    p = tmp_path / "r.yaml"; p.write_text(yaml.safe_dump(d), encoding="utf-8")
+    s = rules_loader.load_rules(str(p))
+    assert s["account"]["max_open_positions_total"] == 4 and s["swing"]["max_positions"] == 4
+    assert s["day"]["enabled"] is False and s["crypto"]["enabled"] is False
+    assert s["swing"]["mr"]["size_mult"] == 6.25 and s["swing"]["mr"]["tilt"] is False
+    assert s["swing"]["mr"]["zreg_max"] == -1.5 and s["swing"]["mr"]["vol_min"] == 1.75      # untouched keys survive the merge

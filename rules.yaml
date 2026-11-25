@@ -152,3 +152,27 @@ premarket:                       # חדשות ודוחות שיצאו לפני �
 
 # leveraged / inverse ETFs: swing "longs" in them are really shorts (shorts are off) and decay; never trade them
 exclude_symbols: [SQQQ, TQQQ, SPXU, SPXS, SPXL, UPRO, SDOW, UDOW, SOXS, SOXL, TZA, TNA, SDS, SSO, QID, QLD, SH, PSQ, DOG, DXD, RWM, SRTY, URTY, FAZ, FAS, LABD, LABU, UVXY, SVXY, VXX, VIXY, UVIX, SVIX, TECS, TECL, YANG, YINN, NUGT, DUST, JNUG, JDST, ERX, ERY, BOIL, KOLD, UCO, SCO, TMV, TMF, TBT, SPDN, SPUU]
+
+# ---- account-size profiles ----
+# profile: standard = tuned for a ~$100k account (10% positions, up to 12 at once).
+# profile: small    = for a ~$1-2k live start: Alpaca brackets need WHOLE shares, so fewer and bigger positions (25% each, max 4),
+#                     only stocks whose single share fits the budget, no day trades (PDT rule under $25k, fees), no crypto, no size tilt.
+# To use it set `profile: small` below. Everything not listed in a profile keeps its default.
+profile: standard
+profiles:
+  small:
+    account:
+      max_open_positions_total: 4
+      max_gross_exposure_pct: 95
+      max_trades_per_day: 4
+    day:
+      enabled: false
+    crypto:
+      enabled: false
+    swing:
+      max_positions: 4
+      pattern_size_mult: 1.5
+      mr:
+        size_mult: 6.25          # x4% = 25% of equity per trade
+        new_per_day: 2
+        tilt: false
