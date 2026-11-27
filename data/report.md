@@ -1,21 +1,18 @@
-# Daily report 2026-11-25
+# Daily report 2026-11-27
 
-- Equity: $99,695.93  |  Day P&L: **-73.90 (-0.07%)**
-- Entries: 0  |  Exits: 0  |  Trailing-stop raises: 0  |  Blocked ideas: 3  |  Errors: 0
+- Equity: $99,737.68  |  Day P&L: **+82.54 (+0.08%)**
+- Entries: 0  |  Exits: 0  |  Trailing-stop raises: 0  |  Blocked ideas: 0  |  Errors: 0
 
 ## Market
-Regime: **bear**. Leading: XLP (13.38), XLV (10.97), XLU (9.51). Lagging: XLE (-2.98), XLK (-10.88), SMH (-17.66)
+Regime: **bear**. Leading: XLP (11.2), XLY (8.98), XLV (8.29). Lagging: XLE (-3.54), XLK (-9.72), SMH (-15.89)
 
 ## Open positions
 | Symbol | Side | Qty | Unrealized P&L |
 |---|---|---|---|
-| ABBV | long | 15 | +16.95 |
-| AMZN | long | 5 | -77.55 |
-| COST | long | 1 | -7.50 |
-| LLY | long | 1 | -11.43 |
-| V | long | 5 | +12.00 |
-| WMT | long | 14 | +69.23 |
-| XOM | long | 8 | -89.80 |
-
-## Why ideas were blocked
-- 3x not shortable / hard to borrow
+| ABBV | long | 15 | -27.15 |
+| AMZN | long | 5 | -34.40 |
+| COST | long | 1 | +0.38 |
+| LLY | long | 1 | -17.06 |
+| V | long | 5 | +33.27 |
+| WMT | long | 14 | +78.82 |
+| XOM | long | 8 | -80.12 |
